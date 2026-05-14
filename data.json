@@ -1,0 +1,778 @@
+{
+  "texts": {
+    "prog:U-DAT-P-2.1:csv:1": "У руководителей появляются понятные дашборды и цифры, на которые можно реально опираться в работе.",
+    "prog:U-DAT-P-2.1:csv:0": "Собрать рабочую BI- и отчетную систему, которой можно пользоваться в управлении, а не только для просмотра цифр.",
+    "prog:U-DAT-P-2.1:csv:2": "Согласовать формулировки и владельцев. Затем — декомпозиция в задачи.",
+    "prog:U-DAT-P-2.1:csv:3": "Метрика уточняется при детализации программы.",
+    "prog:U-UKM-P-1.2:csv:0": "Собрать понятную финансовую модель управляющей компании и сделать ее пригодной для регулярного управления. ПРОБУЕМ ИЗМЕНЕНИЕ И ПУБЛИКАЦИЮ&nbsp;"
+  },
+  "tasks": {
+    "U-FIN-PR-1.2.2": [
+      {
+        "id": "T-0001",
+        "taskId": "U-FIN-Z-1.2.2.1",
+        "text": "Описать фонды и расчет план-факт",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "U-FIN-Z-1.2.2.1",
+        "status": "not_started"
+      }
+    ],
+    "T-FIN-PR-1.2.5": [
+      {
+        "id": "T-0002",
+        "taskId": "T-FIN-Z-1.2.5.1",
+        "text": "Собрать рабочие денежные потоки по ключевым юрлицам так, чтобы они не создавали лишней кассовой нагрузки",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-FIN-Z-1.2.5.1",
+        "status": "not_started"
+      },
+      {
+        "id": "T-0003",
+        "taskId": "T-FIN-Z-1.2.5.2",
+        "text": "Усилить контроль в части дебиторской задолженности и авансовых отчетов",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-FIN-Z-1.2.5.2",
+        "status": "not_started"
+      }
+    ],
+    "T-FIN-PR-1.2.6": [
+      {
+        "id": "T-0004",
+        "taskId": "T-FIN-Z-1.2.6.1",
+        "text": "Структурировать разделение информации и порядок подачи заявок на оплату",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-FIN-Z-1.2.6.1",
+        "status": "not_started"
+      },
+      {
+        "id": "T-0005",
+        "taskId": "T-FIN-Z-1.2.6.2",
+        "text": "Систематизировать поток входящих финансовых задач, чтобы отсекать нефокусные поручения",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-FIN-Z-1.2.6.2",
+        "status": "not_started"
+      }
+    ],
+    "U-CLN-PR-1.1.1": [
+      {
+        "id": "T-0006",
+        "taskId": "U-CLN-Z-1.1.1.1",
+        "text": "Передать финансовое планирование на уровень клиник как рабочую практику",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "U-CLN-Z-1.1.1.1",
+        "status": "not_started"
+      }
+    ],
+    "U-CLN-PR-1.1.4": [
+      {
+        "id": "T-0007",
+        "taskId": "U-CLN-Z-1.1.4.1",
+        "text": "Запустить пробную новую оплату руководителей, привязанную к маржинальности",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "U-CLN-Z-1.1.4.1",
+        "status": "not_started"
+      }
+    ],
+    "T-LEG-PR-1.6.5": [
+      {
+        "id": "T-0008",
+        "taskId": "T-LEG-Z-1.6.5.1",
+        "text": "Подключать бухгалтерию на этапе принятия решения, а не постфактум",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-LEG-Z-1.6.5.1",
+        "status": "not_started"
+      },
+      {
+        "id": "T-0009",
+        "taskId": "T-LEG-Z-1.6.5.2",
+        "text": "Перевести взгляд инициаторов трат с “оплаты” на “факт хозяйственной операции”",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-LEG-Z-1.6.5.2",
+        "status": "not_started"
+      }
+    ],
+    "T-LEG-PR-1.6.6": [
+      {
+        "id": "T-0010",
+        "taskId": "T-LEG-Z-1.6.6.1",
+        "text": "Подготовить бухгалтерский и документный контур к обязательному аудиту",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-LEG-Z-1.6.6.1",
+        "status": "not_started"
+      }
+    ],
+    "T-LEG-PR-1.6.7": [
+      {
+        "id": "T-0011",
+        "taskId": "T-LEG-Z-1.6.7.1",
+        "text": "Обеспечить своевременное поступление документов в бухгалтерию",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-LEG-Z-1.6.7.1",
+        "status": "not_started"
+      },
+      {
+        "id": "T-0012",
+        "taskId": "T-LEG-Z-1.6.7.2",
+        "text": "Обучить сотрудников на земле корректной работе с документами и 1С",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-LEG-Z-1.6.7.2",
+        "status": "not_started"
+      },
+      {
+        "id": "T-0013",
+        "taskId": "T-LEG-Z-1.6.7.3",
+        "text": "Автоматизировать выгрузку выручки так, чтобы 1С Медицина и 1С Бухгалтерия корректно сходились",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-LEG-Z-1.6.7.3",
+        "status": "not_started"
+      }
+    ],
+    "U-HRM-PR-4.1.1": [
+      {
+        "id": "T-0014",
+        "taskId": "T-HRM-Z-4.1.1.1",
+        "text": "Поставить руководителей на все отделы в департаменте продаж сети",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-HRM-Z-4.1.1.1",
+        "status": "not_started"
+      },
+      {
+        "id": "T-0015",
+        "taskId": "T-HRM-Z-4.1.1.2",
+        "text": "Обеспечить руководителей властью и дашбордами",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-HRM-Z-4.1.1.2",
+        "status": "not_started"
+      }
+    ],
+    "T-HRM-PR-4.1.7": [
+      {
+        "id": "T-0016",
+        "taskId": "T-HRM-Z-4.1.7.1",
+        "text": "Посчитать объем ресурса, необходимый для полноценного закрытия техподдержки всех клиник",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-HRM-Z-4.1.7.1",
+        "status": "not_started"
+      },
+      {
+        "id": "T-0017",
+        "taskId": "T-HRM-Z-4.1.7.2",
+        "text": "Нанять еще одного сотрудника в техническую поддержку",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-HRM-Z-4.1.7.2",
+        "status": "not_started"
+      }
+    ],
+    "U-HRM-PR-4.2.1": [
+      {
+        "id": "T-0018",
+        "taskId": "T-HRM-Z-4.2.1.1",
+        "text": "Описать должности и регламенты так, чтобы руководители сами их принимали и соблюдали",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-HRM-Z-4.2.1.1",
+        "status": "in_progress"
+      }
+    ],
+    "U-HRM-PR-4.2.6": [
+      {
+        "id": "T-0019",
+        "taskId": "T-HRM-Z-4.2.6.1",
+        "text": "Привести положение об оплате труда в соответствие с тем, что реально считается в ЗУП",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-HRM-Z-4.2.6.1",
+        "status": "not_started"
+      },
+      {
+        "id": "T-0020",
+        "taskId": "T-HRM-Z-4.2.6.2",
+        "text": "Сделать прозрачным цикл объяснения сотрудникам, почему им пришла именно такая сумма",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-HRM-Z-4.2.6.2",
+        "status": "not_started"
+      }
+    ],
+    "T-HRM-PR-4.2.7": [
+      {
+        "id": "T-0021",
+        "taskId": "T-HRM-Z-4.2.7.1",
+        "text": "Привести в порядок расчетный контур по врачам",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-HRM-Z-4.2.7.1",
+        "status": "not_started"
+      },
+      {
+        "id": "T-0022",
+        "taskId": "T-HRM-Z-4.2.7.2",
+        "text": "Собрать и внедрить табель как единый вход в расчет зарплаты",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-HRM-Z-4.2.7.2",
+        "status": "not_started"
+      }
+    ],
+    "T-HRM-PR-4.2.9": [
+      {
+        "id": "T-0023",
+        "taskId": "T-HRM-Z-4.2.9.1",
+        "text": "Сделать трудовые договоры, должностные инструкции и положения по трудовому законодательству",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-HRM-Z-4.2.9.1",
+        "status": "not_started"
+      },
+      {
+        "id": "T-0024",
+        "taskId": "T-HRM-Z-4.2.9.2",
+        "text": "Обучить департамент персонала правильно работать с новым кадровым контуром",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-HRM-Z-4.2.9.2",
+        "status": "not_started"
+      }
+    ],
+    "T-HRM-PR-4.3.6": [
+      {
+        "id": "T-0025",
+        "taskId": "T-HRM-Z-4.3.6.1",
+        "text": "Написать регламент и KPI для нового контура внутренних коммуникаций и взаимодействия руководителей с HR",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-HRM-Z-4.3.6.1",
+        "status": "not_started"
+      }
+    ],
+    "U-CCT-PR-3.4.1": [
+      {
+        "id": "T-0026",
+        "taskId": "T-CCT-Z-3.4.1.1",
+        "text": "Поставить руководителя первичного КЦ и супервайзеров на места",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-CCT-Z-3.4.1.1",
+        "status": "not_started"
+      }
+    ],
+    "T-CCT-PR-3.4.6": [
+      {
+        "id": "T-0027",
+        "taskId": "T-CCT-Z-3.4.6.1",
+        "text": "Повысить качество входа пациента в отдел продаж после КЦ",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-CCT-Z-3.4.6.1",
+        "status": "not_started"
+      }
+    ],
+    "T-CCT-PR-3.4.7": [
+      {
+        "id": "T-0028",
+        "taskId": "T-CCT-Z-3.4.7.1",
+        "text": "Выделить отдельную функцию по работе со спящими, думающими и отложенными базами",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-CCT-Z-3.4.7.1",
+        "status": "not_started"
+      }
+    ],
+    "T-CCT-PR-3.4.9": [
+      {
+        "id": "T-0029",
+        "taskId": "T-CCT-Z-3.4.9.1",
+        "text": "Довести конверсионную модель первичного КЦ до целевого уровня lead → visit",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-CCT-Z-3.4.9.1",
+        "status": "not_started"
+      }
+    ],
+    "T-HRM-PR-4.8.1": [
+      {
+        "id": "T-0030",
+        "taskId": "T-HRM-Z-4.8.1.1",
+        "text": "Нанять менеджера по внутренним коммуникациям",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-HRM-Z-4.8.1.1",
+        "status": "not_started"
+      },
+      {
+        "id": "T-0031",
+        "taskId": "T-HRM-Z-4.8.1.2",
+        "text": "Запустить HR-маркетинг / контур работодателя и репутации",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-HRM-Z-4.8.1.2",
+        "status": "not_started"
+      }
+    ],
+    "T-HRM-PR-4.8.2": [
+      {
+        "id": "T-0032",
+        "taskId": "T-HRM-Z-4.8.2.1",
+        "text": "Спроектировать контур компенсаций и льгот",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-HRM-Z-4.8.2.1",
+        "status": "not_started"
+      }
+    ],
+    "T-HRM-PR-4.8.3": [
+      {
+        "id": "T-0033",
+        "taskId": "T-HRM-Z-4.8.3.1",
+        "text": "Сделать совместный с IT проект по системному внедрению AI-инструментов в HR",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-HRM-Z-4.8.3.1",
+        "status": "not_started"
+      }
+    ],
+    "T-CCT-PR-3.4.10.1": [
+      {
+        "id": "T-0034",
+        "taskId": "T-CCT-Z-3.4.10.1.1",
+        "text": "Запустить сервис для пациентов из соседних регионов",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-CCT-Z-3.4.10.1.1",
+        "status": "not_started"
+      }
+    ],
+    "T-CCT-PR-3.4.10.2": [
+      {
+        "id": "T-0035",
+        "taskId": "T-CCT-Z-3.4.10.2.1",
+        "text": "Запустить сервис для пациентов из дальних регионов",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-CCT-Z-3.4.10.2.1",
+        "status": "not_started"
+      }
+    ],
+    "U-DAT-PR-2.1.6": [
+      {
+        "id": "T-0036",
+        "taskId": "U-DAT-Z-2.1.6.1",
+        "text": "Утвердить перечень твердых статистик",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "U-DAT-Z-2.1.6.1",
+        "status": "not_started"
+      },
+      {
+        "id": "T-0037",
+        "taskId": "U-DAT-Z-2.1.6.2",
+        "text": "Настроить корректную сборку данных",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "U-DAT-Z-2.1.6.2",
+        "status": "not_started"
+      },
+      {
+        "id": "T-0038",
+        "taskId": "U-DAT-Z-2.1.6.3",
+        "text": "Определить, какие статистики являются фундаментом для остальных, если всю область за квартал пересобрать нельзя",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "U-DAT-Z-2.1.6.3",
+        "status": "not_started"
+      }
+    ],
+    "T-DAT-PR-2.1.8": [
+      {
+        "id": "T-0039",
+        "taskId": "T-DAT-Z-2.1.8.1",
+        "text": "Правильно оценивать каждого сотрудника и работу IT-департамента в целом цифрами",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-DAT-Z-2.1.8.1",
+        "status": "not_started"
+      }
+    ],
+    "T-DAT-PR-2.1.9": [
+      {
+        "id": "T-0040",
+        "taskId": "T-DAT-Z-2.1.9.1",
+        "text": "Изменить форму визуализации финансовой информации так, чтобы ею реально пользовались для управления",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-DAT-Z-2.1.9.1",
+        "status": "not_started"
+      },
+      {
+        "id": "T-0041",
+        "taskId": "T-DAT-Z-2.1.9.2",
+        "text": "Добиться закрытия периодов в 1С Медицина",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-DAT-Z-2.1.9.2",
+        "status": "not_started"
+      }
+    ],
+    "U-FIN-PR-1.3.4": [
+      {
+        "id": "T-0042",
+        "taskId": "T-HRM-Z-1.3.4.1",
+        "text": "Привести в порядок расчетный контур по врачам",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-HRM-Z-1.3.4.1",
+        "status": "not_started"
+      },
+      {
+        "id": "T-0043",
+        "taskId": "T-HRM-Z-1.3.4.2",
+        "text": "Собрать и внедрить табель как единый вход в расчет зарплаты",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-HRM-Z-1.3.4.2",
+        "status": "not_started"
+      },
+      {
+        "id": "T-0044",
+        "taskId": "T-HRM-Z-1.3.4.3",
+        "text": "Привести положение об оплате труда в соответствие с логикой расчета в ЗУП",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-HRM-Z-1.3.4.3",
+        "status": "not_started"
+      }
+    ],
+    "U-SLS-PR-3.2.1": [
+      {
+        "id": "T-0045",
+        "taskId": "T-SLS-Z-3.2.1.1",
+        "text": "Ввести показатели, значимые для консультирующих врачей",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-SLS-Z-3.2.1.1",
+        "status": "not_started"
+      }
+    ],
+    "U-SLS-PR-3.2.2": [
+      {
+        "id": "T-0046",
+        "taskId": "T-SLS-Z-3.2.2.1",
+        "text": "Ввести полный контроль за каждой консультацией",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-SLS-Z-3.2.2.1",
+        "status": "not_started"
+      }
+    ],
+    "T-SLS-PR-3.2.7": [
+      {
+        "id": "T-0047",
+        "taskId": "T-SLS-Z-3.2.7.1",
+        "text": "Сделать так, чтобы консультирующие врачи хотели быть консультирующими врачами и считали это престижной ролью",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-SLS-Z-3.2.7.1",
+        "status": "not_started"
+      }
+    ],
+    "T-SLS-PR-3.2.8": [
+      {
+        "id": "T-0048",
+        "taskId": "T-SLS-Z-3.2.8.1",
+        "text": "Наладить систему обучения консультирующих сотрудников",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-SLS-Z-3.2.8.1",
+        "status": "not_started"
+      }
+    ],
+    "T-SLS-PR-3.2.9": [
+      {
+        "id": "T-0049",
+        "taskId": "T-SLS-Z-3.2.9.1",
+        "text": "Передавать в продажи список проблем и контекст пациента из КЦ",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-SLS-Z-3.2.9.1",
+        "status": "not_started"
+      }
+    ],
+    "T-SLS-PR-3.2.10": [
+      {
+        "id": "T-0050",
+        "taskId": "T-SLS-Z-3.2.10.1",
+        "text": "Проводить в продажах ежемесячный цикл брейнштормов / гипотез по цифрам",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-SLS-Z-3.2.10.1",
+        "status": "not_started"
+      }
+    ],
+    "T-PAT-PR-3.1.8": [
+      {
+        "id": "T-0051",
+        "taskId": "T-PAT-Z-3.1.8.1",
+        "text": "Запустить программу лояльности на рекомендации, чтобы пациенты сами рекомендовали компанию",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-PAT-Z-3.1.8.1",
+        "status": "not_started"
+      }
+    ],
+    "U-CHT-PR-5.7.2": [
+      {
+        "id": "T-0052",
+        "taskId": "T-CHT-Z-5.7.2.1",
+        "text": "Построить прозрачный контур внутренних коммуникаций без хаотичной передачи информации",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-CHT-Z-5.7.2.1",
+        "status": "not_started"
+      }
+    ],
+    "T-MKT-PR-5.9.1": [
+      {
+        "id": "T-0053",
+        "taskId": "T-MKT-Z-5.9.1.1",
+        "text": "Выбрать и упаковать медиа-врачей",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-MKT-Z-5.9.1.1",
+        "status": "not_started"
+      }
+    ],
+    "T-MKT-PR-5.9.2": [
+      {
+        "id": "T-0054",
+        "taskId": "T-MKT-Z-5.9.2.1",
+        "text": "Выбрать узкие целевые аудитории и сделать под них отдельное позиционирование",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-MKT-Z-5.9.2.1",
+        "status": "not_started"
+      }
+    ],
+    "T-MKT-PR-5.9.3": [
+      {
+        "id": "T-0055",
+        "taskId": "T-MKT-Z-5.9.3.1",
+        "text": "Спроектировать фестиваль здоровья как широкоохватный вход в рынок",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-MKT-Z-5.9.3.1",
+        "status": "not_started"
+      }
+    ],
+    "T-MKT-PR-5.9.4": [
+      {
+        "id": "T-0056",
+        "taskId": "T-MKT-Z-5.9.4.1",
+        "text": "Создать MVP-песочницу для продуктовых и коммуникационных гипотез",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-MKT-Z-5.9.4.1",
+        "status": "not_started"
+      }
+    ],
+    "T-MKT-PR-5.9.5": [
+      {
+        "id": "T-0057",
+        "taskId": "T-MKT-Z-5.9.5.1",
+        "text": "Построить окупаемую модель маркетинга и масштабирования спроса",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-MKT-Z-5.9.5.1",
+        "status": "not_started"
+      }
+    ],
+    "U-MKT-PR-3.6.2": [
+      {
+        "id": "T-0058",
+        "taskId": "U-MKT-Z-3.6.2.1",
+        "text": "Придумать новое УТП / новую механику входа в диалог с пациентом, чтобы выйти из “гонки одинаковых”",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "U-MKT-Z-3.6.2.1",
+        "status": "not_started"
+      }
+    ],
+    "U-EMP-PR-5.6.1": [
+      {
+        "id": "T-0059",
+        "taskId": "T-EMP-Z-5.6.1.1",
+        "text": "Сделать личный кабинет сотрудника",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-EMP-Z-5.6.1.1",
+        "status": "not_started"
+      }
+    ],
+    "U-EMP-PR-5.6.3": [
+      {
+        "id": "T-0060",
+        "taskId": "T-EMP-Z-5.6.3.1",
+        "text": "Встроить электронную подпись для кадрового и внутреннего документооборота с сотрудником",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-EMP-Z-5.6.3.1",
+        "status": "not_started"
+      }
+    ],
+    "T-EMP-PR-5.6.6": [
+      {
+        "id": "T-0061",
+        "taskId": "T-EMP-Z-5.6.6.1",
+        "text": "Построить прозрачный контур информирования сотрудников без хаотичной передачи информации",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-EMP-Z-5.6.6.1",
+        "status": "not_started"
+      }
+    ],
+    "T-HRM-PR-4.4.7": [
+      {
+        "id": "T-0062",
+        "taskId": "T-HRM-Z-4.4.7.1",
+        "text": "Найти слабые точки сотрудников",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-HRM-Z-4.4.7.1",
+        "status": "not_started"
+      },
+      {
+        "id": "T-0063",
+        "taskId": "T-HRM-Z-4.4.7.2",
+        "text": "Обучить сотрудников работе в тех участках, где они сейчас слабы",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-HRM-Z-4.4.7.2",
+        "status": "not_started"
+      },
+      {
+        "id": "T-0064",
+        "taskId": "T-HRM-Z-4.4.7.3",
+        "text": "Написать регламент и обучающие курсы для техподдержки",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-HRM-Z-4.4.7.3",
+        "status": "not_started"
+      }
+    ],
+    "T-HRM-PR-4.4.8": [
+      {
+        "id": "T-0065",
+        "taskId": "T-HRM-Z-4.4.8.1",
+        "text": "Ввести обязательное обучение руководителей на регулярной основе",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-HRM-Z-4.4.8.1",
+        "status": "not_started"
+      }
+    ],
+    "T-HRM-PR-4.4.9": [
+      {
+        "id": "T-0066",
+        "taskId": "T-HRM-Z-4.4.9.1",
+        "text": "Получить нормальный список сотрудников и понять, кто, когда и что должен проходить",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-HRM-Z-4.4.9.1",
+        "status": "not_started"
+      },
+      {
+        "id": "T-0067",
+        "taskId": "T-HRM-Z-4.4.9.2",
+        "text": "Закрыть потерянные должности, по которым нет учебного покрытия",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-HRM-Z-4.4.9.2",
+        "status": "not_started"
+      }
+    ],
+    "T-HRM-PR-4.4.10": [
+      {
+        "id": "T-0068",
+        "taskId": "T-HRM-Z-4.4.10.1",
+        "text": "Доделать / внедрить новую доску для управления заявками на обучение",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-HRM-Z-4.4.10.1",
+        "status": "not_started"
+      },
+      {
+        "id": "T-0069",
+        "taskId": "T-HRM-Z-4.4.10.2",
+        "text": "Подобрать готовые курсы по тем темам, где внутри нет достаточной экспертизы",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-HRM-Z-4.4.10.2",
+        "status": "not_started"
+      }
+    ],
+    "U-CHG-PR-4.5.2": [
+      {
+        "id": "T-0070",
+        "taskId": "U-CHG-Z-4.5.2.1",
+        "text": "Открыть руководителям и сотрудникам путь инициатив через проектный офис",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "U-CHG-Z-4.5.2.1",
+        "status": "not_started"
+      }
+    ],
+    "T-CHG-PR-0.1.1": [
+      {
+        "id": "T-0071",
+        "taskId": "T-CHG-Z-0.1.1.1",
+        "text": "Закрепить различие ролей «владелец» и «приемщик» изменения",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-CHG-Z-0.1.1.1",
+        "status": "not_started"
+      },
+      {
+        "id": "T-0072",
+        "taskId": "T-CHG-Z-0.1.1.2",
+        "text": "Определить критерии перехода изменения в норму",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-CHG-Z-0.1.1.2",
+        "status": "not_started"
+      },
+      {
+        "id": "T-0073",
+        "taskId": "T-CHG-Z-0.1.1.3",
+        "text": "Запустить аудит соблюдения методологии внедрения",
+        "assignee": "",
+        "dueDate": "",
+        "legacy_id": "T-CHG-Z-0.1.1.3",
+        "status": "not_started"
+      }
+    ]
+  },
+  "projStatuses": {
+    "U-HRM-PR-4.2.1": {
+      "status": "not-started",
+      "approval": "approved"
+    }
+  },
+  "progStatuses": {},
+  "publishedAt": "2026-05-14T16:02:51.681Z"
+}
