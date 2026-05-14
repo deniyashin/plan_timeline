@@ -765,6 +765,16 @@
         "legacy_id": "T-CHG-Z-0.1.1.3",
         "status": "not_started"
       }
+    ],
+    "U-UKM-PR-1.2.1": [
+      {
+        "id": "T-0074",
+        "taskId": "",
+        "text": "тест",
+        "assignee": "я",
+        "dueDate": "",
+        "status": "not_started"
+      }
     ]
   },
   "projStatuses": {
@@ -774,5 +784,5 @@
     }
   },
   "progStatuses": {},
-  "publishedAt": "2026-05-14T16:02:51.681Z"
+  "publishedAt": "2026-05-14T17:49:54.421Z"
 }
