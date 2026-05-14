@@ -4123,16 +4123,16 @@ body[data-mode="edit"] .po-task-add { display: block; }
   </div>
 </div>
 
-<!-- GitHub token modal -->
-<div id="po-gh-modal" class="po-modal-overlay">
+<!-- Publish password modal -->
+<div id="po-pub-modal" class="po-modal-overlay">
   <div class="po-modal-box">
-    <div class="po-modal-title">GitHub токен</div>
-    <div class="po-modal-hint">Нужен для публикации. Сохраняется в браузере и больше не запрашивается.</div>
-    <input type="password" id="po-gh-inp" class="po-modal-input" placeholder="github_pat_..." autocomplete="off">
-    <div class="po-modal-error" id="po-gh-err"></div>
+    <div class="po-modal-title">Публикация</div>
+    <div class="po-modal-hint">Введите пароль публикации. Он не сохраняется в браузере.</div>
+    <input type="password" id="po-pub-inp" class="po-modal-input" placeholder="Пароль публикации" autocomplete="off">
+    <div class="po-modal-error" id="po-pub-err"></div>
     <div class="po-modal-actions">
-      <button class="po-btn po-btn-cancel" id="po-gh-cancel">Отмена</button>
-      <button class="po-btn po-btn-primary" id="po-gh-ok">Сохранить и опубликовать</button>
+      <button class="po-btn po-btn-cancel" id="po-pub-cancel">Отмена</button>
+      <button class="po-btn po-btn-primary" id="po-pub-ok">Опубликовать</button>
     </div>
   </div>
 </div>
@@ -4151,8 +4151,6 @@ body[data-mode="edit"] .po-task-add { display: block; }
   var SK   = 'po-auth';
   var LT   = 'po-texts';
   var LK   = 'po-tasks';
-  var GT   = 'po-gh-token';
-  var REPO = 'deniyashin/plan_timeline';
 
   /* auth */
   var ok = false;
@@ -4385,58 +4383,53 @@ body[data-mode="edit"] .po-task-add { display: block; }
     });
   }).observe(document.body, { attributes: true });
 
-  /* ---- Publish to GitHub ---- */
-  var ghInp = document.getElementById('po-gh-inp');
-  var ghErr = document.getElementById('po-gh-err');
+  /* ---- Publish via n8n webhook ---- */
+  var WEBHOOK = 'https://noslosnodeyim.beget.app/webhook/plan_timeline';
+  var pubInp = document.getElementById('po-pub-inp');
+  var pubErr = document.getElementById('po-pub-err');
 
-  document.getElementById('po-gh-cancel').addEventListener('click', function () { closeModal('po-gh-modal'); });
-  document.getElementById('po-gh-modal').addEventListener('click', function (e) { if (e.target === this) closeModal('po-gh-modal'); });
-  document.getElementById('po-gh-ok').addEventListener('click', saveTokenAndPublish);
-  ghInp.addEventListener('keydown', function (e) { if (e.key === 'Enter') saveTokenAndPublish(); });
-
-  function saveTokenAndPublish() {
-    var t = ghInp.value.trim();
-    if (!t) { ghErr.textContent = 'Введите токен'; return; }
-    try { localStorage.setItem(GT, t); } catch (e) {}
-    closeModal('po-gh-modal');
-    publish(t);
-  }
+  document.getElementById('po-pub-cancel').addEventListener('click', function () { closeModal('po-pub-modal'); });
+  document.getElementById('po-pub-modal').addEventListener('click', function (e) { if (e.target === this) closeModal('po-pub-modal'); });
+  document.getElementById('po-pub-ok').addEventListener('click', doPublish);
+  pubInp.addEventListener('keydown', function (e) { if (e.key === 'Enter') doPublish(); });
 
   document.getElementById('po-btn-pub').addEventListener('click', function () {
-    var token = ''; try { token = localStorage.getItem(GT) || ''; } catch (e) {}
-    if (!token) {
-      ghInp.value = ''; ghErr.textContent = '';
-      openModal('po-gh-modal'); setTimeout(function () { ghInp.focus(); }, 30);
-    } else { publish(token); }
+    pubInp.value = ''; pubErr.textContent = '';
+    openModal('po-pub-modal');
+    setTimeout(function () { pubInp.focus(); }, 30);
   });
 
-  function publish(token) {
+  function doPublish() {
+    var pwd = pubInp.value;
+    if (!pwd) { pubErr.textContent = 'Введите пароль'; return; }
+    closeModal('po-pub-modal');
     var btn = document.getElementById('po-btn-pub');
     btn.disabled = true; btn.textContent = 'Публикация...';
-    var data = { texts: lsGet(LT), tasks: lsGet(LK), publishedAt: new Date().toISOString() };
-    var content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
-    var api = 'https://api.github.com/repos/' + REPO + '/contents/data.json';
-    var hdrs = { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' };
-    fetch(api, { headers: hdrs })
-      .then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (ex) {
-        var body = { message: 'data: update ' + new Date().toISOString().slice(0, 10), content: content };
-        if (ex && ex.sha) body.sha = ex.sha;
-        return fetch(api, { method: 'PUT', headers: hdrs, body: JSON.stringify(body) });
-      })
+    var payload = {
+      password: pwd,
+      data: { texts: lsGet(LT), tasks: lsGet(LK), publishedAt: new Date().toISOString() }
+    };
+    fetch(WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
       .then(function (r) {
-        if (!r.ok) return r.json().then(function (e) { throw new Error(e.message || r.status); });
-        btn.textContent = '✓ Опубликовано — сайт обновится через ~1 мин';
+        if (!r.ok) return r.text().then(function (t) { throw new Error(t || ('HTTP ' + r.status)); });
+        return r.json();
+      })
+      .then(function (resp) {
+        if (resp && resp.error) throw new Error(resp.error);
+        btn.textContent = 'Опубликовано — сайт обновится через ~1 мин';
         setTimeout(function () { btn.disabled = false; btn.textContent = '↑ Опубликовать'; }, 5000);
       })
       .catch(function (err) {
         btn.disabled = false; btn.textContent = '↑ Опубликовать';
-        try { localStorage.removeItem(GT); } catch (e) {}
-        ghErr.textContent = 'Ошибка: ' + err.message;
-        openModal('po-gh-modal'); setTimeout(function () { ghInp.focus(); }, 30);
+        pubErr.textContent = 'Ошибка: ' + err.message;
+        openModal('po-pub-modal');
+        setTimeout(function () { pubInp.focus(); }, 30);
       });
   }
-
   /* ---- Load published data.json on startup ---- */
   function applyData(data) {
     if (data.texts) {
