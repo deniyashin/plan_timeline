@@ -3980,7 +3980,7 @@ body[data-mode="brief"] .project-deps-block { display: none; }
 })();
 </script>
 
-<!-- ===== EDITOR ENHANCEMENT v2 ===== -->
+<!-- ===== EDITOR v3 ===== -->
 <style>
 /* === Modal base === */
 .po-modal-overlay {
@@ -4045,36 +4045,68 @@ body[data-mode="edit"] { padding-bottom: 56px; }
 .po-btn-logout:hover { border-color: rgba(255,255,255,0.55); color: #fff; }
 
 /* === Editable text fields === */
-body[data-mode="edit"] p.po-editable {
+body[data-mode="edit"] .po-editable {
   outline: 1px dashed #C8BFB0; border-radius: 3px;
   padding: 2px 5px; cursor: text; transition: outline 0.1s;
 }
-body[data-mode="edit"] p.po-editable:hover { outline-color: #8F897E; }
-body[data-mode="edit"] p.po-editable:focus { outline: 2px solid #B8750A; }
-body[data-mode="edit"] p.po-editable:empty::before {
+body[data-mode="edit"] .po-editable:hover { outline-color: #8F897E; }
+body[data-mode="edit"] .po-editable:focus { outline: 2px solid #B8750A; }
+body[data-mode="edit"] .po-editable:empty::before {
   content: attr(data-ph); color: #8F897E; font-style: italic; pointer-events: none;
 }
 
-/* === Task editor (project level) === */
+/* === Project status row === */
+.po-proj-status-row {
+  display: flex; gap: 20px; padding: 10px 16px 10px;
+  border-bottom: 1px solid #E8E1D2; flex-wrap: wrap; background: #FDFBF6;
+}
+.po-proj-status-cell { display: flex; align-items: center; gap: 7px; }
+.po-proj-status-label {
+  font-family: "Geist Mono", monospace; font-size: 9.5px;
+  letter-spacing: 0.14em; color: #8F897E; text-transform: uppercase;
+}
+.po-status-chip {
+  font-family: "Geist Mono", monospace; font-size: 10.5px; font-weight: 500;
+  padding: 2px 9px; border-radius: 3px; border: 1px solid transparent;
+  cursor: default; background: transparent; transition: opacity 0.12s;
+  letter-spacing: 0.02em;
+}
+body[data-mode="edit"] .po-status-chip { cursor: pointer; }
+body[data-mode="edit"] .po-status-chip:hover { opacity: 0.75; }
+
+/* === Task editor === */
 .po-task-section { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #E8E1D2; }
 .po-task-section-head {
   font-family: "Geist Mono", monospace; font-size: 9.5px;
   letter-spacing: 0.16em; text-transform: uppercase; color: #8F897E; margin-bottom: 6px;
 }
-.po-task-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1px; }
-.po-task-item { display: flex; align-items: flex-start; gap: 8px; padding: 4px 0; }
+.po-task-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.po-task-item { display: flex; align-items: baseline; gap: 7px; padding: 3px 0; }
 .po-task-cb {
-  width: 14px; height: 14px; border: 1.5px solid #8F897E; border-radius: 3px;
-  background: transparent; cursor: pointer; flex-shrink: 0; margin-top: 2px; padding: 0;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 9px; color: transparent; transition: all 0.12s;
+  flex-shrink: 0; width: 18px; font-size: 13px; line-height: 1.3;
+  border: none; background: none; cursor: pointer; padding: 0;
+  font-family: "Geist Mono", monospace; color: #8F897E;
+  transition: color 0.12s; text-align: center;
 }
-.po-task-cb.done { background: #2F5233; border-color: #2F5233; color: #fff; }
+.po-task-item[data-st="doing"] .po-task-cb  { color: #1E6E7A; }
+.po-task-item[data-st="done"]  .po-task-cb  { color: #2F5233; }
+.po-task-item[data-st="blocked"] .po-task-cb { color: #8B2635; }
 .po-task-text {
   flex: 1; font-size: 12.5px; line-height: 1.45; color: #1F1D1A;
   outline: none; min-height: 18px; word-break: break-word;
 }
-.po-task-text.done { text-decoration: line-through; color: #8F897E; }
+.po-task-item[data-st="done"] .po-task-text { text-decoration: line-through; color: #8F897E; }
+.po-task-assignee, .po-task-due {
+  font-family: "Geist Mono", monospace; font-size: 10px; color: #8F897E;
+  outline: none; min-width: 14px; padding: 0 3px; border-radius: 2px;
+  white-space: nowrap; flex-shrink: 0;
+}
+.po-task-assignee:empty::before { content: attr(data-ph); color: #C8BFB0; }
+.po-task-due:empty::before { content: attr(data-ph); color: #C8BFB0; }
+body[data-mode="edit"] .po-task-assignee[contenteditable="true"],
+body[data-mode="edit"] .po-task-due[contenteditable="true"] {
+  background: #F2EDE3; border: 1px solid #DDD5C5;
+}
 .po-task-del {
   background: transparent; border: none; color: transparent; cursor: pointer;
   font-size: 15px; padding: 0 2px; flex-shrink: 0; line-height: 1; transition: color 0.1s;
@@ -4100,7 +4132,6 @@ body[data-mode="edit"] .po-task-add { display: block; }
   font-family: "Geist Mono", monospace; font-size: 9.5px;
   color: #8F897E; white-space: nowrap; flex-shrink: 0;
 }
-/* Project inline progress */
 .po-proj-prog {
   display: inline-flex; align-items: center; gap: 5px; margin-left: 6px; flex-shrink: 0;
 }
@@ -4108,20 +4139,6 @@ body[data-mode="edit"] .po-task-add { display: block; }
 .po-proj-prog-fill { height: 100%; background: #2F5233; border-radius: 2px; transition: width 0.4s; }
 .po-proj-prog-lbl { font-family: "Geist Mono", monospace; font-size: 9px; color: #8F897E; }
 </style>
-
-<!-- Password modal -->
-<div id="po-pw-modal" class="po-modal-overlay">
-  <div class="po-modal-box">
-    <div class="po-modal-title">Редактирование</div>
-    <div class="po-modal-hint">Введите пароль для доступа к редактору</div>
-    <input type="password" id="po-pw-inp" class="po-modal-input" placeholder="Пароль" autocomplete="off">
-    <div class="po-modal-error" id="po-pw-err"></div>
-    <div class="po-modal-actions">
-      <button class="po-btn po-btn-cancel" id="po-pw-cancel">Отмена</button>
-      <button class="po-btn po-btn-primary" id="po-pw-ok">Войти</button>
-    </div>
-  </div>
-</div>
 
 <!-- Publish password modal -->
 <div id="po-pub-modal" class="po-modal-overlay">
@@ -4147,21 +4164,21 @@ body[data-mode="edit"] .po-task-add { display: block; }
 
 <script>
 (function () {
-  var PW   = 'PO2026';
-  var SK   = 'po-auth';
-  var LT   = 'po-texts';
-  var LK   = 'po-tasks';
+  var LS_TEXTS  = 'po-texts';
+  var LS_TASKS  = 'po-tasks';
+  var LS_PSTAT  = 'po-proj-statuses';
+  var WEBHOOK   = 'https://noslosnodeyim.beget.app/webhook/plan_timeline';
 
-  /* auth */
-  var ok = false;
-  try { ok = sessionStorage.getItem(SK) === '1'; } catch (e) {}
+  /* helpers */
+  function lsGet(k) { try { return JSON.parse(localStorage.getItem(k) || '{}'); } catch (e) { return {}; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); flash(); } catch (e) {} }
 
   /* save flash */
   var savedEl = document.getElementById('po-edit-saved');
   var _ft;
   function flash() {
     if (!savedEl) return;
-    savedEl.textContent = '&#10003; Сохранено';
+    savedEl.textContent = '✓ Сохранено';
     savedEl.classList.add('flash');
     clearTimeout(_ft);
     _ft = setTimeout(function () {
@@ -4170,74 +4187,54 @@ body[data-mode="edit"] .po-task-add { display: block; }
     }, 2000);
   }
 
-  /* localStorage */
-  function lsGet(k) { try { return JSON.parse(localStorage.getItem(k) || '{}'); } catch (e) { return {}; } }
-  function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); flash(); } catch (e) {} }
-
   /* modals */
-  function openModal(id) { document.getElementById(id).classList.add('open'); }
-  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+  function openModal(id) { var el = document.getElementById(id); if (el) el.classList.add('open'); }
+  function closeModal(id) { var el = document.getElementById(id); if (el) el.classList.remove('open'); }
 
-  /* ---- Password ---- */
-  var pwInp = document.getElementById('po-pw-inp');
-  var pwErr = document.getElementById('po-pw-err');
-  function tryAuth() {
-    if (pwInp.value === PW) {
-      ok = true;
-      try { sessionStorage.setItem(SK, '1'); } catch (e) {}
-      closeModal('po-pw-modal');
-      document.querySelector('.mode-btn[data-mode="edit"]').click();
-    } else { pwErr.textContent = 'Неверный пароль'; pwInp.select(); }
-  }
-  document.getElementById('po-pw-ok').addEventListener('click', tryAuth);
-  document.getElementById('po-pw-cancel').addEventListener('click', function () { closeModal('po-pw-modal'); });
-  pwInp.addEventListener('keydown', function (e) { if (e.key === 'Enter') tryAuth(); if (e.key === 'Escape') closeModal('po-pw-modal'); });
-  document.getElementById('po-pw-modal').addEventListener('click', function (e) { if (e.target === this) closeModal('po-pw-modal'); });
-
-  document.addEventListener('click', function (e) {
-    var btn = e.target.closest('.mode-btn[data-mode="edit"]');
-    if (!btn) return;
-    if (ok) return;
-    e.stopPropagation(); e.stopImmediatePropagation(); e.preventDefault();
-    pwInp.value = ''; pwErr.textContent = '';
-    openModal('po-pw-modal');
-    setTimeout(function () { pwInp.focus(); }, 30);
-  }, true);
-
-  /* ---- Logout ---- */
+  /* exit edit mode */
   document.getElementById('po-btn-logout').addEventListener('click', function () {
-    ok = false;
-    try { sessionStorage.removeItem(SK); } catch (e) {}
     var b = document.querySelector('.mode-btn[data-mode="brief"]');
     if (b) b.click();
   });
 
-  /* ---- Text editing ---- */
+  /* ================================================================
+     TEXT EDITING — comprehensive data-ek key system
+  ================================================================ */
   var textEls = [];
-  function progIdOf(el) {
-    var p = el.closest('.program');
-    if (!p) return null;
-    var m = p.querySelector('.program-id-mono');
-    return m ? m.textContent.trim() : null;
+
+  function assignEditKeys() {
+    document.querySelectorAll('.program[data-program-id]').forEach(function (prog) {
+      var pid = prog.getAttribute('data-program-id');
+      var idx = 0;
+      prog.querySelectorAll('.card-summary-value').forEach(function (el) {
+        if (el.querySelector('.status-editor')) return;
+        if (!el.dataset.ek) el.dataset.ek = 'prog:' + pid + ':csv:' + (idx++);
+      });
+      var fIdx = 0;
+      prog.querySelectorAll('.program-meta .field-value, .program-body .field-value').forEach(function (el) {
+        if (!el.dataset.ek) el.dataset.ek = 'prog:' + pid + ':fv:' + (fIdx++);
+      });
+    });
+    document.querySelectorAll('.project').forEach(function (proj) {
+      var pidEl = proj.querySelector('.project-id-mono');
+      if (!pidEl) return;
+      var pid = pidEl.textContent.trim();
+      var fIdx = 0;
+      proj.querySelectorAll('.project-body .field-value').forEach(function (el) {
+        if (!el.dataset.ek) el.dataset.ek = 'proj:' + pid + ':fv:' + (fIdx++);
+      });
+    });
   }
-  function fieldKey(el) {
-    var pid = progIdOf(el);
-    if (!pid) return null;
-    var prog = el.closest('.program');
-    var all = Array.from(prog.querySelectorAll('p.card-summary-value'));
-    var i = all.indexOf(el);
-    return i >= 0 ? pid + ':f' + i : null;
-  }
-  function setTextEditable(on) {
-    textEls.forEach(function (el) { el.contentEditable = on ? 'true' : 'false'; });
-  }
-  function initTexts() {
-    var saved = lsGet(LT);
-    document.querySelectorAll('p.card-summary-value').forEach(function (el) {
-      if (el.querySelector('button,input,select')) return;
+
+  function initTextEditing() {
+    assignEditKeys();
+    var saved = lsGet(LS_TEXTS);
+    document.querySelectorAll('[data-ek]').forEach(function (el) {
+      if (el.querySelector('.status-editor, button, input, select')) return;
       el.classList.add('po-editable');
-      el.contentEditable = 'false'; el.spellcheck = false; el.dataset.ph = 'Нет текста';
-      var k = fieldKey(el);
+      el.contentEditable = 'false';
+      el.spellcheck = false;
+      var k = el.dataset.ek;
       if (k && saved[k] !== undefined) el.textContent = saved[k];
       el.addEventListener('paste', function (e) {
         e.preventDefault();
@@ -4245,36 +4242,123 @@ body[data-mode="edit"] .po-task-add { display: block; }
       });
       el.addEventListener('keydown', function (e) { if (e.key === 'Enter') e.preventDefault(); });
       el.addEventListener('blur', function () {
-        var k2 = fieldKey(el);
-        if (!k2) return;
-        var d = lsGet(LT); d[k2] = el.textContent.trim(); lsSet(LT, d);
+        var d = lsGet(LS_TEXTS);
+        d[k] = el.textContent.trim();
+        lsSet(LS_TEXTS, d);
       });
       textEls.push(el);
     });
   }
 
-  /* ---- Tasks (project level) ---- */
-  function getTasks(pid) { return lsGet(LK)[pid] || []; }
-  function setTasks(pid, arr) { var d = lsGet(LK); d[pid] = arr; lsSet(LK, d); }
-  function esc(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function setTextEditable(on) {
+    textEls.forEach(function (el) { el.contentEditable = on ? 'true' : 'false'; });
+  }
 
-  function syncEditableInBody(body) {
-    var on = document.body.getAttribute('data-mode') === 'edit';
-    body.querySelectorAll('.po-task-text').forEach(function (el) { el.contentEditable = on ? 'true' : 'false'; });
+  /* ================================================================
+     PROJECT STATUS CHIPS
+  ================================================================ */
+  var PROJ_STATUS_DEF = [
+    { field: 'status', label: 'Статус', options: [
+      { value: 'not-started', label: 'Не начат',      color: '#6B655C' },
+      { value: 'in-progress', label: 'В работе',      color: '#1E6E7A' },
+      { value: 'on-hold',     label: 'На паузе',      color: '#8E5C0E' },
+      { value: 'done',        label: 'Завершён',       color: '#2F5233' },
+      { value: 'cancelled',   label: 'Отменён',        color: '#8B2635' }
+    ]},
+    { field: 'approval', label: 'Согласование', options: [
+      { value: 'not-approved', label: 'Не согласован',    color: '#6B655C' },
+      { value: 'in-review',    label: 'На согласовании',  color: '#8E5C0E' },
+      { value: 'approved',     label: 'Согласован',        color: '#2F5233' },
+      { value: 'rejected',     label: 'Отклонён',          color: '#8B2635' }
+    ]}
+  ];
+
+  function applyChipStyle(chip, opt) {
+    chip.textContent = opt.label;
+    chip.style.color = opt.color;
+    chip.style.borderColor = opt.color + '40';
+    chip.style.background  = opt.color + '18';
+    chip.dataset.value = opt.value;
+  }
+
+  function injectProjStatuses() {
+    var saved = lsGet(LS_PSTAT);
+    document.querySelectorAll('.project').forEach(function (proj) {
+      var pidEl = proj.querySelector('.project-id-mono');
+      if (!pidEl) return;
+      var pid = pidEl.textContent.trim();
+      var body = proj.querySelector('.project-body');
+      if (!body || body.querySelector('.po-proj-status-row')) return;
+
+      var row = document.createElement('div');
+      row.className = 'po-proj-status-row';
+
+      PROJ_STATUS_DEF.forEach(function (def) {
+        var cell = document.createElement('span');
+        cell.className = 'po-proj-status-cell';
+
+        var lbl = document.createElement('span');
+        lbl.className = 'po-proj-status-label';
+        lbl.textContent = def.label;
+
+        var chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'po-status-chip';
+        chip.dataset.field = def.field;
+
+        var savedVal = saved[pid] && saved[pid][def.field];
+        var opt0 = (savedVal && def.options.find(function (o) { return o.value === savedVal; })) || def.options[0];
+        applyChipStyle(chip, opt0);
+
+        chip.addEventListener('click', function (e) {
+          e.stopPropagation();
+          if (document.body.getAttribute('data-mode') !== 'edit') return;
+          var cur = def.options.findIndex(function (o) { return o.value === chip.dataset.value; });
+          var next = def.options[(cur + 1) % def.options.length];
+          applyChipStyle(chip, next);
+          var d = lsGet(LS_PSTAT);
+          if (!d[pid]) d[pid] = {};
+          d[pid][def.field] = next.value;
+          lsSet(LS_PSTAT, d);
+        });
+
+        cell.appendChild(lbl);
+        cell.appendChild(chip);
+        row.appendChild(cell);
+      });
+      body.insertBefore(row, body.firstChild);
+    });
+  }
+
+  /* ================================================================
+     TASKS (expanded: 4-state status + assignee + due date)
+  ================================================================ */
+  var TASK_ST = [
+    { v: 'todo',    icon: '○', title: 'Не начата'    },
+    { v: 'doing',   icon: '◑', title: 'В работе'     },
+    { v: 'done',    icon: '●', title: 'Готово'       },
+    { v: 'blocked', icon: '⦵', title: 'Заблокирована'}
+  ];
+
+  function getTasks(pid) { return lsGet(LS_TASKS)[pid] || []; }
+  function setTasks(pid, arr) { var d = lsGet(LS_TASKS); d[pid] = arr; lsSet(LS_TASKS, d); }
+  function esc(s) {
+    return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
   function updateProjProgress(proj, pid) {
     var tasks = getTasks(pid);
-    var total = tasks.length, done = tasks.filter(function (t) { return t.done; }).length;
+    var total = tasks.length;
+    var done  = tasks.filter(function (t) { return t.status === 'done'; }).length;
     var badge = proj.querySelector('.task-badge');
     if (badge) {
       if (total === 0) { badge.textContent = '—'; badge.classList.add('task-badge-empty'); }
       else { badge.textContent = done + '/' + total; badge.classList.remove('task-badge-empty'); }
     }
-    var fill  = proj.querySelector('.po-proj-prog-fill');
-    var lbl   = proj.querySelector('.po-proj-prog-lbl');
-    if (fill)  fill.style.width  = (total ? Math.round(done / total * 100) : 0) + '%';
-    if (lbl)   lbl.textContent   = total ? done + '/' + total : '';
+    var fill = proj.querySelector('.po-proj-prog-fill');
+    var lbl  = proj.querySelector('.po-proj-prog-lbl');
+    if (fill) fill.style.width = (total ? Math.round(done / total * 100) : 0) + '%';
+    if (lbl)  lbl.textContent  = total ? done + '/' + total : '';
   }
 
   function updateProgProgress(prog) {
@@ -4284,66 +4368,146 @@ body[data-mode="edit"] .po-task-add { display: block; }
       if (!m) return;
       var ts = getTasks(m.textContent.trim());
       total += ts.length;
-      done  += ts.filter(function (t) { return t.done; }).length;
+      done  += ts.filter(function (t) { return t.status === 'done'; }).length;
     });
     var pct = total ? Math.round(done / total * 100) : 0;
     var fill = prog.querySelector('.po-prog-fill');
     var lbl  = prog.querySelector('.po-prog-lbl');
-    if (fill) fill.style.width  = pct + '%';
-    if (lbl)  lbl.textContent   = total ? done + '/' + total + ' задач' : 'нет задач';
+    if (fill) fill.style.width = pct + '%';
+    if (lbl)  lbl.textContent  = total ? done + '/' + total + ' задач' : 'нет задач';
+  }
+
+  function syncTaskEdit(body) {
+    var on = document.body.getAttribute('data-mode') === 'edit';
+    body.querySelectorAll('.po-task-text, .po-task-assignee, .po-task-due').forEach(function (el) {
+      el.contentEditable = on ? 'true' : 'false';
+    });
   }
 
   function renderTasks(pid, body, proj) {
     var tasks = getTasks(pid);
     var sec = body.querySelector('.po-task-section');
     if (!sec) {
-      sec = document.createElement('div'); sec.className = 'po-task-section';
-      var hd = document.createElement('div'); hd.className = 'po-task-section-head'; hd.textContent = 'Задачи';
-      var ul = document.createElement('ul');  ul.className = 'po-task-list';
-      var ab = document.createElement('button'); ab.type = 'button'; ab.className = 'po-task-add'; ab.textContent = '+ Добавить задачу';
-      ab.addEventListener('click', function (e) { e.stopPropagation(); doAdd(pid, body, proj); });
-      sec.appendChild(hd); sec.appendChild(ul); sec.appendChild(ab);
+      sec = document.createElement('div');
+      sec.className = 'po-task-section';
+      var hd = document.createElement('div');
+      hd.className = 'po-task-section-head';
+      hd.textContent = 'Задачи';
+      var ul = document.createElement('ul');
+      ul.className = 'po-task-list';
+      var ab = document.createElement('button');
+      ab.type = 'button';
+      ab.className = 'po-task-add';
+      ab.textContent = '+ Добавить задачу';
+      ab.addEventListener('click', function (e) {
+        e.stopPropagation();
+        doAddTask(pid, body, proj);
+      });
+      sec.appendChild(hd);
+      sec.appendChild(ul);
+      sec.appendChild(ab);
       body.appendChild(sec);
     }
+
     var list = sec.querySelector('.po-task-list');
     list.innerHTML = '';
+
     tasks.forEach(function (t, i) {
-      var li = document.createElement('li'); li.className = 'po-task-item';
-      li.innerHTML =
-        '<button type="button" class="po-task-cb' + (t.done ? ' done' : '') + '">' + (t.done ? '&#10003;' : '') + '</button>' +
-        '<span class="po-task-text' + (t.done ? ' done' : '') + '" contenteditable="false" spellcheck="false">' + esc(t.text) + '</span>' +
-        '<button type="button" class="po-task-del">&#215;</button>';
-      var cb = li.querySelector('.po-task-cb'), txt = li.querySelector('.po-task-text'), del = li.querySelector('.po-task-del');
+      var st  = TASK_ST.find(function (s) { return s.v === t.status; }) || TASK_ST[0];
+      var li  = document.createElement('li');
+      li.className = 'po-task-item';
+      li.dataset.st = st.v;
+
+      var cb = document.createElement('button');
+      cb.type = 'button';
+      cb.className = 'po-task-cb';
+      cb.textContent = st.icon;
+      cb.title = st.title;
       cb.addEventListener('click', function (e) {
         e.stopPropagation();
-        var a = getTasks(pid); a[i].done = !a[i].done; setTasks(pid, a);
+        var a   = getTasks(pid);
+        var sts = TASK_ST.map(function (s) { return s.v; });
+        var cur = sts.indexOf(a[i].status || 'todo');
+        a[i].status = sts[(cur + 1) % sts.length];
+        setTasks(pid, a);
         renderTasks(pid, body, proj);
+        var pr = proj.closest('.program');
+        if (pr) updateProgProgress(pr);
       });
+
+      var txt = document.createElement('span');
+      txt.className = 'po-task-text';
+      txt.contentEditable = 'false';
+      txt.spellcheck = false;
+      txt.textContent = t.text || '';
       txt.addEventListener('keydown', function (e) {
         e.stopPropagation();
-        if (e.key === 'Enter') { e.preventDefault(); doAdd(pid, body, proj); }
+        if (e.key === 'Enter') { e.preventDefault(); doAddTask(pid, body, proj); }
       });
       txt.addEventListener('blur', function () {
-        var a = getTasks(pid); if (!a[i]) return; a[i].text = txt.textContent; setTasks(pid, a);
+        var a = getTasks(pid);
+        if (a[i]) { a[i].text = txt.textContent; setTasks(pid, a); }
       });
+
+      var asgn = document.createElement('span');
+      asgn.className = 'po-task-assignee';
+      asgn.contentEditable = 'false';
+      asgn.spellcheck = false;
+      asgn.dataset.ph = 'Испол.';
+      asgn.textContent = t.assignee || '';
+      asgn.addEventListener('blur', function () {
+        var a = getTasks(pid);
+        if (a[i]) { a[i].assignee = asgn.textContent.trim(); setTasks(pid, a); }
+      });
+
+      var due = document.createElement('span');
+      due.className = 'po-task-due';
+      due.contentEditable = 'false';
+      due.spellcheck = false;
+      due.dataset.ph = 'Срок';
+      due.textContent = t.dueDate || '';
+      due.addEventListener('blur', function () {
+        var a = getTasks(pid);
+        if (a[i]) { a[i].dueDate = due.textContent.trim(); setTasks(pid, a); }
+      });
+
+      var del = document.createElement('button');
+      del.type = 'button';
+      del.className = 'po-task-del';
+      del.textContent = '\xd7';
       del.addEventListener('click', function (e) {
         e.stopPropagation();
-        var a = getTasks(pid); a.splice(i, 1); setTasks(pid, a);
+        var a = getTasks(pid);
+        a.splice(i, 1);
+        setTasks(pid, a);
         renderTasks(pid, body, proj);
+        var pr = proj.closest('.program');
+        if (pr) updateProgProgress(pr);
       });
+
+      li.appendChild(cb);
+      li.appendChild(txt);
+      li.appendChild(asgn);
+      li.appendChild(due);
+      li.appendChild(del);
       list.appendChild(li);
     });
-    syncEditableInBody(body);
+
+    syncTaskEdit(body);
     updateProjProgress(proj, pid);
-    var prog = proj.closest('.program');
-    if (prog) updateProgProgress(prog);
   }
 
-  function doAdd(pid, body, proj) {
-    var a = getTasks(pid); a.push({ text: '', done: false }); setTasks(pid, a);
+  function doAddTask(pid, body, proj) {
+    var a = getTasks(pid);
+    a.push({ text: '', assignee: '', dueDate: '', status: 'todo' });
+    setTasks(pid, a);
     renderTasks(pid, body, proj);
     var items = body.querySelectorAll('.po-task-text');
-    if (items.length) { var last = items[items.length - 1]; last.contentEditable = 'true'; last.focus(); }
+    if (items.length) {
+      var last = items[items.length - 1];
+      last.contentEditable = 'true';
+      last.focus();
+    }
   }
 
   function initTasks() {
@@ -4353,20 +4517,20 @@ body[data-mode="edit"] .po-task-add { display: block; }
       var pid  = pidEl.textContent.trim();
       var body = proj.querySelector('.project-body');
       if (!body) return;
-      /* inline progress next to task-badge */
       var badge = proj.querySelector('.task-badge');
       if (badge && !proj.querySelector('.po-proj-prog')) {
-        var pg = document.createElement('span'); pg.className = 'po-proj-prog';
+        var pg = document.createElement('span');
+        pg.className = 'po-proj-prog';
         pg.innerHTML = '<span class="po-proj-prog-bar"><span class="po-proj-prog-fill" style="width:0%"></span></span><span class="po-proj-prog-lbl"></span>';
         badge.parentNode.insertBefore(pg, badge.nextSibling);
       }
       renderTasks(pid, body, proj);
     });
-    /* program-level progress bar */
     document.querySelectorAll('.program').forEach(function (prog) {
       var head = prog.querySelector('.program-head');
       if (!head || prog.querySelector('.po-prog-wrap')) return;
-      var wrap = document.createElement('div'); wrap.className = 'po-prog-wrap';
+      var wrap = document.createElement('div');
+      wrap.className = 'po-prog-wrap';
       wrap.innerHTML = '<div class="po-prog-bar"><div class="po-prog-fill" style="width:0%"></div></div><span class="po-prog-lbl">нет задач</span>';
       head.appendChild(wrap);
       updateProgProgress(prog);
@@ -4379,25 +4543,39 @@ body[data-mode="edit"] .po-task-add { display: block; }
       if (m.attributeName !== 'data-mode') return;
       var on = document.body.getAttribute('data-mode') === 'edit';
       setTextEditable(on);
-      document.querySelectorAll('.project-body').forEach(function (b) { syncEditableInBody(b); });
+      document.querySelectorAll('.project-body').forEach(syncTaskEdit);
     });
   }).observe(document.body, { attributes: true });
 
-  /* ---- Publish via n8n webhook ---- */
-  var WEBHOOK = 'https://noslosnodeyim.beget.app/webhook/plan_timeline';
+  /* ================================================================
+     PUBLISH
+  ================================================================ */
   var pubInp = document.getElementById('po-pub-inp');
   var pubErr = document.getElementById('po-pub-err');
 
   document.getElementById('po-pub-cancel').addEventListener('click', function () { closeModal('po-pub-modal'); });
-  document.getElementById('po-pub-modal').addEventListener('click', function (e) { if (e.target === this) closeModal('po-pub-modal'); });
+  document.getElementById('po-pub-modal').addEventListener('click', function (e) {
+    if (e.target === this) closeModal('po-pub-modal');
+  });
   document.getElementById('po-pub-ok').addEventListener('click', doPublish);
   pubInp.addEventListener('keydown', function (e) { if (e.key === 'Enter') doPublish(); });
-
   document.getElementById('po-btn-pub').addEventListener('click', function () {
     pubInp.value = ''; pubErr.textContent = '';
     openModal('po-pub-modal');
     setTimeout(function () { pubInp.focus(); }, 30);
   });
+
+  function collectState() {
+    var progStatuses = {};
+    try { progStatuses = JSON.parse(localStorage.getItem('plan-timeline-statuses-v1') || '{}'); } catch (e) {}
+    return {
+      texts:        lsGet(LS_TEXTS),
+      tasks:        lsGet(LS_TASKS),
+      projStatuses: lsGet(LS_PSTAT),
+      progStatuses: progStatuses,
+      publishedAt:  new Date().toISOString()
+    };
+  }
 
   function doPublish() {
     var pwd = pubInp.value;
@@ -4405,22 +4583,18 @@ body[data-mode="edit"] .po-task-add { display: block; }
     closeModal('po-pub-modal');
     var btn = document.getElementById('po-btn-pub');
     btn.disabled = true; btn.textContent = 'Публикация...';
-    var payload = {
-      password: pwd,
-      data: { texts: lsGet(LT), tasks: lsGet(LK), publishedAt: new Date().toISOString() }
-    };
     fetch(WEBHOOK, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({ password: pwd, data: collectState() })
     })
       .then(function (r) {
-        if (!r.ok) return r.text().then(function (t) { throw new Error(t || ('HTTP ' + r.status)); });
+        if (!r.ok) return r.text().then(function (t) { throw new Error(t || 'HTTP ' + r.status); });
         return r.json();
       })
       .then(function (resp) {
         if (resp && resp.error) throw new Error(resp.error);
-        btn.textContent = 'Опубликовано — сайт обновится через ~1 мин';
+        btn.textContent = '↑ Опубликовано ✓';
         setTimeout(function () { btn.disabled = false; btn.textContent = '↑ Опубликовать'; }, 5000);
       })
       .catch(function (err) {
@@ -4430,25 +4604,71 @@ body[data-mode="edit"] .po-task-add { display: block; }
         setTimeout(function () { pubInp.focus(); }, 30);
       });
   }
-  /* ---- Load published data.json on startup ---- */
+
+  /* ================================================================
+     LOAD REMOTE DATA
+  ================================================================ */
   function applyData(data) {
+    if (!data) return;
+
+    /* texts */
     if (data.texts) {
-      try { localStorage.setItem(LT, JSON.stringify(data.texts)); } catch (e) {}
-      var saved = data.texts;
+      try { localStorage.setItem(LS_TEXTS, JSON.stringify(data.texts)); } catch (e) {}
       textEls.forEach(function (el) {
-        var k = fieldKey(el);
-        if (k && saved[k] !== undefined) el.textContent = saved[k];
+        var k = el.dataset.ek;
+        if (k && data.texts[k] !== undefined) el.textContent = data.texts[k];
       });
     }
+
+    /* tasks */
     if (data.tasks) {
-      try { localStorage.setItem(LK, JSON.stringify(data.tasks)); } catch (e) {}
+      try { localStorage.setItem(LS_TASKS, JSON.stringify(data.tasks)); } catch (e) {}
       document.querySelectorAll('.project').forEach(function (proj) {
         var pidEl = proj.querySelector('.project-id-mono');
         var body  = proj.querySelector('.project-body');
         if (!pidEl || !body) return;
         renderTasks(pidEl.textContent.trim(), body, proj);
       });
-      document.querySelectorAll('.program').forEach(function (prog) { updateProgProgress(prog); });
+      document.querySelectorAll('.program').forEach(updateProgProgress);
+    }
+
+    /* project statuses */
+    if (data.projStatuses) {
+      try { localStorage.setItem(LS_PSTAT, JSON.stringify(data.projStatuses)); } catch (e) {}
+      document.querySelectorAll('.project').forEach(function (proj) {
+        var pidEl = proj.querySelector('.project-id-mono');
+        if (!pidEl) return;
+        var pid = pidEl.textContent.trim();
+        var ps  = data.projStatuses[pid];
+        if (!ps) return;
+        PROJ_STATUS_DEF.forEach(function (def) {
+          var chip = proj.querySelector('.po-status-chip[data-field="' + def.field + '"]');
+          if (!chip) return;
+          var opt = def.options.find(function (o) { return o.value === ps[def.field]; });
+          if (opt) applyChipStyle(chip, opt);
+        });
+      });
+    }
+
+    /* program statuses */
+    if (data.progStatuses) {
+      try { localStorage.setItem('plan-timeline-statuses-v1', JSON.stringify(data.progStatuses)); } catch (e) {}
+      Object.keys(data.progStatuses).forEach(function (key) {
+        var parts = key.split(':');
+        var field = parts.pop();
+        var pid   = parts.join(':');
+        var prog  = document.querySelector('.program[data-program-id="' + pid + '"]');
+        if (!prog) return;
+        var editor = prog.querySelector('.status-editor[data-field="' + field + '"]');
+        if (!editor) return;
+        var chip = editor.querySelector('.status-chip');
+        if (!chip) return;
+        var v = data.progStatuses[key];
+        if (!v || !v.css) return;
+        chip.className = 'status-chip ' + v.css;
+        chip.textContent = v.label;
+        chip.dataset.current = v.css;
+      });
     }
   }
 
@@ -4459,8 +4679,11 @@ body[data-mode="edit"] .po-task-add { display: block; }
       .catch(function () {});
   }
 
-  /* ---- Init ---- */
-  initTexts();
+  /* ================================================================
+     INIT
+  ================================================================ */
+  initTextEditing();
+  injectProjStatuses();
   initTasks();
   setTextEditable(document.body.getAttribute('data-mode') === 'edit');
   loadRemote();
