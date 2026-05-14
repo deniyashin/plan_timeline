@@ -4674,7 +4674,7 @@ body[data-mode="edit"] .po-task-add { display: block; }
   }
 
   function loadRemote() {
-    fetch('https://deniyashin.github.io/plan_timeline/data.json?v=' + Date.now())
+    fetch('https://deniyashin.github.io/plan_timeline/data.json?v=' + Date.now(), { cache: 'no-cache' })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (d) { if (d) applyData(d); })
       .catch(function () {});
