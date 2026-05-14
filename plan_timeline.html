@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -3980,46 +3980,71 @@ body[data-mode="brief"] .project-deps-block { display: none; }
 })();
 </script>
 
-<!-- ===== EDITOR ENHANCEMENT: Password + Text Editor + Task Editor ===== -->
+<!-- ===== EDITOR ENHANCEMENT v2 ===== -->
 <style>
-/* Password modal */
-#po-pw-modal {
-  position: fixed; inset: 0;
-  background: rgba(31,29,26,0.55);
-  z-index: 999; display: none;
-  align-items: center; justify-content: center;
+/* === Modal base === */
+.po-modal-overlay {
+  position: fixed; inset: 0; background: rgba(31,29,26,0.55);
+  z-index: 999; display: none; align-items: center; justify-content: center;
   backdrop-filter: blur(3px);
 }
-#po-pw-modal.open { display: flex; }
-.po-pw-box {
-  background: #FDFBF6; border: 1px solid #DDD5C5;
-  border-radius: 8px; padding: 28px 32px; width: 340px;
-  box-shadow: 0 16px 48px rgba(0,0,0,0.2);
+.po-modal-overlay.open { display: flex; }
+.po-modal-box {
+  background: #FDFBF6; border: 1px solid #DDD5C5; border-radius: 8px;
+  padding: 28px 32px; width: 360px; box-shadow: 0 16px 48px rgba(0,0,0,0.2);
 }
-.po-pw-title {
+.po-modal-title {
   font-family: "Fraunces", serif; font-size: 20px; font-weight: 500;
   letter-spacing: -0.01em; margin-bottom: 6px; color: #1F1D1A;
 }
-.po-pw-hint { font-size: 13px; color: #6B655C; margin-bottom: 18px; }
-.po-pw-input {
-  width: 100%; padding: 9px 12px; border: 1px solid #DDD5C5;
-  border-radius: 4px; font-family: "Geist", -apple-system, sans-serif;
-  font-size: 14px; outline: none; background: #F8F5EF; color: #1F1D1A;
-  box-sizing: border-box;
+.po-modal-hint { font-size: 13px; color: #6B655C; margin-bottom: 18px; }
+.po-modal-input {
+  width: 100%; padding: 9px 12px; border: 1px solid #DDD5C5; border-radius: 4px;
+  font-family: "Geist", -apple-system, sans-serif; font-size: 14px;
+  outline: none; background: #F8F5EF; color: #1F1D1A; box-sizing: border-box;
 }
-.po-pw-input:focus { border-color: #1F1D1A; }
-.po-pw-error { color: #8B2635; font-size: 12px; margin-top: 6px; min-height: 16px; }
-.po-pw-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
-.po-pw-btn {
-  font-family: inherit; font-size: 13px;
-  padding: 7px 16px; border-radius: 4px; cursor: pointer;
-}
-.po-pw-btn-cancel { background: transparent; border: 1px solid #DDD5C5; color: #6B655C; }
-.po-pw-btn-cancel:hover { border-color: #1F1D1A; color: #1F1D1A; }
-.po-pw-btn-ok { background: #1F1D1A; border: 1px solid #1F1D1A; color: #FDFBF6; }
-.po-pw-btn-ok:hover { background: #3A3835; }
+.po-modal-input:focus { border-color: #1F1D1A; }
+.po-modal-error { color: #8B2635; font-size: 12px; min-height: 16px; margin-top: 4px; }
+.po-modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+.po-btn { font-family: inherit; font-size: 13px; padding: 7px 16px; border-radius: 4px; cursor: pointer; }
+.po-btn-cancel { background: transparent; border: 1px solid #DDD5C5; color: #6B655C; }
+.po-btn-cancel:hover { border-color: #1F1D1A; color: #1F1D1A; }
+.po-btn-primary { background: #1F1D1A; border: 1px solid #1F1D1A; color: #FDFBF6; }
+.po-btn-primary:hover { background: #3A3835; }
 
-/* Editable text fields (only styled in edit mode) */
+/* === Edit mode bottom bar === */
+.po-edit-bar {
+  display: none; position: fixed; bottom: 0; left: 0; right: 0;
+  background: #1F1D1A; z-index: 100; padding: 10px 32px;
+  align-items: center; gap: 12px;
+}
+body[data-mode="edit"] .po-edit-bar { display: flex; }
+body[data-mode="edit"] { padding-bottom: 56px; }
+.po-edit-bar-label {
+  font-family: "Geist Mono", monospace; font-size: 10.5px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgba(255,255,255,0.45); margin-right: auto;
+}
+.po-edit-saved {
+  font-family: "Geist Mono", monospace; font-size: 10.5px;
+  color: rgba(255,255,255,0.35); transition: color 0.3s;
+}
+.po-edit-saved.flash { color: #7EBF83; }
+.po-btn-pub {
+  background: #2F5233; border: 1px solid #2F5233; color: #FDFBF6;
+  font-family: inherit; font-size: 12px; padding: 6px 16px;
+  border-radius: 4px; cursor: pointer; transition: all 0.12s;
+}
+.po-btn-pub:hover { background: #3E6B43; }
+.po-btn-pub:disabled { opacity: 0.55; cursor: default; }
+.po-btn-logout {
+  background: transparent; border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.6); font-family: inherit; font-size: 12px;
+  padding: 6px 14px; border-radius: 4px; cursor: pointer; transition: all 0.12s;
+}
+.po-btn-logout:hover { border-color: rgba(255,255,255,0.55); color: #fff; }
+
+/* === Editable text fields === */
 body[data-mode="edit"] p.po-editable {
   outline: 1px dashed #C8BFB0; border-radius: 3px;
   padding: 2px 5px; cursor: text; transition: outline 0.1s;
@@ -4030,170 +4055,195 @@ body[data-mode="edit"] p.po-editable:empty::before {
   content: attr(data-ph); color: #8F897E; font-style: italic; pointer-events: none;
 }
 
-/* Task editor */
-.po-task-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
-.po-task-item {
-  display: flex; align-items: flex-start; gap: 8px;
-  padding: 5px 0; border-bottom: 1px dashed #EAE3D4;
+/* === Task editor (project level) === */
+.po-task-section { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #E8E1D2; }
+.po-task-section-head {
+  font-family: "Geist Mono", monospace; font-size: 9.5px;
+  letter-spacing: 0.16em; text-transform: uppercase; color: #8F897E; margin-bottom: 6px;
 }
-.po-task-item:last-child { border-bottom: none; }
+.po-task-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1px; }
+.po-task-item { display: flex; align-items: flex-start; gap: 8px; padding: 4px 0; }
 .po-task-cb {
-  width: 15px; height: 15px; border: 1.5px solid #8F897E;
-  border-radius: 3px; background: transparent; cursor: pointer;
-  flex-shrink: 0; margin-top: 2px; padding: 0;
+  width: 14px; height: 14px; border: 1.5px solid #8F897E; border-radius: 3px;
+  background: transparent; cursor: pointer; flex-shrink: 0; margin-top: 2px; padding: 0;
   display: flex; align-items: center; justify-content: center;
   font-size: 9px; color: transparent; transition: all 0.12s;
 }
 .po-task-cb.done { background: #2F5233; border-color: #2F5233; color: #fff; }
 .po-task-text {
-  flex: 1; font-size: 13px; line-height: 1.45; color: #1F1D1A;
+  flex: 1; font-size: 12.5px; line-height: 1.45; color: #1F1D1A;
   outline: none; min-height: 18px; word-break: break-word;
 }
 .po-task-text.done { text-decoration: line-through; color: #8F897E; }
 .po-task-del {
-  background: transparent; border: none; color: transparent;
-  cursor: pointer; font-size: 16px; padding: 0 3px;
-  flex-shrink: 0; line-height: 1; transition: color 0.1s;
+  background: transparent; border: none; color: transparent; cursor: pointer;
+  font-size: 15px; padding: 0 2px; flex-shrink: 0; line-height: 1; transition: color 0.1s;
 }
 .po-task-item:hover .po-task-del { color: #8F897E; }
 .po-task-del:hover { color: #8B2635 !important; }
 .po-task-add {
-  display: none; margin-top: 8px; font-family: inherit;
-  font-size: 12px; color: #6B655C; background: transparent;
-  border: 1px dashed #DDD5C5; padding: 5px 10px;
-  border-radius: 3px; cursor: pointer; width: 100%; text-align: left;
-  transition: all 0.12s;
+  display: none; margin-top: 6px; font-family: inherit; font-size: 11px; color: #6B655C;
+  background: transparent; border: 1px dashed #DDD5C5; padding: 4px 10px;
+  border-radius: 3px; cursor: pointer; width: 100%; text-align: left; transition: all 0.12s;
 }
 .po-task-add:hover { border-color: #1F1D1A; color: #1F1D1A; border-style: solid; }
 body[data-mode="edit"] .po-task-add { display: block; }
 
-/* Save flash */
-#po-saved {
-  position: fixed; bottom: 20px; right: 20px;
-  background: #2F5233; color: #fff;
-  padding: 8px 14px; border-radius: 4px;
-  font-size: 12px; font-family: "Geist Mono", monospace;
-  opacity: 0; pointer-events: none; z-index: 500;
-  transition: opacity 0.25s;
+/* === Progress bars === */
+.po-prog-wrap {
+  display: flex; align-items: center; gap: 8px;
+  flex-basis: 100%; margin-top: 8px;
 }
-#po-saved.show { opacity: 1; }
+.po-prog-bar { flex: 1; height: 3px; background: #E8E1D2; border-radius: 2px; overflow: hidden; }
+.po-prog-fill { height: 100%; border-radius: 2px; background: #2F5233; transition: width 0.4s; }
+.po-prog-lbl {
+  font-family: "Geist Mono", monospace; font-size: 9.5px;
+  color: #8F897E; white-space: nowrap; flex-shrink: 0;
+}
+/* Project inline progress */
+.po-proj-prog {
+  display: inline-flex; align-items: center; gap: 5px; margin-left: 6px; flex-shrink: 0;
+}
+.po-proj-prog-bar { width: 36px; height: 3px; background: #E8E1D2; border-radius: 2px; overflow: hidden; }
+.po-proj-prog-fill { height: 100%; background: #2F5233; border-radius: 2px; transition: width 0.4s; }
+.po-proj-prog-lbl { font-family: "Geist Mono", monospace; font-size: 9px; color: #8F897E; }
 </style>
 
-<div id="po-pw-modal">
-  <div class="po-pw-box">
-    <div class="po-pw-title">Редактирование</div>
-    <div class="po-pw-hint">Введите пароль для доступа к редактору</div>
-    <input type="password" id="po-pw-input" class="po-pw-input" placeholder="Пароль" autocomplete="off">
-    <div class="po-pw-error" id="po-pw-error"></div>
-    <div class="po-pw-actions">
-      <button type="button" class="po-pw-btn po-pw-btn-cancel" id="po-pw-cancel">Отмена</button>
-      <button type="button" class="po-pw-btn po-pw-btn-ok" id="po-pw-ok">Войти</button>
+<!-- Password modal -->
+<div id="po-pw-modal" class="po-modal-overlay">
+  <div class="po-modal-box">
+    <div class="po-modal-title">Редактирование</div>
+    <div class="po-modal-hint">Введите пароль для доступа к редактору</div>
+    <input type="password" id="po-pw-inp" class="po-modal-input" placeholder="Пароль" autocomplete="off">
+    <div class="po-modal-error" id="po-pw-err"></div>
+    <div class="po-modal-actions">
+      <button class="po-btn po-btn-cancel" id="po-pw-cancel">Отмена</button>
+      <button class="po-btn po-btn-primary" id="po-pw-ok">Войти</button>
     </div>
   </div>
 </div>
-<div id="po-saved">&#10003; Сохранено</div>
+
+<!-- GitHub token modal -->
+<div id="po-gh-modal" class="po-modal-overlay">
+  <div class="po-modal-box">
+    <div class="po-modal-title">GitHub токен</div>
+    <div class="po-modal-hint">Нужен для публикации. Сохраняется в браузере и больше не запрашивается.</div>
+    <input type="password" id="po-gh-inp" class="po-modal-input" placeholder="github_pat_..." autocomplete="off">
+    <div class="po-modal-error" id="po-gh-err"></div>
+    <div class="po-modal-actions">
+      <button class="po-btn po-btn-cancel" id="po-gh-cancel">Отмена</button>
+      <button class="po-btn po-btn-primary" id="po-gh-ok">Сохранить и опубликовать</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit toolbar -->
+<div class="po-edit-bar" id="po-edit-bar">
+  <span class="po-edit-bar-label">&#9998;&nbsp;Режим редактирования</span>
+  <span class="po-edit-saved" id="po-edit-saved">Все изменения сохранены</span>
+  <button class="po-btn-pub" id="po-btn-pub">&#8593; Опубликовать</button>
+  <button class="po-btn-logout" id="po-btn-logout">Выйти из редактора</button>
+</div>
 
 <script>
 (function () {
-  var PW  = 'PO2026';
-  var SK  = 'po-auth';
-  var LT  = 'po-texts';
-  var LK  = 'po-tasks';
+  var PW   = 'PO2026';
+  var SK   = 'po-auth';
+  var LT   = 'po-texts';
+  var LK   = 'po-tasks';
+  var GT   = 'po-gh-token';
+  var REPO = 'deniyashin/plan_timeline';
 
   /* auth */
   var ok = false;
   try { ok = sessionStorage.getItem(SK) === '1'; } catch (e) {}
 
-  /* flash */
-  var savedEl = document.getElementById('po-saved');
+  /* save flash */
+  var savedEl = document.getElementById('po-edit-saved');
   var _ft;
   function flash() {
-    savedEl.classList.add('show');
+    if (!savedEl) return;
+    savedEl.textContent = '&#10003; Сохранено';
+    savedEl.classList.add('flash');
     clearTimeout(_ft);
-    _ft = setTimeout(function () { savedEl.classList.remove('show'); }, 1800);
+    _ft = setTimeout(function () {
+      savedEl.classList.remove('flash');
+      savedEl.textContent = 'Все изменения сохранены';
+    }, 2000);
   }
 
-  /* localStorage helpers */
-  function lsGet(k) {
-    try { return JSON.parse(localStorage.getItem(k) || '{}'); } catch (e) { return {}; }
-  }
-  function lsSet(k, v) {
-    try { localStorage.setItem(k, JSON.stringify(v)); flash(); } catch (e) {}
-  }
+  /* localStorage */
+  function lsGet(k) { try { return JSON.parse(localStorage.getItem(k) || '{}'); } catch (e) { return {}; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); flash(); } catch (e) {} }
 
-  /* ---- Password modal ---- */
-  var modal  = document.getElementById('po-pw-modal');
-  var inp    = document.getElementById('po-pw-input');
-  var errEl  = document.getElementById('po-pw-error');
+  /* modals */
+  function openModal(id) { document.getElementById(id).classList.add('open'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
-  function openModal()  { modal.classList.add('open'); inp.value = ''; errEl.textContent = ''; setTimeout(function () { inp.focus(); }, 30); }
-  function closeModal() { modal.classList.remove('open'); }
+  /* ---- Password ---- */
+  var pwInp = document.getElementById('po-pw-inp');
+  var pwErr = document.getElementById('po-pw-err');
   function tryAuth() {
-    if (inp.value === PW) {
+    if (pwInp.value === PW) {
       ok = true;
       try { sessionStorage.setItem(SK, '1'); } catch (e) {}
-      closeModal();
+      closeModal('po-pw-modal');
       document.querySelector('.mode-btn[data-mode="edit"]').click();
-    } else {
-      errEl.textContent = 'Неверный пароль';
-      inp.select();
-    }
+    } else { pwErr.textContent = 'Неверный пароль'; pwInp.select(); }
   }
-
   document.getElementById('po-pw-ok').addEventListener('click', tryAuth);
-  document.getElementById('po-pw-cancel').addEventListener('click', closeModal);
-  inp.addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') tryAuth();
-    if (e.key === 'Escape') closeModal();
-  });
-  modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+  document.getElementById('po-pw-cancel').addEventListener('click', function () { closeModal('po-pw-modal'); });
+  pwInp.addEventListener('keydown', function (e) { if (e.key === 'Enter') tryAuth(); if (e.key === 'Escape') closeModal('po-pw-modal'); });
+  document.getElementById('po-pw-modal').addEventListener('click', function (e) { if (e.target === this) closeModal('po-pw-modal'); });
 
-  /* intercept Edit button in capture phase */
   document.addEventListener('click', function (e) {
     var btn = e.target.closest('.mode-btn[data-mode="edit"]');
     if (!btn) return;
     if (ok) return;
     e.stopPropagation(); e.stopImmediatePropagation(); e.preventDefault();
-    openModal();
+    pwInp.value = ''; pwErr.textContent = '';
+    openModal('po-pw-modal');
+    setTimeout(function () { pwInp.focus(); }, 30);
   }, true);
+
+  /* ---- Logout ---- */
+  document.getElementById('po-btn-logout').addEventListener('click', function () {
+    ok = false;
+    try { sessionStorage.removeItem(SK); } catch (e) {}
+    var b = document.querySelector('.mode-btn[data-mode="brief"]');
+    if (b) b.click();
+  });
 
   /* ---- Text editing ---- */
   var textEls = [];
-
-  function progId(el) {
+  function progIdOf(el) {
     var p = el.closest('.program');
     if (!p) return null;
     var m = p.querySelector('.program-id-mono');
     return m ? m.textContent.trim() : null;
   }
-
   function fieldKey(el) {
-    var pid = progId(el);
+    var pid = progIdOf(el);
     if (!pid) return null;
     var prog = el.closest('.program');
     var all = Array.from(prog.querySelectorAll('p.card-summary-value'));
     var i = all.indexOf(el);
-    return i >= 0 ? pid + ':' + i : null;
+    return i >= 0 ? pid + ':f' + i : null;
   }
-
   function setTextEditable(on) {
     textEls.forEach(function (el) { el.contentEditable = on ? 'true' : 'false'; });
   }
-
   function initTexts() {
     var saved = lsGet(LT);
     document.querySelectorAll('p.card-summary-value').forEach(function (el) {
       if (el.querySelector('button,input,select')) return;
       el.classList.add('po-editable');
-      el.contentEditable = 'false';
-      el.spellcheck = false;
-      el.dataset.ph = 'Текст не добавлен';
+      el.contentEditable = 'false'; el.spellcheck = false; el.dataset.ph = 'Нет текста';
       var k = fieldKey(el);
       if (k && saved[k] !== undefined) el.textContent = saved[k];
       el.addEventListener('paste', function (e) {
         e.preventDefault();
-        var t = (e.clipboardData || window.clipboardData).getData('text/plain');
-        document.execCommand('insertText', false, t);
+        document.execCommand('insertText', false, (e.clipboardData || window.clipboardData).getData('text/plain'));
       });
       el.addEventListener('keydown', function (e) { if (e.key === 'Enter') e.preventDefault(); });
       el.addEventListener('blur', function () {
@@ -4205,131 +4255,223 @@ body[data-mode="edit"] .po-task-add { display: block; }
     });
   }
 
-  /* ---- Task editor ---- */
-  function getTasks(pid)      { return lsGet(LK)[pid] || []; }
+  /* ---- Tasks (project level) ---- */
+  function getTasks(pid) { return lsGet(LK)[pid] || []; }
   function setTasks(pid, arr) { var d = lsGet(LK); d[pid] = arr; lsSet(LK, d); }
+  function esc(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-  function esc(s) {
-    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  }
-
-  function syncTaskEditable(wrap) {
+  function syncEditableInBody(body) {
     var on = document.body.getAttribute('data-mode') === 'edit';
-    wrap.querySelectorAll('.po-task-text').forEach(function (el) {
-      el.contentEditable = on ? 'true' : 'false';
-    });
+    body.querySelectorAll('.po-task-text').forEach(function (el) { el.contentEditable = on ? 'true' : 'false'; });
   }
 
-  function renderTasks(pid, wrap) {
+  function updateProjProgress(proj, pid) {
     var tasks = getTasks(pid);
-    var list = wrap.querySelector('.po-task-list');
-    if (!list) {
-      list = document.createElement('ul');
-      list.className = 'po-task-list';
-      var addBtn = wrap.querySelector('.po-task-add');
-      wrap.insertBefore(list, addBtn || null);
+    var total = tasks.length, done = tasks.filter(function (t) { return t.done; }).length;
+    var badge = proj.querySelector('.task-badge');
+    if (badge) {
+      if (total === 0) { badge.textContent = '—'; badge.classList.add('task-badge-empty'); }
+      else { badge.textContent = done + '/' + total; badge.classList.remove('task-badge-empty'); }
     }
+    var fill  = proj.querySelector('.po-proj-prog-fill');
+    var lbl   = proj.querySelector('.po-proj-prog-lbl');
+    if (fill)  fill.style.width  = (total ? Math.round(done / total * 100) : 0) + '%';
+    if (lbl)   lbl.textContent   = total ? done + '/' + total : '';
+  }
+
+  function updateProgProgress(prog) {
+    var total = 0, done = 0;
+    prog.querySelectorAll('.project').forEach(function (proj) {
+      var m = proj.querySelector('.project-id-mono');
+      if (!m) return;
+      var ts = getTasks(m.textContent.trim());
+      total += ts.length;
+      done  += ts.filter(function (t) { return t.done; }).length;
+    });
+    var pct = total ? Math.round(done / total * 100) : 0;
+    var fill = prog.querySelector('.po-prog-fill');
+    var lbl  = prog.querySelector('.po-prog-lbl');
+    if (fill) fill.style.width  = pct + '%';
+    if (lbl)  lbl.textContent   = total ? done + '/' + total + ' задач' : 'нет задач';
+  }
+
+  function renderTasks(pid, body, proj) {
+    var tasks = getTasks(pid);
+    var sec = body.querySelector('.po-task-section');
+    if (!sec) {
+      sec = document.createElement('div'); sec.className = 'po-task-section';
+      var hd = document.createElement('div'); hd.className = 'po-task-section-head'; hd.textContent = 'Задачи';
+      var ul = document.createElement('ul');  ul.className = 'po-task-list';
+      var ab = document.createElement('button'); ab.type = 'button'; ab.className = 'po-task-add'; ab.textContent = '+ Добавить задачу';
+      ab.addEventListener('click', function (e) { e.stopPropagation(); doAdd(pid, body, proj); });
+      sec.appendChild(hd); sec.appendChild(ul); sec.appendChild(ab);
+      body.appendChild(sec);
+    }
+    var list = sec.querySelector('.po-task-list');
     list.innerHTML = '';
-
     tasks.forEach(function (t, i) {
-      var li = document.createElement('li');
-      li.className = 'po-task-item';
+      var li = document.createElement('li'); li.className = 'po-task-item';
       li.innerHTML =
-        '<button type="button" class="po-task-cb' + (t.done ? ' done' : '') + '" title="Выполнено">' + (t.done ? '&#10003;' : '') + '</button>' +
+        '<button type="button" class="po-task-cb' + (t.done ? ' done' : '') + '">' + (t.done ? '&#10003;' : '') + '</button>' +
         '<span class="po-task-text' + (t.done ? ' done' : '') + '" contenteditable="false" spellcheck="false">' + esc(t.text) + '</span>' +
-        '<button type="button" class="po-task-del" title="Удалить">&#215;</button>';
-
-      var cb     = li.querySelector('.po-task-cb');
-      var textEl = li.querySelector('.po-task-text');
-      var del    = li.querySelector('.po-task-del');
-
+        '<button type="button" class="po-task-del">&#215;</button>';
+      var cb = li.querySelector('.po-task-cb'), txt = li.querySelector('.po-task-text'), del = li.querySelector('.po-task-del');
       cb.addEventListener('click', function (e) {
         e.stopPropagation();
         var a = getTasks(pid); a[i].done = !a[i].done; setTasks(pid, a);
-        renderTasks(pid, wrap);
+        renderTasks(pid, body, proj);
       });
-      textEl.addEventListener('keydown', function (e) {
+      txt.addEventListener('keydown', function (e) {
         e.stopPropagation();
-        if (e.key === 'Enter') { e.preventDefault(); doAdd(pid, wrap); }
+        if (e.key === 'Enter') { e.preventDefault(); doAdd(pid, body, proj); }
       });
-      textEl.addEventListener('blur', function () {
-        var a = getTasks(pid); if (!a[i]) return;
-        a[i].text = textEl.textContent; setTasks(pid, a);
+      txt.addEventListener('blur', function () {
+        var a = getTasks(pid); if (!a[i]) return; a[i].text = txt.textContent; setTasks(pid, a);
       });
       del.addEventListener('click', function (e) {
         e.stopPropagation();
         var a = getTasks(pid); a.splice(i, 1); setTasks(pid, a);
-        renderTasks(pid, wrap);
+        renderTasks(pid, body, proj);
       });
       list.appendChild(li);
     });
-
-    /* empty state */
-    var note = wrap.querySelector('.tasks-empty-note');
-    if (tasks.length > 0) {
-      wrap.classList.remove('tasks-empty');
-      if (note) note.style.display = 'none';
-    } else {
-      wrap.classList.add('tasks-empty');
-      if (note) note.style.display = '';
-    }
-
-    syncTaskEditable(wrap);
+    syncEditableInBody(body);
+    updateProjProgress(proj, pid);
+    var prog = proj.closest('.program');
+    if (prog) updateProgProgress(prog);
   }
 
-  function doAdd(pid, wrap) {
+  function doAdd(pid, body, proj) {
     var a = getTasks(pid); a.push({ text: '', done: false }); setTasks(pid, a);
-    renderTasks(pid, wrap);
-    var items = wrap.querySelectorAll('.po-task-text');
-    if (items.length) { var last = items[items.length-1]; last.contentEditable = 'true'; last.focus(); }
+    renderTasks(pid, body, proj);
+    var items = body.querySelectorAll('.po-task-text');
+    if (items.length) { var last = items[items.length - 1]; last.contentEditable = 'true'; last.focus(); }
   }
 
   function initTasks() {
-    document.querySelectorAll('.program').forEach(function (prog) {
-      var pidEl = prog.querySelector('.program-id-mono');
+    document.querySelectorAll('.project').forEach(function (proj) {
+      var pidEl = proj.querySelector('.project-id-mono');
       if (!pidEl) return;
       var pid  = pidEl.textContent.trim();
-      var wrap = prog.querySelector('.tasks-wrap');
-      if (!wrap) return;
-
-      var btn = document.createElement('button');
-      btn.type = 'button'; btn.className = 'po-task-add'; btn.textContent = '+ Добавить задачу';
-      btn.addEventListener('click', function (e) { e.stopPropagation(); doAdd(pid, wrap); });
-      wrap.appendChild(btn);
-
-      renderTasks(pid, wrap);
+      var body = proj.querySelector('.project-body');
+      if (!body) return;
+      /* inline progress next to task-badge */
+      var badge = proj.querySelector('.task-badge');
+      if (badge && !proj.querySelector('.po-proj-prog')) {
+        var pg = document.createElement('span'); pg.className = 'po-proj-prog';
+        pg.innerHTML = '<span class="po-proj-prog-bar"><span class="po-proj-prog-fill" style="width:0%"></span></span><span class="po-proj-prog-lbl"></span>';
+        badge.parentNode.insertBefore(pg, badge.nextSibling);
+      }
+      renderTasks(pid, body, proj);
+    });
+    /* program-level progress bar */
+    document.querySelectorAll('.program').forEach(function (prog) {
+      var head = prog.querySelector('.program-head');
+      if (!head || prog.querySelector('.po-prog-wrap')) return;
+      var wrap = document.createElement('div'); wrap.className = 'po-prog-wrap';
+      wrap.innerHTML = '<div class="po-prog-bar"><div class="po-prog-fill" style="width:0%"></div></div><span class="po-prog-lbl">нет задач</span>';
+      head.appendChild(wrap);
+      updateProgProgress(prog);
     });
   }
 
-  /* ---- Mode observer: sync editability ---- */
-  new MutationObserver(function (mutations) {
-    mutations.forEach(function (m) {
+  /* mode observer */
+  new MutationObserver(function (muts) {
+    muts.forEach(function (m) {
       if (m.attributeName !== 'data-mode') return;
       var on = document.body.getAttribute('data-mode') === 'edit';
       setTextEditable(on);
-      document.querySelectorAll('.tasks-wrap').forEach(function (w) { syncTaskEditable(w); });
+      document.querySelectorAll('.project-body').forEach(function (b) { syncEditableInBody(b); });
     });
   }).observe(document.body, { attributes: true });
+
+  /* ---- Publish to GitHub ---- */
+  var ghInp = document.getElementById('po-gh-inp');
+  var ghErr = document.getElementById('po-gh-err');
+
+  document.getElementById('po-gh-cancel').addEventListener('click', function () { closeModal('po-gh-modal'); });
+  document.getElementById('po-gh-modal').addEventListener('click', function (e) { if (e.target === this) closeModal('po-gh-modal'); });
+  document.getElementById('po-gh-ok').addEventListener('click', saveTokenAndPublish);
+  ghInp.addEventListener('keydown', function (e) { if (e.key === 'Enter') saveTokenAndPublish(); });
+
+  function saveTokenAndPublish() {
+    var t = ghInp.value.trim();
+    if (!t) { ghErr.textContent = 'Введите токен'; return; }
+    try { localStorage.setItem(GT, t); } catch (e) {}
+    closeModal('po-gh-modal');
+    publish(t);
+  }
+
+  document.getElementById('po-btn-pub').addEventListener('click', function () {
+    var token = ''; try { token = localStorage.getItem(GT) || ''; } catch (e) {}
+    if (!token) {
+      ghInp.value = ''; ghErr.textContent = '';
+      openModal('po-gh-modal'); setTimeout(function () { ghInp.focus(); }, 30);
+    } else { publish(token); }
+  });
+
+  function publish(token) {
+    var btn = document.getElementById('po-btn-pub');
+    btn.disabled = true; btn.textContent = 'Публикация...';
+    var data = { texts: lsGet(LT), tasks: lsGet(LK), publishedAt: new Date().toISOString() };
+    var content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+    var api = 'https://api.github.com/repos/' + REPO + '/contents/data.json';
+    var hdrs = { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' };
+    fetch(api, { headers: hdrs })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (ex) {
+        var body = { message: 'data: update ' + new Date().toISOString().slice(0, 10), content: content };
+        if (ex && ex.sha) body.sha = ex.sha;
+        return fetch(api, { method: 'PUT', headers: hdrs, body: JSON.stringify(body) });
+      })
+      .then(function (r) {
+        if (!r.ok) return r.json().then(function (e) { throw new Error(e.message || r.status); });
+        btn.textContent = '✓ Опубликовано — сайт обновится через ~1 мин';
+        setTimeout(function () { btn.disabled = false; btn.textContent = '↑ Опубликовать'; }, 5000);
+      })
+      .catch(function (err) {
+        btn.disabled = false; btn.textContent = '↑ Опубликовать';
+        try { localStorage.removeItem(GT); } catch (e) {}
+        ghErr.textContent = 'Ошибка: ' + err.message;
+        openModal('po-gh-modal'); setTimeout(function () { ghInp.focus(); }, 30);
+      });
+  }
+
+  /* ---- Load published data.json on startup ---- */
+  function applyData(data) {
+    if (data.texts) {
+      try { localStorage.setItem(LT, JSON.stringify(data.texts)); } catch (e) {}
+      var saved = data.texts;
+      textEls.forEach(function (el) {
+        var k = fieldKey(el);
+        if (k && saved[k] !== undefined) el.textContent = saved[k];
+      });
+    }
+    if (data.tasks) {
+      try { localStorage.setItem(LK, JSON.stringify(data.tasks)); } catch (e) {}
+      document.querySelectorAll('.project').forEach(function (proj) {
+        var pidEl = proj.querySelector('.project-id-mono');
+        var body  = proj.querySelector('.project-body');
+        if (!pidEl || !body) return;
+        renderTasks(pidEl.textContent.trim(), body, proj);
+      });
+      document.querySelectorAll('.program').forEach(function (prog) { updateProgProgress(prog); });
+    }
+  }
+
+  function loadRemote() {
+    fetch('https://deniyashin.github.io/plan_timeline/data.json?v=' + Date.now())
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) { if (d) applyData(d); })
+      .catch(function () {});
+  }
 
   /* ---- Init ---- */
   initTexts();
   initTasks();
-
-  /* sync editability to current mode on load */
-  var initMode = document.body.getAttribute('data-mode') || 'brief';
-  setTextEditable(initMode === 'edit');
+  setTextEditable(document.body.getAttribute('data-mode') === 'edit');
+  loadRemote();
 
 })();
 </script>
 </body>
-</html><div class="hero-status-cell hero-status-cell-progress">
-  <span class="hero-status-label">Прогресс согласования</span>
-  <div class="approval-progress" id="approval-progress">
-    <div class="approval-bar"><div class="approval-bar-fill" id="approval-bar-fill" style="width:0%"></div></div>
-    <div class="approval-counts" id="approval-counts">—</div>
-  </div>
-</div>
-<div class="hero-status-cell hero-status-cell-progress">
-  <span class="hero-status-label">Сигналы внимания</span>
-  <div class="disputed-counters" id="disputed-counters">—</div>
-</div>
