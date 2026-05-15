@@ -826,6 +826,42 @@
     border-color: var(--bg);
   }
 
+  /* Person picker popup */
+  .person-picker-wrap { position: relative; display: inline-flex; }
+  .person-picker-btn { display: inline-flex; align-items: center; gap: 5px; }
+  .person-picker-btn .person-cf-code { flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 9.5px; font-weight: 600; font-family: "Geist Mono", monospace; }
+  .person-picker-caret { font-size: 10px; color: var(--ink-soft); transition: transform 0.15s; }
+  .person-picker-wrap.open .person-picker-caret { transform: rotate(180deg); }
+  .person-picker-popup {
+    position: absolute; top: calc(100% + 6px); left: 0; z-index: 300;
+    background: #FDFBF6; border: 1px solid #DDD5C5; border-radius: 8px;
+    min-width: 210px; max-height: 320px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.13);
+    display: flex; flex-direction: column;
+  }
+  .person-picker-clear {
+    background: transparent; border: none; border-bottom: 1px solid #EDE8DF;
+    padding: 8px 12px; text-align: left; font-size: 11.5px; color: #8B2635;
+    font-family: inherit; cursor: pointer; flex-shrink: 0;
+  }
+  .person-picker-clear:hover { background: #FEE2E2; }
+  .person-picker-list { overflow-y: auto; flex: 1; padding: 4px 0; }
+  .person-picker-item {
+    display: flex; align-items: center; gap: 8px; width: 100%;
+    background: transparent; border: none; padding: 6px 12px;
+    font-family: inherit; font-size: 13px; color: var(--ink); cursor: pointer;
+    text-align: left; white-space: nowrap;
+  }
+  .person-picker-item:hover { background: #F0EDE6; }
+  .person-picker-item.filter-on { background: #E8E2D8; font-weight: 600; }
+  .person-picker-name { flex: 1; }
+  .person-picker-item .person-cf-code { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; font-family: "Geist Mono", monospace; background: var(--ink); color: var(--bg); }
+  .person-picker-item .person-cf-code-unit { background: var(--bg-alt); color: var(--ink); border: 1px solid var(--line); }
+  .person-picker-item .person-cf-code-empty { background: transparent; color: var(--ink-soft); border: 1px dashed var(--line); }
+  .person-picker-item-none .person-picker-name { font-style: italic; color: var(--ink-soft); }
+  /* Keep trigger active state same as other filter-chips */
+  .person-picker-btn.filter-on .person-cf-code { background: var(--bg); color: var(--ink); }
+
   /* Role filter — the role mark in the chip takes color according to role */
   .role-filter .role-mark {
     background: var(--ink);
@@ -2622,8 +2658,18 @@ body[data-mode="brief"] .project-deps-block { display: none; }
         <span class="filter-label">Роль</span>
         <div class="filter-chips-inline"><button class="filter-chip role-filter filter-on" data-role-filter="any" title="Искать человека в любой роли"><span class="cf-label">Любая роль</span></button><button class="filter-chip role-filter" data-role-filter="anchor" title="Якорь-учредитель — инициирует изменение и удерживает его"><span class="role-mark">Я</span><span class="cf-label">Якорь-учредитель</span></button><button class="filter-chip role-filter" data-role-filter="owner" title="Владелец внедрения — контролирует использование на земле"><span class="role-mark">В</span><span class="cf-label">Владелец внедрения</span></button><button class="filter-chip role-filter" data-role-filter="methodologist" title="Методолог — отвечает за корректность бизнес-процесса"><span class="role-mark">М</span><span class="cf-label">Методолог</span></button></div>
         <span class="filter-divider-v"></span>
-        <span class="filter-label">Человек</span>
-        <div class="filter-chips-inline"><button class="filter-chip person-filter" data-person-filter="AA" title="Арман Арамович · Учредитель · 15 программ"><span class="cf-code person-cf-code">АА</span><span class="cf-label">Арамович</span></button><button class="filter-chip person-filter" data-person-filter="VV" title="Вардан Вазгенович · Учредитель · 8 программ"><span class="cf-code person-cf-code">ВВ</span><span class="cf-label">Вазгенович</span></button><button class="filter-chip person-filter" data-person-filter="OS" title="Олег Сергеевич · Учредитель · 18 программ"><span class="cf-code person-cf-code">ОС</span><span class="cf-label">Сергеевич</span></button><button class="filter-chip person-filter" data-person-filter="OA" title="Олег Александрович · Учредитель · 20 программ"><span class="cf-code person-cf-code">ОА</span><span class="cf-label">Александрович</span></button><button class="filter-chip person-filter" data-person-filter="EM" title="Екатерина Мездрикова · Финансовый директор · 5 программ"><span class="cf-code person-cf-code">ЕМ</span><span class="cf-label">Мездрикова</span></button><button class="filter-chip person-filter" data-person-filter="TP" title="Тамара Платухина · Главный бухгалтер · 1 программ"><span class="cf-code person-cf-code">ТП</span><span class="cf-label">Платухина</span></button><button class="filter-chip person-filter" data-person-filter="GB" title="Галина Боде · Руководитель HR · 7 программ"><span class="cf-code person-cf-code">ГБ</span><span class="cf-label">Боде</span></button><button class="filter-chip person-filter" data-person-filter="KM" title="Кристина Москаленко · Старший тренер, методолог · 2 программ"><span class="cf-code person-cf-code">КМ</span><span class="cf-label">Москаленко</span></button><button class="filter-chip person-filter" data-person-filter="AG" title="Александр Гулевич · Руководитель IT · 2 программ"><span class="cf-code person-cf-code">АГ</span><span class="cf-label">Гулевич</span></button><button class="filter-chip person-filter" data-person-filter="NA" title="Надежда Астафьева · РОП сети · 4 программ"><span class="cf-code person-cf-code">НА</span><span class="cf-label">Астафьева</span></button><button class="filter-chip person-filter" data-person-filter="DR" title="Даниэль Рон · Руководитель департамента продаж · 8 программ"><span class="cf-code person-cf-code">ДР</span><span class="cf-label">Рон</span></button><button class="filter-chip person-filter" data-person-filter="HA" title="Харламов Артем · Руководитель · 4 программ"><span class="cf-code person-cf-code">ХА</span><span class="cf-label">Харламов</span></button><button class="filter-chip person-filter" data-person-filter="KR" title="Константин Резуненко · Руководитель · 1 программ"><span class="cf-code person-cf-code">КР</span><span class="cf-label">Резуненко</span></button><button class="filter-chip person-filter" data-person-filter="KE" title="Краюшкина Елизавета · Проектный офис / методолог · 17 программ"><span class="cf-code person-cf-code">КЕ</span><span class="cf-label">Краюшкина</span></button><button class="filter-chip person-filter" data-person-filter="AK" title="Алексей Краскевич · Руководитель · 5 программ"><span class="cf-code person-cf-code">АК</span><span class="cf-label">Краскевич</span></button><button class="filter-chip person-filter" data-person-filter="DB" title="Динара Бикбаева · Руководитель · 4 программ"><span class="cf-code person-cf-code">ДБ</span><span class="cf-label">Бикбаева</span></button><button class="filter-chip person-filter" data-person-filter="BO" title="Белый Олег Александрович · Методолог · 1 программ"><span class="cf-code person-cf-code">БО</span><span class="cf-label">Белый</span></button><button class="filter-chip person-filter" data-person-filter="YD" title="Яшин Денис · Руководитель · 1 программ"><span class="cf-code person-cf-code">ЯД</span><span class="cf-label">Яшин</span></button><button class="filter-chip person-filter" data-person-filter="CK" title="Чащин Кирилл · Руководитель (лаборатория) · 2 программ"><span class="cf-code person-cf-code">ЧК</span><span class="cf-label">Чащин</span></button><button class="filter-chip person-filter person-filter-unit" data-person-filter="unit_training" title="Функция обучения · Подразделение · 1 программ"><span class="cf-code person-cf-code person-cf-code-unit">ФО</span><span class="cf-label">Функция обучения</span></button><button class="filter-chip person-filter person-filter-unit" data-person-filter="unit_po" title="Проектный офис · Подразделение · 1 программ"><span class="cf-code person-cf-code person-cf-code-unit">ПО</span><span class="cf-label">Проектный офис</span></button><button class="filter-chip person-filter person-filter-none" data-person-filter="__none__" title="Программы без назначений · 0"><span class="cf-code person-cf-code person-cf-code-empty">—</span><span class="cf-label">не назначен</span></button></div>
+        <div class="person-picker-wrap" id="person-picker-wrap">
+          <button class="filter-chip person-picker-btn" id="person-picker-btn" type="button" title="Фильтр по участнику">
+            <span class="person-cf-code person-cf-code-empty" id="person-picker-avatar">?</span>
+            <span class="cf-label" id="person-picker-label">Человек</span>
+            <span class="person-picker-caret">▾</span>
+          </button>
+          <div class="person-picker-popup" id="person-picker-popup" hidden>
+            <button class="person-picker-clear" type="button" id="person-picker-clear">✕ сбросить</button>
+            <div class="person-picker-list"><button class="person-picker-item" data-person-filter="AA" title="Арман Арамович · Учредитель · 15 программ"><span class="person-cf-code">АА</span><span class="person-picker-name">Арамович</span></button><button class="person-picker-item" data-person-filter="VV" title="Вардан Вазгенович · Учредитель · 8 программ"><span class="person-cf-code">ВВ</span><span class="person-picker-name">Вазгенович</span></button><button class="person-picker-item" data-person-filter="OS" title="Олег Сергеевич · Учредитель · 18 программ"><span class="person-cf-code">ОС</span><span class="person-picker-name">Сергеевич</span></button><button class="person-picker-item" data-person-filter="OA" title="Олег Александрович · Учредитель · 20 программ"><span class="person-cf-code">ОА</span><span class="person-picker-name">Александрович</span></button><button class="person-picker-item" data-person-filter="EM" title="Екатерина Мездрикова · Финансовый директор · 5 программ"><span class="person-cf-code">ЕМ</span><span class="person-picker-name">Мездрикова</span></button><button class="person-picker-item" data-person-filter="TP" title="Тамара Платухина · Главный бухгалтер · 1 программ"><span class="person-cf-code">ТП</span><span class="person-picker-name">Платухина</span></button><button class="person-picker-item" data-person-filter="GB" title="Галина Боде · Руководитель HR · 7 программ"><span class="person-cf-code">ГБ</span><span class="person-picker-name">Боде</span></button><button class="person-picker-item" data-person-filter="KM" title="Кристина Москаленко · Старший тренер, методолог · 2 программ"><span class="person-cf-code">КМ</span><span class="person-picker-name">Москаленко</span></button><button class="person-picker-item" data-person-filter="AG" title="Александр Гулевич · Руководитель IT · 2 программ"><span class="person-cf-code">АГ</span><span class="person-picker-name">Гулевич</span></button><button class="person-picker-item" data-person-filter="NA" title="Надежда Астафьева · РОП сети · 4 программ"><span class="person-cf-code">НА</span><span class="person-picker-name">Астафьева</span></button><button class="person-picker-item" data-person-filter="DR" title="Даниэль Рон · Руководитель департамента продаж · 8 программ"><span class="person-cf-code">ДР</span><span class="person-picker-name">Рон</span></button><button class="person-picker-item" data-person-filter="HA" title="Харламов Артем · Руководитель · 4 программ"><span class="person-cf-code">ХА</span><span class="person-picker-name">Харламов</span></button><button class="person-picker-item" data-person-filter="KR" title="Константин Резуненко · Руководитель · 1 программ"><span class="person-cf-code">КР</span><span class="person-picker-name">Резуненко</span></button><button class="person-picker-item" data-person-filter="KE" title="Краюшкина Елизавета · Проектный офис / методолог · 17 программ"><span class="person-cf-code">КЕ</span><span class="person-picker-name">Краюшкина</span></button><button class="person-picker-item" data-person-filter="AK" title="Алексей Краскевич · Руководитель · 5 программ"><span class="person-cf-code">АК</span><span class="person-picker-name">Краскевич</span></button><button class="person-picker-item" data-person-filter="DB" title="Динара Бикбаева · Руководитель · 4 программ"><span class="person-cf-code">ДБ</span><span class="person-picker-name">Бикбаева</span></button><button class="person-picker-item" data-person-filter="BO" title="Белый Олег Александрович · Методолог · 1 программ"><span class="person-cf-code">БО</span><span class="person-picker-name">Белый</span></button><button class="person-picker-item" data-person-filter="YD" title="Яшин Денис · Руководитель · 1 программ"><span class="person-cf-code">ЯД</span><span class="person-picker-name">Яшин</span></button><button class="person-picker-item" data-person-filter="CK" title="Чащин Кирилл · Руководитель (лаборатория) · 2 программ"><span class="person-cf-code">ЧК</span><span class="person-picker-name">Чащин</span></button><button class="person-picker-item person-picker-item-unit" data-person-filter="unit_training" title="Функция обучения · Подразделение · 1 программ"><span class="person-cf-code person-cf-code-unit">ФО</span><span class="person-picker-name">Функция обучения</span></button><button class="person-picker-item person-picker-item-unit" data-person-filter="unit_po" title="Проектный офис · Подразделение · 1 программ"><span class="person-cf-code person-cf-code-unit">ПО</span><span class="person-picker-name">Проектный офис</span></button><button class="person-picker-item person-picker-item-none" data-person-filter="__none__" title="Программы без назначений · 0"><span class="person-cf-code person-cf-code-empty">—</span><span class="person-picker-name">не назначен</span></button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="filter-row">
@@ -4033,6 +4079,67 @@ body[data-mode="brief"] .project-deps-block { display: none; }
     target.classList.add('dep-highlight');
     setTimeout(() => target.classList.remove('dep-highlight'), 1500);
   });
+
+  // ---- Person picker popup ----
+  (function () {
+    const wrap    = document.getElementById('person-picker-wrap');
+    const trigger = document.getElementById('person-picker-btn');
+    const popup   = document.getElementById('person-picker-popup');
+    const avatar  = document.getElementById('person-picker-avatar');
+    const label   = document.getElementById('person-picker-label');
+    const clearBtn= document.getElementById('person-picker-clear');
+    if (!wrap) return;
+
+    function openPicker()  { popup.hidden = false; wrap.classList.add('open'); }
+    function closePicker() { popup.hidden = true;  wrap.classList.remove('open'); }
+
+    function updateTrigger() {
+      const v = state.person;
+      if (v) {
+        if (v === '__none__') {
+          avatar.textContent = '—'; avatar.className = 'person-cf-code person-cf-code-empty';
+          label.textContent  = 'не назначен';
+        } else {
+          const a = ASSIGNEES[v];
+          avatar.textContent = a ? a.initials : v;
+          avatar.className   = 'person-cf-code' + (UNITS && UNITS[v] ? ' person-cf-code-unit' : '');
+          label.textContent  = a ? a.last : v;
+        }
+        trigger.classList.add('filter-on');
+      } else {
+        avatar.textContent = '?'; avatar.className = 'person-cf-code person-cf-code-empty';
+        label.textContent  = 'Человек';
+        trigger.classList.remove('filter-on');
+      }
+    }
+
+    trigger.addEventListener('click', e => {
+      e.stopPropagation();
+      popup.hidden ? openPicker() : closePicker();
+    });
+
+    popup.addEventListener('click', e => {
+      const item = e.target.closest('[data-person-filter]');
+      if (!item) return;
+      // state.person is updated by the existing [data-person-filter] handler
+      setTimeout(() => { updateTrigger(); closePicker(); }, 0);
+    });
+
+    clearBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      state.person = null;
+      applyFilters();
+      updateTrigger();
+      closePicker();
+    });
+
+    document.addEventListener('click', e => {
+      if (!wrap.contains(e.target)) closePicker();
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closePicker();
+    });
+  })();
 })();
 </script>
 
