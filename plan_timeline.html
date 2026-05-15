@@ -4492,18 +4492,30 @@ body[data-mode="edit"] .po-task-id-line { display: block; }
   outline: none; word-break: break-word;
 }
 .po-task-item[data-st="done"] .po-task-text { text-decoration: line-through; color: #8F897E; }
-.po-task-meta { display: flex; gap: 8px; align-items: center; }
-.po-task-assignee, .po-task-due {
-  font-family: "Geist Mono", monospace; font-size: 10px; color: #8F897E;
-  outline: none; min-width: 14px; padding: 0 3px; border-radius: 2px;
-  white-space: nowrap; flex-shrink: 0;
+.po-task-meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+/* Assignee picker button */
+.po-task-asgn-btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: transparent; border: none; padding: 1px 3px; border-radius: 4px;
+  cursor: default; font-family: inherit; font-size: 11px; color: #8F897E;
 }
-.po-task-assignee:empty::before { content: attr(data-ph); color: #C8BFB0; }
-.po-task-due:empty::before      { content: attr(data-ph); color: #C8BFB0; }
-body[data-mode="edit"] .po-task-assignee[contenteditable="true"],
-body[data-mode="edit"] .po-task-due[contenteditable="true"] {
-  background: #F2EDE3; border: 1px solid #DDD5C5;
+body[data-mode="edit"] .po-task-asgn-btn { cursor: pointer; }
+body[data-mode="edit"] .po-task-asgn-btn:hover { background: #F0EDE6; }
+.po-task-asgn-av {
+  width: 16px; height: 16px; border-radius: 50%; background: #E8E2D8; color: #6B6560;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 7px; font-weight: 700; font-family: "Geist Mono", monospace; flex-shrink: 0;
 }
+.po-task-asgn-nm { font-size: 11px; color: #8F897E; }
+.po-task-asgn-nm.ph { color: #C8BFB0; }
+/* Due date picker button */
+.po-task-due-btn {
+  background: transparent; border: none; padding: 1px 3px; border-radius: 4px;
+  cursor: default; font-family: "Geist Mono", monospace; font-size: 10px; color: #8F897E;
+}
+body[data-mode="edit"] .po-task-due-btn { cursor: pointer; }
+body[data-mode="edit"] .po-task-due-btn:hover { background: #F0EDE6; }
+.po-task-due-btn.ph { color: #C8BFB0; }
 .po-task-del {
   background: transparent; border: none; color: transparent; cursor: pointer;
   font-size: 15px; padding: 0 2px; flex-shrink: 0; line-height: 1; transition: color 0.1s;
@@ -4940,10 +4952,216 @@ body[data-mode="edit"] .po-task-add { display: block; }
 
   function syncTaskEdit(body) {
     var on = document.body.getAttribute('data-mode') === 'edit';
-    body.querySelectorAll('.po-task-text, .po-task-id-line, .po-task-assignee, .po-task-due').forEach(function (el) {
-      if (el.classList.contains('po-task-id-line')) return; /* ID not contenteditable */
+    body.querySelectorAll('.po-task-text').forEach(function (el) {
       el.contentEditable = on ? 'true' : 'false';
     });
+  }
+
+  var MONTHS_SHORT = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+  var MONTHS_FULL  = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+
+  function makeAssigneeBtn(t, i, pid) {
+    var btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'po-task-asgn-btn';
+
+    var av = document.createElement('span'); av.className = 'po-task-asgn-av';
+    var nm = document.createElement('span'); nm.className = 'po-task-asgn-nm';
+    btn.appendChild(av); btn.appendChild(nm);
+
+    function refresh(code) {
+      var a = code && window.ASSIGNEES && window.ASSIGNEES[code];
+      if (a) {
+        av.textContent = a.initials;
+        av.style.background = window.UNITS && window.UNITS[code] ? '#D4EDE2' : '#E8E2D8';
+        av.style.color      = window.UNITS && window.UNITS[code] ? '#1B6B4A' : '#6B6560';
+        nm.textContent = a.last; nm.className = 'po-task-asgn-nm';
+      } else {
+        av.textContent = '+'; av.style.background = '#ECEAE7'; av.style.color = '#B0A898';
+        nm.textContent = 'Исполнитель'; nm.className = 'po-task-asgn-nm ph';
+      }
+    }
+    refresh(t.assignee || '');
+
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (document.body.getAttribute('data-mode') !== 'edit') return;
+      document.querySelectorAll('.po-task-asgn-drop').forEach(function (d) { d.remove(); });
+
+      var drop = document.createElement('div');
+      drop.className = 'po-task-asgn-drop';
+      var rect = btn.getBoundingClientRect();
+      drop.style.cssText = 'position:fixed;top:'+(rect.bottom+4)+'px;left:'+rect.left+'px;z-index:700;'+
+        'background:#FDFBF6;border:1px solid #DDD5C5;border-radius:8px;'+
+        'min-width:195px;max-height:260px;overflow-y:auto;'+
+        'box-shadow:0 6px 20px rgba(0,0,0,0.13);padding:4px 0;';
+
+      /* clear option */
+      var clr = document.createElement('button'); clr.type = 'button';
+      clr.style.cssText = 'display:flex;align-items:center;gap:7px;width:100%;background:transparent;border:none;'+
+        'border-bottom:1px solid #EDE8DF;padding:6px 10px 8px;font-family:inherit;font-size:12px;color:#8B2635;cursor:pointer;';
+      clr.innerHTML = '<span style="width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:#ECEAE7;color:#B0A898;font-size:9px;">—</span> Не назначен';
+      clr.onmouseenter = function () { clr.style.background = '#FEF0F0'; };
+      clr.onmouseleave = function () { clr.style.background = 'transparent'; };
+      clr.addEventListener('click', function (ev) {
+        ev.stopPropagation(); drop.remove();
+        var a = getTasks(pid); if (a[i]) { a[i].assignee = ''; setTasks(pid, a); }
+        t.assignee = ''; refresh('');
+      });
+      drop.appendChild(clr);
+
+      Object.keys(window.ASSIGNEES || {}).forEach(function (code) {
+        var a = window.ASSIGNEES[code];
+        var opt = document.createElement('button'); opt.type = 'button';
+        var isSel = code === (t.assignee || '');
+        var isUnit = window.UNITS && window.UNITS[code];
+        opt.style.cssText = 'display:flex;align-items:center;gap:7px;width:100%;border:none;'+
+          'padding:5px 10px;font-family:inherit;font-size:12px;color:#1F1D1A;cursor:pointer;text-align:left;'+
+          'background:'+(isSel ? '#E8E2D8' : 'transparent')+';'+(isSel ? 'font-weight:600;' : '');
+        opt.onmouseenter = function () { opt.style.background = '#F0EDE6'; };
+        opt.onmouseleave = function () { opt.style.background = isSel ? '#E8E2D8' : 'transparent'; };
+        var optAv = document.createElement('span');
+        optAv.style.cssText = 'width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;'+
+          'justify-content:center;font-size:7px;font-weight:700;flex-shrink:0;'+
+          'background:'+(isUnit ? '#D4EDE2' : '#E8E2D8')+';color:'+(isUnit ? '#1B6B4A' : '#6B6560')+';';
+        optAv.textContent = a.initials;
+        var optNm = document.createElement('span');
+        optNm.textContent = a.last;
+        opt.appendChild(optAv); opt.appendChild(optNm);
+        opt.addEventListener('click', function (ev) {
+          ev.stopPropagation(); drop.remove();
+          var arr = getTasks(pid); if (arr[i]) { arr[i].assignee = code; setTasks(pid, arr); }
+          t.assignee = code; refresh(code);
+        });
+        drop.appendChild(opt);
+      });
+
+      document.body.appendChild(drop);
+      function closeA(ev) {
+        if (!drop.contains(ev.target) && ev.target !== btn) { drop.remove(); document.removeEventListener('click', closeA, true); }
+      }
+      setTimeout(function () { document.addEventListener('click', closeA, true); }, 0);
+    });
+
+    return btn;
+  }
+
+  function makeDueBtn(t, i, pid) {
+    var btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'po-task-due-btn';
+
+    function fmtDate(val) {
+      if (!val) return null;
+      var m = val.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      return m ? parseInt(m[3], 10) + ' ' + MONTHS_SHORT[parseInt(m[2], 10) - 1] + ' ' + m[1] : val;
+    }
+    function refreshBtn(val) {
+      var label = fmtDate(val);
+      btn.textContent = label || 'Срок';
+      btn.classList.toggle('ph', !label);
+    }
+    refreshBtn(t.dueDate || '');
+
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (document.body.getAttribute('data-mode') !== 'edit') return;
+      document.querySelectorAll('.po-task-cal').forEach(function (d) { d.remove(); });
+
+      var now = new Date();
+      var sel = t.dueDate ? new Date(t.dueDate + 'T00:00:00') : null;
+      var vY = sel ? sel.getFullYear() : now.getFullYear();
+      var vM = sel ? sel.getMonth()    : now.getMonth();
+
+      var cal = document.createElement('div');
+      cal.className = 'po-task-cal';
+      var rect = btn.getBoundingClientRect();
+      cal.style.cssText = 'position:fixed;top:'+(rect.bottom+4)+'px;left:'+rect.left+'px;z-index:700;'+
+        'background:#FDFBF6;border:1px solid #DDD5C5;border-radius:10px;'+
+        'box-shadow:0 8px 24px rgba(0,0,0,0.14);padding:12px;min-width:224px;user-select:none;';
+
+      function drawCal() {
+        cal.innerHTML = '';
+        /* header */
+        var head = document.createElement('div');
+        head.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;';
+        function navBtn(ch) {
+          var b = document.createElement('button'); b.type = 'button'; b.textContent = ch;
+          b.style.cssText = 'background:transparent;border:none;cursor:pointer;font-size:17px;padding:1px 7px;color:#6B6560;border-radius:4px;line-height:1;';
+          b.onmouseenter = function () { b.style.background = '#F0EDE6'; };
+          b.onmouseleave = function () { b.style.background = 'transparent'; };
+          return b;
+        }
+        var prev = navBtn('‹'); var next = navBtn('›');
+        prev.addEventListener('click', function (ev) { ev.stopPropagation(); vM--; if (vM<0){vM=11;vY--;} drawCal(); });
+        next.addEventListener('click', function (ev) { ev.stopPropagation(); vM++; if (vM>11){vM=0;vY++;} drawCal(); });
+        var lbl = document.createElement('span');
+        lbl.style.cssText = 'font-size:12px;font-weight:600;color:#1F1D1A;';
+        lbl.textContent = MONTHS_FULL[vM] + ' ' + vY;
+        head.appendChild(prev); head.appendChild(lbl); head.appendChild(next);
+        cal.appendChild(head);
+
+        /* day-of-week row */
+        var grid = document.createElement('div');
+        grid.style.cssText = 'display:grid;grid-template-columns:repeat(7,1fr);gap:1px;';
+        ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].forEach(function (d) {
+          var h = document.createElement('div');
+          h.style.cssText = 'font-size:9px;font-weight:600;color:#8F897E;text-align:center;padding-bottom:4px;';
+          h.textContent = d; grid.appendChild(h);
+        });
+
+        /* blank cells */
+        var firstDay = new Date(vY, vM, 1).getDay();
+        var offset = firstDay === 0 ? 6 : firstDay - 1;
+        for (var p = 0; p < offset; p++) grid.appendChild(document.createElement('div'));
+
+        var daysInMonth = new Date(vY, vM + 1, 0).getDate();
+        for (var d2 = 1; d2 <= daysInMonth; d2++) {
+          (function (day) {
+            var isoStr = vY + '-' + String(vM+1).padStart(2,'0') + '-' + String(day).padStart(2,'0');
+            var isToday = day === now.getDate() && vM === now.getMonth() && vY === now.getFullYear();
+            var isSel   = isoStr === (t.dueDate || '');
+            var cell = document.createElement('button'); cell.type = 'button'; cell.textContent = day;
+            cell.style.cssText = 'border:none;border-radius:50%;width:28px;height:28px;font-family:inherit;'+
+              'font-size:11px;text-align:center;cursor:pointer;display:flex;align-items:center;justify-content:center;'+
+              'background:'+(isSel?'#1F1D1A':'transparent')+';'+
+              'color:'+(isSel?'#FDFBF6':isToday?'#8B2635':'#1F1D1A')+';'+
+              'font-weight:'+(isToday||isSel?'700':'400')+';';
+            if (!isSel) {
+              cell.onmouseenter = function(){cell.style.background='#F0EDE6';};
+              cell.onmouseleave = function(){cell.style.background='transparent';};
+            }
+            cell.addEventListener('click', function (ev) {
+              ev.stopPropagation(); cal.remove(); document.removeEventListener('click', closeC, true);
+              var arr = getTasks(pid); if (arr[i]) { arr[i].dueDate = isoStr; setTasks(pid, arr); }
+              t.dueDate = isoStr; refreshBtn(isoStr);
+            });
+            grid.appendChild(cell);
+          })(d2);
+        }
+        cal.appendChild(grid);
+
+        /* clear */
+        var clr = document.createElement('button'); clr.type = 'button'; clr.textContent = 'Очистить дату';
+        clr.style.cssText = 'display:block;width:100%;margin-top:8px;background:transparent;border:none;'+
+          'border-top:1px solid #EDE8DF;padding:6px 0 0;font-family:inherit;font-size:11px;color:#8B2635;cursor:pointer;text-align:center;';
+        clr.onmouseenter = function(){clr.style.opacity='0.7';};
+        clr.onmouseleave = function(){clr.style.opacity='1';};
+        clr.addEventListener('click', function (ev) {
+          ev.stopPropagation(); cal.remove(); document.removeEventListener('click', closeC, true);
+          var arr = getTasks(pid); if (arr[i]) { arr[i].dueDate = ''; setTasks(pid, arr); }
+          t.dueDate = ''; refreshBtn('');
+        });
+        cal.appendChild(clr);
+      }
+
+      drawCal();
+      document.body.appendChild(cal);
+      function closeC(ev) {
+        if (!cal.contains(ev.target) && ev.target !== btn) { cal.remove(); document.removeEventListener('click', closeC, true); }
+      }
+      setTimeout(function () { document.addEventListener('click', closeC, true); }, 0);
+    });
+
+    return btn;
   }
 
   function renderTasks(pid, body, proj) {
@@ -5034,23 +5252,8 @@ body[data-mode="edit"] .po-task-add { display: block; }
       var meta = document.createElement('div');
       meta.className = 'po-task-meta';
 
-      var asgn = document.createElement('span');
-      asgn.className = 'po-task-assignee'; asgn.contentEditable = 'false'; asgn.spellcheck = false;
-      asgn.dataset.ph = 'Исполнитель';
-      asgn.textContent = t.assignee || '';
-      asgn.addEventListener('blur', function () {
-        var a = getTasks(pid); if (a[i]) { a[i].assignee = asgn.textContent.trim(); setTasks(pid, a); }
-      });
-
-      var due = document.createElement('span');
-      due.className = 'po-task-due'; due.contentEditable = 'false'; due.spellcheck = false;
-      due.dataset.ph = 'Срок';
-      due.textContent = t.dueDate || '';
-      due.addEventListener('blur', function () {
-        var a = getTasks(pid); if (a[i]) { a[i].dueDate = due.textContent.trim(); setTasks(pid, a); }
-      });
-
-      meta.appendChild(asgn); meta.appendChild(due);
+      meta.appendChild(makeAssigneeBtn(t, i, pid));
+      meta.appendChild(makeDueBtn(t, i, pid));
       bd.appendChild(idLine); bd.appendChild(txt); bd.appendChild(meta);
 
       var del = document.createElement('button');
