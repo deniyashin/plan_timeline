@@ -2708,6 +2708,10 @@ body[data-mode="brief"] .project-deps-block { display: none; }
   const ROLES = {"anchor": {"short": "Я", "label": "Якорь-учредитель", "hint": "инициирует изменение и удерживает его"}, "owner": {"short": "В", "label": "Владелец внедрения", "hint": "контролирует использование на земле"}, "methodologist": {"short": "М", "label": "Методолог", "hint": "отвечает за корректность бизнес-процесса"}};
   const DEFAULT_ASSIGNMENTS = {"U-CHG-P-0.1": {"anchor": ["AA"], "owner": ["HA"], "methodologist": ["BO"]}, "U-HRM-P-0.2": {"anchor": ["AA"], "owner": ["KR"], "methodologist": ["unit_training", "KE"]}, "U-CLN-P-1.1": {"anchor": ["OA"], "owner": ["EM"], "methodologist": ["OS"]}, "U-UKM-P-1.2": {"anchor": ["OA"], "owner": ["EM"], "methodologist": ["KE"]}, "U-FIN-P-1.3": {"anchor": ["OS"], "owner": ["OA"], "methodologist": ["KE"]}, "U-SKL-P-1.4": {"anchor": ["AA", "VV"], "owner": ["KR"], "methodologist": ["AK"]}, "U-LAB-P-1.5": {"anchor": ["OA"], "owner": ["EM"], "methodologist": ["OS"]}, "U-LEG-P-1.6": {"anchor": ["OA"], "owner": ["EM"], "methodologist": ["TP"]}, "U-DAT-P-2.1": {"anchor": ["OS"], "owner": ["AG"], "methodologist": ["KE"]}, "U-DAT-P-2.2": {"anchor": ["OS"], "owner": ["AA"], "methodologist": ["KE"]}, "U-DAT-P-2.3": {"anchor": ["AA"], "owner": ["VV"], "methodologist": ["OA"]}, "U-ALL-P-2.4": {"anchor": ["AA"], "owner": ["KE"], "methodologist": ["OS"]}, "U-CHG-P-2.5": {"anchor": ["OS"], "owner": ["OA"], "methodologist": ["KE"]}, "U-PAT-P-3.1": {"anchor": ["AA"], "owner": ["DR"], "methodologist": ["KE", "OS"]}, "U-SLS-P-3.2": {"anchor": ["AA"], "owner": ["NA", "AK"], "methodologist": ["DR"]}, "U-PAT-P-3.3": {"anchor": ["OS"], "owner": ["DB"], "methodologist": ["AK"]}, "U-CCT-P-3.4": {"anchor": ["DR"], "owner": ["DB"], "methodologist": ["KE", "YD"]}, "T-CCT-P-3.4.10": {"anchor": ["DR"], "owner": ["DB"], "methodologist": ["KE"]}, "U-PAT-P-3.5": {"anchor": ["OS"], "owner": ["DB", "DR"], "methodologist": ["AK"]}, "U-MKT-P-3.6": {"anchor": ["DR"], "owner": ["NA"], "methodologist": ["unit_po"]}, "U-HRM-P-4.1": {"anchor": ["VV"], "owner": ["OA"], "methodologist": ["KE", "OS", "AA"]}, "U-HRM-P-4.2": {"anchor": ["OS"], "owner": ["OA"], "methodologist": ["KE"]}, "U-HRM-P-4.3": {"anchor": ["AA"], "owner": ["GB"], "methodologist": ["VV"]}, "U-HRM-P-4.4": {"anchor": ["VV", "AA"], "owner": ["KM", "GB"], "methodologist": ["KE", "OA"]}, "U-CHG-P-4.5": {"anchor": ["OS"], "owner": ["AK"], "methodologist": ["KE"]}, "U-HRM-P-4.6": {"anchor": ["AA", "VV"], "owner": ["GB"], "methodologist": ["OA", "OS"]}, "U-HRM-P-4.7": {"anchor": ["OA"], "owner": ["KM", "GB"], "methodologist": ["AA"]}, "T-HRM-P-4.8": {"anchor": ["OA"], "owner": ["GB"], "methodologist": ["KE"]}, "U-MKT-P-5.1": {"anchor": ["OS"], "owner": ["NA"], "methodologist": ["DR"]}, "U-INF-P-5.2": {"anchor": ["OA", "AA"], "owner": ["VV"], "methodologist": ["OS"]}, "U-LAB-P-5.3": {"anchor": ["OA"], "owner": ["HA", "VV"], "methodologist": ["CK"]}, "U-INF-P-5.4": {"anchor": ["OA", "AA"], "owner": ["VV"], "methodologist": ["OS"]}, "U-CTR-P-5.5": {"anchor": ["OA"], "owner": ["EM"], "methodologist": ["OS"]}, "U-EMP-P-5.6": {"anchor": ["OA"], "owner": ["GB", "AG"], "methodologist": ["KE", "AK"]}, "U-CHT-P-5.7": {"anchor": ["OA"], "owner": ["GB"], "methodologist": ["KE"]}, "U-SPC-P-5.8": {"anchor": ["AA"], "owner": ["HA"], "methodologist": ["CK"]}, "T-MKT-P-5.9": {"anchor": ["OS", "AA"], "owner": ["NA", "HA"], "methodologist": ["DR"]}, "T-MED-P-5.10": {"anchor": ["AA"], "owner": ["CK"], "methodologist": ["KE"]}};
   const ASSIGNEES = Object.assign({}, PEOPLE, UNITS);
+  window.ASSIGNEES = ASSIGNEES;
+  window.UNITS = UNITS;
+  window.PEOPLE = PEOPLE;
+  window.ROLES = ROLES;
   const ROLE_KEYS = ['anchor', 'owner', 'methodologist'];
   const STORAGE_KEY = 'plan-timeline-assignments-v2';
 
@@ -4435,6 +4439,47 @@ body[data-mode="edit"] .po-status-chip:hover { opacity: 0.75; }
 .po-task-st-opt:hover { background: #F0EDE6; }
 .po-task-st-opt.current { font-weight: 600; background: #E8E2D8; }
 body:not([data-mode="edit"]) .po-task-cb { pointer-events: none; cursor: default; }
+/* Add-project button (edit mode only) */
+.po-add-proj-btn {
+  display: none; width: 100%; margin-top: 6px;
+  background: transparent; border: 1px dashed #C5BBAD; border-radius: 6px;
+  padding: 6px 14px; font-family: inherit; font-size: 12px; color: #8F897E;
+  cursor: pointer; text-align: left; transition: background 0.1s, border-color 0.1s, color 0.1s;
+}
+.po-add-proj-btn:hover { background: #F5F1EA; border-color: #8F897E; color: #1F1D1A; }
+body[data-mode="edit"] .po-add-proj-btn { display: block; }
+/* New project modal */
+.po-newproj-modal {
+  display: none; position: fixed; inset: 0; z-index: 900;
+  background: rgba(31,29,26,0.48); align-items: center; justify-content: center;
+}
+.po-newproj-modal.open { display: flex; }
+.po-newproj-box {
+  background: #FDFBF6; border-radius: 12px; padding: 24px 28px;
+  min-width: 360px; max-width: 460px; width: 90%;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.22);
+}
+.po-newproj-title { font-size: 15px; font-weight: 700; margin-bottom: 18px; }
+.po-newproj-field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+.po-newproj-field label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.07em; color: #8F897E; text-transform: uppercase;
+}
+.po-newproj-field input {
+  border: 1px solid #DDD5C5; border-radius: 6px; padding: 8px 10px;
+  font-family: inherit; font-size: 13px; background: #FDFBF6; color: #1F1D1A; outline: none;
+}
+.po-newproj-field input:focus { border-color: #8F897E; }
+.po-newproj-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
+.po-newproj-cancel {
+  background: transparent; border: 1px solid #DDD5C5; border-radius: 6px;
+  padding: 7px 16px; font-family: inherit; font-size: 13px; color: #6B6560; cursor: pointer;
+}
+.po-newproj-cancel:hover { border-color: #8F897E; }
+.po-newproj-confirm {
+  background: #1F1D1A; border: none; border-radius: 6px;
+  padding: 7px 18px; font-family: inherit; font-size: 13px; color: #FDFBF6; cursor: pointer;
+}
+.po-newproj-confirm:hover { background: #3A3630; }
 .po-task-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
 .po-task-id-line {
   font-family: "Geist Mono", monospace; font-size: 9.5px;
@@ -5192,13 +5237,211 @@ body[data-mode="edit"] .po-task-add { display: block; }
   }
 
   /* ================================================================
+     NEW PROJECT CREATION
+  ================================================================ */
+  var LS_NEWPROJ = 'po-new-projects';
+  function getNewProjects() { return lsGet(LS_NEWPROJ); }
+  function saveNewProjects(obj) { try { localStorage.setItem(LS_NEWPROJ, JSON.stringify(obj)); flash(); } catch (e) {} }
+
+  function buildProjectLi(d) {
+    var li = document.createElement('li');
+    li.className = 'project po-created-proj';
+    li.setAttribute('data-source', d.source || 'U');
+    li.setAttribute('data-contour', d.contour || '');
+    li.setAttribute('data-change', '');
+    var color = d.accentColor || '#8B2635';
+    li.innerHTML =
+      '<button class="project-head" type="button" aria-expanded="false">' +
+        '<span class="project-accent" style="background:' + color + '"></span>' +
+        '<span class="project-index">' + (d.idx || '?') + '</span>' +
+        '<span class="project-kind">Проект</span>' +
+        (d.contour ? '<span class="contour-chip">' + d.contour + '</span>' : '') +
+        '<span class="project-name">' + d.name + '</span>' +
+        '<span class="project-id-mono">' + d.id + '</span>' +
+        '<span class="task-badge task-badge-empty">—</span>' +
+        '<span class="chev" aria-hidden="true"></span>' +
+      '</button>' +
+      '<div class="project-body" hidden>' +
+        '<div class="field"><span class="field-label">Измеримый результат</span>' +
+          '<p class="field-value" data-ek="np-result-' + d.id + '"></p></div>' +
+        '<div class="field"><span class="field-label">Описание</span>' +
+          '<p class="field-value" data-ek="np-desc-' + d.id + '"></p></div>' +
+      '</div>';
+    return li;
+  }
+
+  function restoreNewProjects() {
+    var np = getNewProjects();
+    Object.keys(np).forEach(function (progId) {
+      var prog = document.querySelector('.program[data-program-id="' + progId + '"]');
+      if (!prog) return;
+      var projList = prog.querySelector('.project-list');
+      if (!projList) return;
+      var accentEl = prog.querySelector('.program-accent');
+      var accentColor = accentEl ? accentEl.style.background : '#8B2635';
+      var baseIdx = projList.querySelectorAll('.project').length;
+      (np[progId] || []).forEach(function (d, i) {
+        d.idx = baseIdx + i + 1;
+        d.accentColor = accentColor;
+        projList.appendChild(buildProjectLi(d));
+      });
+    });
+  }
+
+  var _npModal = null, _npTargetProg = null;
+
+  function _ensureNpModal() {
+    if (_npModal) return;
+    _npModal = document.createElement('div');
+    _npModal.className = 'po-newproj-modal';
+    _npModal.innerHTML =
+      '<div class="po-newproj-box">' +
+        '<div class="po-newproj-title">Новый проект</div>' +
+        '<div class="po-newproj-field"><label>Название проекта</label>' +
+          '<input type="text" id="np-name" placeholder="Название проекта" autocomplete="off"></div>' +
+        '<div class="po-newproj-field"><label>ID проекта</label>' +
+          '<input type="text" id="np-id" placeholder="U-XXX-PR-0.0.1" autocomplete="off" style="font-family:monospace;font-size:12px"></div>' +
+        '<div class="po-newproj-field"><label>Контур (код)</label>' +
+          '<input type="text" id="np-contour" placeholder="CLN, FIN, HRM …" autocomplete="off" maxlength="12"></div>' +
+        '<div class="po-newproj-actions">' +
+          '<button class="po-newproj-cancel" type="button">Отмена</button>' +
+          '<button class="po-newproj-confirm" type="button">Создать</button>' +
+        '</div></div>';
+    document.body.appendChild(_npModal);
+    _npModal.querySelector('.po-newproj-cancel').addEventListener('click', _closeNpModal);
+    _npModal.querySelector('.po-newproj-confirm').addEventListener('click', _confirmNp);
+    _npModal.addEventListener('click', function (e) { if (e.target === _npModal) _closeNpModal(); });
+    _npModal.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') { e.stopPropagation(); _closeNpModal(); }
+      if (e.key === 'Enter' && e.target.tagName === 'INPUT') { e.preventDefault(); _confirmNp(); }
+    });
+    _npModal.querySelector('#np-contour').addEventListener('input', function () {
+      this.value = this.value.toUpperCase();
+    });
+  }
+
+  function _openNpModal(prog) {
+    _npTargetProg = prog;
+    _ensureNpModal();
+    var progId = prog.getAttribute('data-program-id') || '';
+    var base = progId.replace(/-P-/, '-PR-');
+    var projList = prog.querySelector('.project-list');
+    var existingCount = projList ? projList.querySelectorAll('.project').length : 0;
+    _npModal.querySelector('#np-name').value = '';
+    _npModal.querySelector('#np-id').value = base + '.' + (existingCount + 1);
+    _npModal.querySelector('#np-contour').value = '';
+    _npModal.classList.add('open');
+    setTimeout(function () { _npModal.querySelector('#np-name').focus(); }, 50);
+  }
+
+  function _closeNpModal() {
+    if (_npModal) _npModal.classList.remove('open');
+    _npTargetProg = null;
+  }
+
+  function _confirmNp() {
+    var nameEl = _npModal.querySelector('#np-name');
+    var idEl   = _npModal.querySelector('#np-id');
+    var ctEl   = _npModal.querySelector('#np-contour');
+    var name    = (nameEl.value || '').trim();
+    var id      = (idEl.value  || '').trim();
+    var contour = (ctEl.value  || '').trim().toUpperCase();
+    if (!name) { nameEl.focus(); return; }
+    if (!id)   { idEl.focus();   return; }
+
+    var prog = _npTargetProg;
+    _closeNpModal();
+
+    var progId = prog.getAttribute('data-program-id') || '';
+    var source = (progId || 'U').charAt(0);
+    var accentEl = prog.querySelector('.program-accent');
+    var accentColor = accentEl ? accentEl.style.background : '#8B2635';
+    var projList = prog.querySelector('.project-list');
+    var idx = projList ? projList.querySelectorAll('.project').length + 1 : 1;
+
+    var d = { id: id, name: name, contour: contour, source: source, accentColor: accentColor, idx: idx };
+    var li = buildProjectLi(d);
+    if (projList) projList.appendChild(li);
+
+    /* persist */
+    var np = getNewProjects();
+    if (!np[progId]) np[progId] = [];
+    np[progId].push({ id: id, name: name, contour: contour, source: source });
+    saveNewProjects(np);
+
+    /* inject status chips */
+    var pbody = li.querySelector('.project-body');
+    if (pbody && !pbody.querySelector('.po-proj-status-row')) {
+      var savedPs = lsGet(LS_PSTAT);
+      var row = document.createElement('div');
+      row.className = 'po-proj-status-row';
+      PROJ_STATUS_DEF.forEach(function (def) {
+        var cell = document.createElement('span'); cell.className = 'po-proj-status-cell';
+        var lbl  = document.createElement('span'); lbl.className  = 'po-proj-status-label'; lbl.textContent = def.label;
+        var chip = document.createElement('span'); chip.className = 'po-status-chip'; chip.dataset.field = def.field;
+        var sv = savedPs[id] && savedPs[id][def.field];
+        var opt = def.options.find(function (o) { return o.value === sv; }) || def.options[0];
+        applyChipStyle(chip, opt);
+        cell.appendChild(lbl); cell.appendChild(chip);
+        row.appendChild(cell);
+      });
+      pbody.insertBefore(row, pbody.firstChild);
+    }
+
+    /* register text fields */
+    var savedTexts = lsGet(LS_TEXTS);
+    if (pbody) pbody.querySelectorAll('[data-ek]').forEach(function (el) {
+      var k = el.dataset.ek;
+      if (k && savedTexts[k] !== undefined) el.innerHTML = sanitize(savedTexts[k]);
+      el.classList.add('po-editable');
+      el.contentEditable = 'true';
+      el.addEventListener('paste', function (e) {
+        e.preventDefault();
+        var text = (e.clipboardData || window.clipboardData).getData('text/plain');
+        document.execCommand('insertText', false, text);
+      });
+      el.addEventListener('blur', function () { saveTextField(el); });
+      textEls.push(el);
+    });
+
+    /* progress bar */
+    var badge = li.querySelector('.task-badge');
+    if (badge && !li.querySelector('.po-proj-prog')) {
+      var pg = document.createElement('span');
+      pg.className = 'po-proj-prog';
+      pg.innerHTML = '<span class="po-proj-prog-bar"><span class="po-proj-prog-fill" style="width:0%"></span></span><span class="po-proj-prog-lbl"></span>';
+      badge.parentNode.insertBefore(pg, badge.nextSibling);
+    }
+
+    /* tasks */
+    if (pbody) renderTasks(id, pbody, li);
+    syncTaskEdit(pbody);
+    updateProgProgress(prog);
+  }
+
+  function initAddProjectBtns() {
+    document.querySelectorAll('.program[data-program-id]').forEach(function (prog) {
+      var projList = prog.querySelector('.project-list');
+      if (!projList) return;
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'po-add-proj-btn';
+      btn.textContent = '+ Добавить проект';
+      btn.addEventListener('click', function (e) { e.stopPropagation(); _openNpModal(prog); });
+      projList.after(btn);
+    });
+  }
+
+  /* ================================================================
      INIT
   ================================================================ */
+  restoreNewProjects();
   migrateHardcodedTasks();   /* must run before initTasks */
   migrateTasksV2();
   initTextEditing();
   injectProjStatuses();
   initTasks();
+  initAddProjectBtns();
   hideOldTasksWrap();
   setTextEditable(document.body.getAttribute('data-mode') === 'edit');
   loadRemote();
