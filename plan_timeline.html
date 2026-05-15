@@ -2600,7 +2600,7 @@ body[data-mode="brief"] .project-deps-block { display: none; }
 
 <header class="hero">
   <div class="po-pub-stamp" id="po-pub-stamp" hidden>
-    <span class="po-pub-stamp-label">Последняя публикация</span>
+    <span class="po-pub-stamp-label">Редакция документа</span>
     <span class="po-pub-stamp-time" id="po-pub-stamp-time"></span>
   </div>
   <div class="hero-kicker">Документ для согласования · Совещание учредителей</div>
@@ -4634,6 +4634,9 @@ body[data-mode="edit"] .po-task-add { display: block; }
       savedEl.classList.remove('flash');
       savedEl.textContent = 'Все изменения сохранены';
     }, 2000);
+    var _now = new Date().toISOString();
+    try { localStorage.setItem('po-doc-edited', _now); } catch (e) {}
+    updatePubStamp(_now);
   }
 
   /* modals */
@@ -5473,7 +5476,7 @@ body[data-mode="edit"] .po-task-add { display: block; }
         btn.textContent = '↑ Опубликовано ✓';
         setTimeout(function () { btn.disabled = false; btn.textContent = '↑ Опубликовать'; }, 5000);
         var nowIso = new Date().toISOString();
-        localStorage.setItem('po-published-at', nowIso);
+        try { localStorage.setItem('po-doc-edited', nowIso); } catch (e) {}
         updatePubStamp(nowIso);
       })
       .catch(function (err) {
@@ -6042,7 +6045,7 @@ body[data-mode="edit"] .po-task-add { display: block; }
   initAddProjectBtns();
   hideOldTasksWrap();
   setTextEditable(document.body.getAttribute('data-mode') === 'edit');
-  (function () { var _pa = localStorage.getItem('po-published-at'); if (_pa) updatePubStamp(_pa); }());
+  (function () { var _pa = localStorage.getItem('po-doc-edited') || localStorage.getItem('po-published-at'); if (_pa) updatePubStamp(_pa); }());
   loadRemote();
 
 })();
