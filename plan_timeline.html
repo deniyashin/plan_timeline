@@ -390,6 +390,27 @@
     margin: 0 auto;
     padding: 64px 40px 48px;
     border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+  .po-pub-stamp {
+    position: absolute;
+    top: 24px; right: 40px;
+    font-family: "Geist Mono", monospace;
+    text-align: right;
+    line-height: 1.5;
+    pointer-events: none;
+  }
+  .po-pub-stamp-label {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .po-pub-stamp-time {
+    display: block;
+    font-size: 11px;
+    color: var(--ink-muted);
   }
   .hero-kicker {
     font-family: "Geist Mono", monospace;
@@ -2578,6 +2599,10 @@ body[data-mode="brief"] .project-deps-block { display: none; }
 </div>
 
 <header class="hero">
+  <div class="po-pub-stamp" id="po-pub-stamp" hidden>
+    <span class="po-pub-stamp-label">Последняя публикация</span>
+    <span class="po-pub-stamp-time" id="po-pub-stamp-time"></span>
+  </div>
   <div class="hero-kicker">Документ для согласования · Совещание учредителей</div>
   <h1>Единый план изменений компании на <em>12 месяцев</em></h1>
   <p class="hero-lede">
@@ -5416,6 +5441,19 @@ body[data-mode="edit"] .po-task-add { display: block; }
     };
   }
 
+  function updatePubStamp(iso) {
+    var wrap = document.getElementById('po-pub-stamp');
+    var timeEl = document.getElementById('po-pub-stamp-time');
+    if (!wrap || !timeEl || !iso) return;
+    var d = new Date(iso);
+    if (isNaN(d)) return;
+    var months = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+    var date = d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+    var time = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+    timeEl.textContent = date + ' · ' + time;
+    wrap.removeAttribute('hidden');
+  }
+
   function doPublish() {
     var pwd = pubInp.value;
     if (!pwd) { pubErr.textContent = 'Введите пароль'; return; }
@@ -5434,6 +5472,9 @@ body[data-mode="edit"] .po-task-add { display: block; }
         if (resp && resp.error) throw new Error(resp.error);
         btn.textContent = '↑ Опубликовано ✓';
         setTimeout(function () { btn.disabled = false; btn.textContent = '↑ Опубликовать'; }, 5000);
+        var nowIso = new Date().toISOString();
+        localStorage.setItem('po-published-at', nowIso);
+        updatePubStamp(nowIso);
       })
       .catch(function (err) {
         btn.disabled = false; btn.textContent = '↑ Опубликовать';
@@ -6001,6 +6042,7 @@ body[data-mode="edit"] .po-task-add { display: block; }
   initAddProjectBtns();
   hideOldTasksWrap();
   setTextEditable(document.body.getAttribute('data-mode') === 'edit');
+  (function () { var _pa = localStorage.getItem('po-published-at'); if (_pa) updatePubStamp(_pa); }());
   loadRemote();
 
 })();
