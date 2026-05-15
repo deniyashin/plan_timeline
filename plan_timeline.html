@@ -2361,7 +2361,10 @@ body[data-mode="working"] .field-brief.is-empty {
   border: 1px solid var(--line-soft);
   font-family: "Geist Mono", monospace;
   font-size: 11px;
+  cursor: pointer;
+  transition: opacity 0.12s;
 }
+.project-dep-item:hover { opacity: 0.72; }
 .project-dep-item-confirmed { border-color: #B8C6BB; background: #DEE7DF; color: #2F5233; }
 .project-dep-item-likely    { border-color: #ECD8A8; background: #F5E8D0; color: #8E5C0E; }
 .project-dep-item-hypothesis{ border-color: #E8C2C8; background: #F3E4E6; color: #8B2635; }
@@ -4065,24 +4068,64 @@ body[data-mode="brief"] .project-deps-block { display: none; }
     if (block) block.classList.add('deps-expanded');
   });
 
-  // ---- Clickable dep-id: scroll to referenced program ----
-  document.addEventListener('click', e => {
-    const chip = e.target.closest('.dep-id');
-    if (!chip) return;
-    const pid = chip.textContent.trim();
-    const target = document.querySelector(`.program[data-program-id="${pid}"]`);
+  // ---- Clickable dep-id / project-dep-item: scroll to referenced program or project ----
+  function expandAndScroll(target, isProject) {
     if (!target) return;
-    e.stopPropagation();
-    // Expand the program if collapsed
-    const btn = target.querySelector('.program-head');
-    const body = target.querySelector('.program-body');
-    if (btn && body && btn.getAttribute('aria-expanded') !== 'true') {
-      btn.setAttribute('aria-expanded', 'true');
-      body.removeAttribute('hidden');
+    if (isProject) {
+      // expand parent program first
+      const prog = target.closest('.program');
+      if (prog) {
+        const ph = prog.querySelector('.program-head');
+        const pb = prog.querySelector('.program-body');
+        if (ph && pb && ph.getAttribute('aria-expanded') !== 'true') {
+          ph.setAttribute('aria-expanded', 'true'); pb.removeAttribute('hidden');
+          prog.classList.add('is-open');
+        }
+      }
+      // expand project itself
+      const ph2 = target.querySelector('.project-head');
+      const pb2 = target.querySelector('.project-body');
+      if (ph2 && pb2 && ph2.getAttribute('aria-expanded') !== 'true') {
+        ph2.setAttribute('aria-expanded', 'true'); pb2.removeAttribute('hidden');
+        target.classList.add('is-open');
+      }
+    } else {
+      const btn = target.querySelector('.program-head');
+      const body = target.querySelector('.program-body');
+      if (btn && body && btn.getAttribute('aria-expanded') !== 'true') {
+        btn.setAttribute('aria-expanded', 'true'); body.removeAttribute('hidden');
+        target.classList.add('is-open');
+      }
     }
     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     target.classList.add('dep-highlight');
     setTimeout(() => target.classList.remove('dep-highlight'), 1500);
+  }
+
+  document.addEventListener('click', e => {
+    // Program-level dep chip (.dep-id span)
+    const chip = e.target.closest('.dep-id');
+    if (chip) {
+      const pid = chip.textContent.trim();
+      const target = document.querySelector(`.program[data-program-id="${pid}"]`);
+      if (!target) return;
+      e.stopPropagation();
+      expandAndScroll(target, false);
+      return;
+    }
+    // Project-level dep item (.project-dep-item li)
+    const projDep = e.target.closest('.project-dep-item');
+    if (projDep) {
+      const pid = projDep.textContent.trim();
+      // Find project by project-id-mono span text
+      let target = null;
+      document.querySelectorAll('.project-id-mono').forEach(span => {
+        if (span.textContent.trim() === pid) target = span.closest('.project');
+      });
+      if (!target) return;
+      e.stopPropagation();
+      expandAndScroll(target, true);
+    }
   });
 
   // ---- Person picker popup ----
