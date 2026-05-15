@@ -4448,6 +4448,38 @@ body:not([data-mode="edit"]) .po-task-cb { pointer-events: none; cursor: default
 }
 .po-add-proj-btn:hover { background: #F5F1EA; border-color: #8F897E; color: #1F1D1A; }
 body[data-mode="edit"] .po-add-proj-btn { display: block; }
+/* Add-program button (edit mode only, below each month's program list) */
+.po-add-prog-btn {
+  display: none; width: 100%; margin-top: 10px;
+  background: transparent; border: 1px dashed #B8A898; border-radius: 8px;
+  padding: 8px 16px; font-family: inherit; font-size: 12.5px; color: #8F897E;
+  cursor: pointer; text-align: left; transition: background 0.1s, border-color 0.1s, color 0.1s;
+}
+.po-add-prog-btn:hover { background: #F5F1EA; border-color: #6B6560; color: #1F1D1A; }
+body[data-mode="edit"] .po-add-prog-btn { display: block; }
+/* Move-month button inside program head */
+.po-prog-move-btn {
+  display: none; background: transparent; border: 1px solid #DDD5C5; border-radius: 4px;
+  padding: 2px 8px; font-family: inherit; font-size: 10px; color: #8F897E; line-height: 1.4;
+  cursor: pointer; flex-shrink: 0; white-space: nowrap;
+  transition: background 0.1s, border-color 0.1s, color 0.1s;
+}
+.po-prog-move-btn:hover { background: #F0EDE6; border-color: #8F897E; color: #1F1D1A; }
+body[data-mode="edit"] .po-prog-move-btn { display: inline-flex; align-items: center; }
+/* Month pick dropdown */
+.po-month-pick-drop {
+  position: fixed; z-index: 700;
+  background: #FDFBF6; border: 1px solid #DDD5C5; border-radius: 8px;
+  min-width: 210px; max-height: 320px; overflow-y: auto;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.14); padding: 4px 0;
+}
+.po-month-pick-opt {
+  display: block; width: 100%; background: transparent; border: none;
+  padding: 7px 14px; font-family: inherit; font-size: 13px; color: #1F1D1A;
+  cursor: pointer; text-align: left;
+}
+.po-month-pick-opt:hover { background: #F0EDE6; }
+.po-month-pick-opt.current { background: #E8E2D8; font-weight: 600; cursor: default; }
 /* New project modal */
 .po-newproj-modal {
   display: none; position: fixed; inset: 0; z-index: 900;
@@ -5476,6 +5508,288 @@ body[data-mode="edit"] .po-task-add { display: block; }
   }
 
   /* ================================================================
+     NEW PROGRAM CREATION + MONTH MOVE
+  ================================================================ */
+  var LS_NEWPROG    = 'po-new-programs';
+  var LS_PROG_MONTHS = 'po-prog-months';
+  function getNewProgs()   { return lsGet(LS_NEWPROG); }
+  function saveNewProgs(o) { try { localStorage.setItem(LS_NEWPROG,    JSON.stringify(o)); flash(); } catch (e) {} }
+  function getProgMonths() { return lsGet(LS_PROG_MONTHS); }
+  function saveProgMonths(o){ try { localStorage.setItem(LS_PROG_MONTHS, JSON.stringify(o)); flash(); } catch (e) {} }
+
+  function buildProgramLi(d) {
+    var li = document.createElement('li');
+    li.className = 'program po-created-prog';
+    li.setAttribute('data-program-id', d.id);
+    li.setAttribute('data-source', d.source || 'U');
+    li.setAttribute('data-contour', d.contour || '');
+    li.setAttribute('data-change', '');
+    li.setAttribute('data-assignees-all', '');
+    li.setAttribute('data-assignees-anchor', '');
+    li.setAttribute('data-assignees-owner', '');
+    li.setAttribute('data-assignees-methodologist', '');
+    var color = d.color || '#5A554C';
+    li.innerHTML =
+      '<button class="program-head" type="button" aria-expanded="false">' +
+        '<span class="program-accent" style="background:' + color + '"></span>' +
+        '<span class="program-kind">Программа</span>' +
+        (d.contour ? '<span class="contour-chip contour-chip-lg">' + d.contour + '</span>' : '') +
+        '<span class="program-name" data-ek="np-progname-' + d.id + '">' + d.name + '</span>' +
+        '<span class="program-roles-slot" data-roles-slot></span>' +
+        '<span class="program-flags" data-flags-slot></span>' +
+        '<span class="program-id-mono">' + d.id + '</span>' +
+        '<span class="project-count" title="Проектов в программе">0</span>' +
+        '<span class="chev chev-lg" aria-hidden="true"></span>' +
+      '</button>' +
+      '<div class="program-body" hidden>' +
+        '<div class="field" style="margin-bottom:12px">' +
+          '<span class="field-label">Описание</span>' +
+          '<p class="field-value" data-ek="np-progdesc-' + d.id + '"></p>' +
+        '</div>' +
+        '<ol class="project-list"></ol>' +
+      '</div>';
+    return li;
+  }
+
+  function restoreNewPrograms() {
+    var np = getNewProgs();
+    var pm = getProgMonths();
+    /* flatten: progId → data */
+    Object.keys(np).forEach(function (origMonthId) {
+      (np[origMonthId] || []).forEach(function (d) {
+        /* if the program has been moved, place it in new month */
+        var monthId = pm[d.id] || origMonthId;
+        var sec = document.getElementById(monthId) || document.getElementById(origMonthId);
+        if (!sec) return;
+        var progList = sec.querySelector('.program-list');
+        if (progList) progList.appendChild(buildProgramLi(d));
+      });
+    });
+  }
+
+  function restoreProgramMonths() {
+    var pm = getProgMonths();
+    Object.keys(pm).forEach(function (progId) {
+      var monthId = pm[progId];
+      var prog = document.querySelector('.program[data-program-id="' + progId + '"]');
+      var sec  = document.getElementById(monthId);
+      if (!prog || !sec) return;
+      /* skip if already in the right month */
+      if (prog.closest('section.month') === sec) return;
+      var list = sec.querySelector('.program-list');
+      if (list) list.appendChild(prog);
+    });
+  }
+
+  /* ---- new-program modal ---- */
+  var _pmModal = null, _pmTargetSec = null;
+
+  function _ensurePmModal() {
+    if (_pmModal) return;
+    _pmModal = document.createElement('div');
+    _pmModal.className = 'po-newproj-modal'; /* reuse same overlay style */
+    _pmModal.innerHTML =
+      '<div class="po-newproj-box">' +
+        '<div class="po-newproj-title">Новая программа</div>' +
+        '<div class="po-newproj-field"><label>Название программы</label>' +
+          '<input type="text" id="pm-name" placeholder="Название программы" autocomplete="off"></div>' +
+        '<div class="po-newproj-field"><label>ID программы</label>' +
+          '<input type="text" id="pm-id" placeholder="U-XXX-P-0.0" autocomplete="off" style="font-family:monospace;font-size:12px"></div>' +
+        '<div class="po-newproj-field"><label>Контур (код)</label>' +
+          '<input type="text" id="pm-contour" placeholder="CLN, FIN, HRM …" autocomplete="off" maxlength="12"></div>' +
+        '<div class="po-newproj-actions">' +
+          '<button class="po-newproj-cancel" type="button">Отмена</button>' +
+          '<button class="po-newproj-confirm" type="button">Создать</button>' +
+        '</div></div>';
+    document.body.appendChild(_pmModal);
+    _pmModal.querySelector('.po-newproj-cancel').addEventListener('click', _closePmModal);
+    _pmModal.querySelector('.po-newproj-confirm').addEventListener('click', _confirmPm);
+    _pmModal.addEventListener('click', function (e) { if (e.target === _pmModal) _closePmModal(); });
+    _pmModal.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') { e.stopPropagation(); _closePmModal(); }
+      if (e.key === 'Enter' && e.target.tagName === 'INPUT') { e.preventDefault(); _confirmPm(); }
+    });
+    _pmModal.querySelector('#pm-contour').addEventListener('input', function () {
+      this.value = this.value.toUpperCase();
+    });
+  }
+
+  function _openPmModal(sec) {
+    _pmTargetSec = sec;
+    _ensurePmModal();
+    var progList = sec.querySelector('.program-list');
+    var existCount = progList ? progList.querySelectorAll('.program').length : 0;
+    /* guess month index from section id */
+    var monthIdx = (sec.id || '').replace('month-', '');
+    _pmModal.querySelector('#pm-name').value = '';
+    _pmModal.querySelector('#pm-id').value = 'U-NEW-P-' + (monthIdx || '0') + '.' + (existCount + 1);
+    _pmModal.querySelector('#pm-contour').value = '';
+    _pmModal.classList.add('open');
+    setTimeout(function () { _pmModal.querySelector('#pm-name').focus(); }, 50);
+  }
+
+  function _closePmModal() {
+    if (_pmModal) _pmModal.classList.remove('open');
+    _pmTargetSec = null;
+  }
+
+  function _confirmPm() {
+    var nameEl    = _pmModal.querySelector('#pm-name');
+    var idEl      = _pmModal.querySelector('#pm-id');
+    var ctEl      = _pmModal.querySelector('#pm-contour');
+    var name    = (nameEl.value || '').trim();
+    var id      = (idEl.value  || '').trim();
+    var contour = (ctEl.value  || '').trim().toUpperCase();
+    if (!name) { nameEl.focus(); return; }
+    if (!id)   { idEl.focus();   return; }
+    /* check uniqueness */
+    if (document.querySelector('.program[data-program-id="' + id + '"]')) {
+      idEl.style.borderColor = '#8B2635';
+      idEl.title = 'ID уже существует'; idEl.focus(); return;
+    }
+    idEl.style.borderColor = '';
+
+    var sec = _pmTargetSec;
+    _closePmModal();
+
+    var d = { id: id, name: name, contour: contour, source: 'U', color: '#5A554C' };
+    var li = buildProgramLi(d);
+    var progList = sec.querySelector('.program-list');
+    if (progList) progList.appendChild(li);
+
+    /* persist */
+    var np = getNewProgs();
+    if (!np[sec.id]) np[sec.id] = [];
+    np[sec.id].push(d);
+    saveNewProgs(np);
+
+    /* inject add-project button */
+    var pl2 = li.querySelector('.project-list');
+    if (pl2) {
+      var ab2 = document.createElement('button');
+      ab2.type = 'button'; ab2.className = 'po-add-proj-btn'; ab2.textContent = '+ Добавить проект';
+      ab2.addEventListener('click', function (e) { e.stopPropagation(); _openNpModal(li); });
+      pl2.after(ab2);
+    }
+
+    /* inject move-month button */
+    _injectMoveBtn(li);
+
+    /* inject progress bar */
+    var head = li.querySelector('.program-head');
+    if (head && !li.querySelector('.po-prog-wrap')) {
+      var pw = document.createElement('div'); pw.className = 'po-prog-wrap';
+      pw.innerHTML = '<div class="po-prog-bar"><div class="po-prog-fill" style="width:0%"></div></div><span class="po-prog-lbl">нет задач</span>';
+      head.appendChild(pw);
+    }
+
+    /* register text fields */
+    li.querySelectorAll('[data-ek]').forEach(function (el) {
+      if (el.tagName === 'BUTTON' || el.querySelector('button')) return;
+      var k = el.dataset.ek;
+      var sv = lsGet(LS_TEXTS); if (k && sv[k]) el.innerHTML = sanitize(sv[k]);
+      el.classList.add('po-editable'); el.contentEditable = 'true';
+      el.addEventListener('paste', function (pe) {
+        pe.preventDefault();
+        document.execCommand('insertText', false, (pe.clipboardData || window.clipboardData).getData('text/plain'));
+      });
+      el.addEventListener('blur', function () { saveTextField(el); });
+      textEls.push(el);
+    });
+  }
+
+  /* ---- month-move picker ---- */
+  function _injectMoveBtn(progLi) {
+    var head = progLi.querySelector('.program-head');
+    if (!head || head.querySelector('.po-prog-move-btn')) return;
+    var idMono = head.querySelector('.program-id-mono');
+    if (!idMono) return;
+    var btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'po-prog-move-btn'; btn.textContent = '↕ месяц';
+    btn.addEventListener('click', function (e) { e.stopPropagation(); _openMonthPicker(progLi, btn); });
+    idMono.after(btn);
+  }
+
+  function _openMonthPicker(progLi, anchorEl) {
+    document.querySelectorAll('.po-month-pick-drop').forEach(function (d) { d.remove(); });
+    var currentSec = progLi.closest('section.month');
+    var drop = document.createElement('div');
+    drop.className = 'po-month-pick-drop';
+    var rect = anchorEl.getBoundingClientRect();
+    drop.style.top  = (rect.bottom + 4) + 'px';
+    drop.style.left = rect.left + 'px';
+
+    document.querySelectorAll('section.month').forEach(function (sec) {
+      var lbl  = sec.querySelector('.month-label');
+      var yr   = sec.querySelector('.month-year');
+      var text = (lbl ? lbl.textContent : sec.id) + (yr ? ' ' + yr.textContent : '');
+      var isCur = sec === currentSec;
+      var opt = document.createElement('button');
+      opt.type = 'button';
+      opt.className = 'po-month-pick-opt' + (isCur ? ' current' : '');
+      opt.textContent = text + (isCur ? ' ✓' : '');
+      if (!isCur) {
+        opt.addEventListener('click', function (ev) {
+          ev.stopPropagation(); drop.remove();
+          document.removeEventListener('click', closeM, true);
+          _moveProgramToMonth(progLi, sec);
+        });
+      }
+      drop.appendChild(opt);
+    });
+
+    document.body.appendChild(drop);
+    function closeM(ev) {
+      if (!drop.contains(ev.target) && ev.target !== anchorEl) {
+        drop.remove(); document.removeEventListener('click', closeM, true);
+      }
+    }
+    setTimeout(function () { document.addEventListener('click', closeM, true); }, 0);
+  }
+
+  function _moveProgramToMonth(progLi, targetSec) {
+    var progId = progLi.getAttribute('data-program-id');
+    var targetList = targetSec.querySelector('.program-list');
+    if (!targetList) return;
+
+    /* move DOM — insert before the add-prog button if present */
+    var addBtn = targetSec.querySelector('.po-add-prog-btn');
+    if (addBtn) targetList.after(progLi); /* temp, then fix */
+    targetList.appendChild(progLi);
+
+    /* save to po-prog-months */
+    var pm = getProgMonths();
+    pm[progId] = targetSec.id;
+    saveProgMonths(pm);
+
+    /* if it's a new program, update po-new-programs creation month too */
+    var np = getNewProgs();
+    var moved = false;
+    Object.keys(np).forEach(function (mId) {
+      np[mId] = (np[mId] || []).filter(function (d) {
+        if (d.id === progId) { moved = true; if (!np[targetSec.id]) np[targetSec.id] = []; np[targetSec.id].push(d); return false; }
+        return true;
+      });
+    });
+    if (moved) saveNewProgs(np);
+  }
+
+  function initAddProgramBtns() {
+    document.querySelectorAll('section.month').forEach(function (sec) {
+      var progList = sec.querySelector('.program-list');
+      if (!progList) return;
+      var btn = document.createElement('button');
+      btn.type = 'button'; btn.className = 'po-add-prog-btn'; btn.textContent = '+ Добавить программу';
+      btn.addEventListener('click', function (e) { e.stopPropagation(); _openPmModal(sec); });
+      progList.after(btn);
+    });
+  }
+
+  function initMoveProgramBtns() {
+    document.querySelectorAll('.program[data-program-id]').forEach(_injectMoveBtn);
+  }
+
+  /* ================================================================
      NEW PROJECT CREATION
   ================================================================ */
   var LS_NEWPROJ = 'po-new-projects';
@@ -5674,12 +5988,16 @@ body[data-mode="edit"] .po-task-add { display: block; }
   /* ================================================================
      INIT
   ================================================================ */
+  restoreNewPrograms();
   restoreNewProjects();
   migrateHardcodedTasks();   /* must run before initTasks */
   migrateTasksV2();
   initTextEditing();
   injectProjStatuses();
   initTasks();
+  restoreProgramMonths();
+  initAddProgramBtns();
+  initMoveProgramBtns();
   initAddProjectBtns();
   hideOldTasksWrap();
   setTextEditable(document.body.getAttribute('data-mode') === 'edit');
