@@ -2517,9 +2517,14 @@ body[data-mode="brief"] .project-deps-block { display: none; }
       <button class="mode-btn active" type="button" data-mode="brief">Кратко</button>
       <button class="mode-btn" type="button" data-mode="working">Рабочий</button>
       <button class="mode-btn" type="button" data-mode="detailed">Детали</button>
-      
+      <button class="mode-btn" type="button" data-mode="edit">Редактирование</button>
     </div>
-    <button class="ghost-btn" type="button" id="btn-print" title="Распечатать в режиме «Кратко» (для PDF)">Печать</button><button class="ghost-btn" type="button" id="btn-deps-map">Карта зависимостей</button>
+    <button class="ghost-btn" type="button" id="btn-print" title="Распечатать в режиме «Кратко» (для PDF)">Печать</button><button class="ghost-btn" type="button" id="btn-deps-map">Карта зависимостей</button><div class="doc-actions">
+      <button class="ghost-btn" type="button" id="btn-export" title="Скачать назначения владельцев как JSON">Экспорт</button>
+      <button class="ghost-btn" type="button" id="btn-import" title="Загрузить назначения из JSON">Импорт</button>
+      <button class="ghost-btn" type="button" id="btn-reset-owners" title="Сбросить все назначения к исходным">Сброс</button>
+      <input type="file" id="file-import" accept="application/json,.json" hidden>
+    </div>
     <div class="doc-meta">
       <span><b>5</b> изменений</span>
       <span><b>38</b> программ</span>
@@ -4031,6 +4036,28 @@ body[data-mode="brief"] .project-deps-block { display: none; }
 })();
 </script>
 
+<!-- Publish password modal -->
+<div id="po-pub-modal" class="po-modal-overlay">
+  <div class="po-modal-box">
+    <div class="po-modal-title">Публикация</div>
+    <div class="po-modal-hint">Введите пароль публикации. Он не сохраняется в браузере.</div>
+    <input type="password" id="po-pub-inp" class="po-modal-input" placeholder="Пароль публикации" autocomplete="off">
+    <div class="po-modal-error" id="po-pub-err"></div>
+    <div class="po-modal-actions">
+      <button class="po-btn po-btn-cancel" id="po-pub-cancel">Отмена</button>
+      <button class="po-btn po-btn-primary" id="po-pub-ok">Опубликовать</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit toolbar -->
+<div class="po-edit-bar" id="po-edit-bar">
+  <span class="po-edit-bar-label">&#9998;&nbsp;Режим редактирования</span>
+  <span class="po-edit-saved" id="po-edit-saved">Все изменения сохранены</span>
+  <button class="po-btn-pub" id="po-btn-pub">&#8593; Опубликовать</button>
+  <button class="po-btn-logout" id="po-btn-logout">Выйти из редактора</button>
+</div>
+
 <!-- ===== EDITOR v4 ===== -->
 <style>
 /* === Modal base === */
@@ -4233,4 +4260,699 @@ body[data-mode="edit"] .po-task-add { display: block; }
 </style>
 
 
+
+<script>
+(function () {
+  var LS_TEXTS  = 'po-texts';
+  var LS_TASKS  = 'po-tasks';
+  var LS_PSTAT  = 'po-proj-statuses';
+  var LS_MIG    = 'po-migrated-v1';
+  var WEBHOOK   = 'https://noslosnodeyim.beget.app/webhook/plan_timeline';
+
+  /* helpers */
+  function lsGet(k) { try { return JSON.parse(localStorage.getItem(k) || '{}'); } catch (e) { return {}; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); flash(); } catch (e) {} }
+  function lsRaw(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsRawSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+
+  /* save flash */
+  var savedEl = document.getElementById('po-edit-saved');
+  var _ft;
+  function flash() {
+    if (!savedEl) return;
+    savedEl.textContent = '✓ Сохранено';
+    savedEl.classList.add('flash');
+    clearTimeout(_ft);
+    _ft = setTimeout(function () {
+      savedEl.classList.remove('flash');
+      savedEl.textContent = 'Все изменения сохранены';
+    }, 2000);
+  }
+
+  /* modals */
+  function openModal(id)  { var el = document.getElementById(id); if (el) el.classList.add('open'); }
+  function closeModal(id) { var el = document.getElementById(id); if (el) el.classList.remove('open'); }
+
+  /* exit edit mode */
+  document.getElementById('po-btn-logout').addEventListener('click', function () {
+    var b = document.querySelector('.mode-btn[data-mode="brief"]');
+    if (b) b.click();
+  });
+
+  /* ================================================================
+     SANITIZE HTML (allow only safe formatting)
+  ================================================================ */
+  function sanitize(html) {
+    var tmp = document.createElement('div');
+    tmp.innerHTML = html || '';
+    tmp.querySelectorAll('script,style,link,iframe,object,embed,meta').forEach(function (el) { el.remove(); });
+    tmp.querySelectorAll('*').forEach(function (el) {
+      var keep = ['B','STRONG','I','EM','U','UL','OL','LI','BR','SPAN','P','DIV'];
+      if (keep.indexOf(el.tagName) === -1) {
+        var frag = document.createDocumentFragment();
+        while (el.firstChild) frag.appendChild(el.firstChild);
+        el.parentNode.replaceChild(frag, el);
+        return;
+      }
+      /* strip dangerous attrs */
+      Array.from(el.attributes).forEach(function (a) {
+        if (a.name !== 'style') el.removeAttribute(a.name);
+      });
+      /* allow only background-color style */
+      if (el.hasAttribute('style')) {
+        var bg = el.style.backgroundColor;
+        el.removeAttribute('style');
+        if (bg) el.style.backgroundColor = bg;
+      }
+    });
+    return tmp.innerHTML;
+  }
+
+  /* ================================================================
+     RICH TEXT FLOATING TOOLBAR
+  ================================================================ */
+  var rtBar = null;
+  var rtCmds = [
+    { cmd: 'bold',                 label: 'B',  title: 'Жирный', style: 'font-weight:700' },
+    { cmd: 'italic',               label: 'I',  title: 'Курсив', style: 'font-style:italic' },
+    { cmd: 'underline',            label: 'U',  title: 'Подчёркнутый', style: 'text-decoration:underline' },
+    null, /* separator */
+    { cmd: 'insertUnorderedList',  label: '≡', title: 'Маркированный список' },
+    { cmd: 'insertOrderedList',    label: '☰', title: 'Нумерованный список' },
+    null,
+    { cmd: 'hilite',               label: '■', title: 'Выделение', color: '#FFF3B0' },
+    { cmd: 'removeFormat',         label: '×', title: 'Сбросить форматирование' }
+  ];
+
+  function ensureRtBar() {
+    if (rtBar) return rtBar;
+    rtBar = document.createElement('div');
+    rtBar.id = 'po-rt-bar';
+    rtCmds.forEach(function (c) {
+      if (!c) {
+        var sep = document.createElement('span');
+        sep.className = 'po-rt-sep';
+        rtBar.appendChild(sep);
+        return;
+      }
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'po-rt-btn';
+      btn.title = c.title;
+      btn.innerHTML = c.label;
+      btn.dataset.cmd = c.cmd;
+      if (c.color) btn.dataset.color = c.color;
+      if (c.style) btn.style.cssText = c.style;
+      rtBar.appendChild(btn);
+    });
+    document.body.appendChild(rtBar);
+    rtBar.addEventListener('mousedown', function (e) {
+      e.preventDefault(); /* keep selection */
+      var btn = e.target.closest('.po-rt-btn');
+      if (!btn) return;
+      var cmd = btn.dataset.cmd;
+      if (cmd === 'hilite') {
+        document.execCommand('hiliteColor', false, btn.dataset.color);
+      } else {
+        document.execCommand(cmd, false, null);
+      }
+      /* save to localStorage after formatting */
+      var sel = window.getSelection();
+      if (sel && sel.anchorNode) {
+        var el = (sel.anchorNode.nodeType === 3 ? sel.anchorNode.parentElement : sel.anchorNode).closest('.po-editable');
+        if (el) saveTextField(el);
+      }
+      updateRtBar();
+    });
+    return rtBar;
+  }
+
+  function updateRtBar() {
+    if (!rtBar) return;
+    rtBar.querySelectorAll('.po-rt-btn[data-cmd]').forEach(function (btn) {
+      var cmd = btn.dataset.cmd;
+      if (['bold','italic','underline'].indexOf(cmd) >= 0) {
+        try { btn.classList.toggle('active', document.queryCommandState(cmd)); } catch (e) {}
+      }
+    });
+  }
+
+  function showRtBar(rect) {
+    var bar = ensureRtBar();
+    bar.style.top = '-999px'; bar.style.left = '-999px';
+    bar.style.display = 'flex';
+    var bw = bar.offsetWidth, bh = bar.offsetHeight;
+    var x = rect.left + rect.width / 2 - bw / 2;
+    var y = rect.top - bh - 10;
+    if (y < 4) y = rect.bottom + 10;
+    bar.style.left = Math.max(4, Math.min(window.innerWidth - bw - 4, x)) + 'px';
+    bar.style.top  = Math.max(4, y) + 'px';
+    updateRtBar();
+  }
+
+  function hideRtBar() {
+    if (rtBar) rtBar.style.display = 'none';
+  }
+
+  document.addEventListener('selectionchange', function () {
+    if (document.body.getAttribute('data-mode') !== 'edit') { hideRtBar(); return; }
+    var sel = window.getSelection();
+    if (!sel || sel.isCollapsed || !sel.rangeCount) { hideRtBar(); return; }
+    var node = sel.anchorNode;
+    var el = (node && node.nodeType === 3 ? node.parentElement : node);
+    if (!el || !el.closest('.po-editable')) { hideRtBar(); return; }
+    try {
+      var rect = sel.getRangeAt(0).getBoundingClientRect();
+      if (rect.width > 0 || rect.height > 0) showRtBar(rect);
+    } catch (e) {}
+  });
+
+  /* ================================================================
+     TEXT EDITING — data-ek key system (saves innerHTML for rich text)
+  ================================================================ */
+  var textEls = [];
+
+  function saveTextField(el) {
+    var k = el.dataset.ek;
+    if (!k) return;
+    var d = lsGet(LS_TEXTS);
+    d[k] = sanitize(el.innerHTML);
+    try { localStorage.setItem(LS_TEXTS, JSON.stringify(d)); flash(); } catch (e) {}
+  }
+
+  function assignEditKeys() {
+    document.querySelectorAll('.program[data-program-id]').forEach(function (prog) {
+      var pid = prog.getAttribute('data-program-id');
+      var csvIdx = 0, fvIdx = 0;
+      prog.querySelectorAll('.card-summary-value').forEach(function (el) {
+        if (el.querySelector('.status-editor')) return;
+        if (!el.dataset.ek) el.dataset.ek = 'prog:' + pid + ':csv:' + (csvIdx++);
+      });
+      prog.querySelectorAll('.program-meta .field-value, .program-body .field-value').forEach(function (el) {
+        if (!el.dataset.ek) el.dataset.ek = 'prog:' + pid + ':fv:' + (fvIdx++);
+      });
+    });
+    document.querySelectorAll('.project').forEach(function (proj) {
+      var pidEl = proj.querySelector('.project-id-mono');
+      if (!pidEl) return;
+      var pid = pidEl.textContent.trim();
+      var fvIdx = 0;
+      proj.querySelectorAll('.project-body .field-value').forEach(function (el) {
+        if (!el.dataset.ek) el.dataset.ek = 'proj:' + pid + ':fv:' + (fvIdx++);
+      });
+    });
+  }
+
+  function initTextEditing() {
+    assignEditKeys();
+    var saved = lsGet(LS_TEXTS);
+    document.querySelectorAll('[data-ek]').forEach(function (el) {
+      if (el.querySelector('.status-editor, button, input, select')) return;
+      el.classList.add('po-editable');
+      el.contentEditable = 'false';
+      el.spellcheck = false;
+      var k = el.dataset.ek;
+      if (k && saved[k] !== undefined) el.innerHTML = sanitize(saved[k]);
+      el.addEventListener('paste', function (e) {
+        e.preventDefault();
+        var text = (e.clipboardData || window.clipboardData).getData('text/plain');
+        document.execCommand('insertText', false, text);
+      });
+      el.addEventListener('blur', function () { saveTextField(el); });
+      textEls.push(el);
+    });
+  }
+
+  function setTextEditable(on) {
+    textEls.forEach(function (el) { el.contentEditable = on ? 'true' : 'false'; });
+  }
+
+  /* ================================================================
+     PROJECT STATUS CHIPS
+  ================================================================ */
+  var PROJ_STATUS_DEF = [
+    { field: 'status', label: 'Статус', options: [
+      { value: 'not-started', label: 'Не начат',      color: '#6B655C' },
+      { value: 'in-progress', label: 'В работе',      color: '#1E6E7A' },
+      { value: 'on-hold',     label: 'На паузе',      color: '#8E5C0E' },
+      { value: 'done',        label: 'Завершён', color: '#2F5233' },
+      { value: 'cancelled',   label: 'Отменён',       color: '#8B2635' }
+    ]},
+    { field: 'approval', label: 'Согласование', options: [
+      { value: 'not-approved', label: 'Не согласован',    color: '#6B655C' },
+      { value: 'in-review',    label: 'На согласовании', color: '#8E5C0E' },
+      { value: 'approved',     label: 'Согласован',     color: '#2F5233' },
+      { value: 'rejected',     label: 'Отклонён',                 color: '#8B2635' }
+    ]}
+  ];
+
+  function applyChipStyle(chip, opt) {
+    chip.textContent = opt.label;
+    chip.style.color        = opt.color;
+    chip.style.borderColor  = opt.color + '40';
+    chip.style.background   = opt.color + '18';
+    chip.dataset.value = opt.value;
+  }
+
+  function injectProjStatuses() {
+    var saved = lsGet(LS_PSTAT);
+    document.querySelectorAll('.project').forEach(function (proj) {
+      var pidEl = proj.querySelector('.project-id-mono');
+      if (!pidEl) return;
+      var pid = pidEl.textContent.trim();
+      var body = proj.querySelector('.project-body');
+      if (!body || body.querySelector('.po-proj-status-row')) return;
+      var row = document.createElement('div');
+      row.className = 'po-proj-status-row';
+      PROJ_STATUS_DEF.forEach(function (def) {
+        var cell = document.createElement('span');
+        cell.className = 'po-proj-status-cell';
+        var lbl = document.createElement('span');
+        lbl.className = 'po-proj-status-label';
+        lbl.textContent = def.label;
+        var chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'po-status-chip';
+        chip.dataset.field = def.field;
+        var savedVal = saved[pid] && saved[pid][def.field];
+        var opt0 = (savedVal && def.options.find(function (o) { return o.value === savedVal; })) || def.options[0];
+        applyChipStyle(chip, opt0);
+        chip.addEventListener('click', function (e) {
+          e.stopPropagation();
+          if (document.body.getAttribute('data-mode') !== 'edit') return;
+          var cur  = def.options.findIndex(function (o) { return o.value === chip.dataset.value; });
+          var next = def.options[(cur + 1) % def.options.length];
+          applyChipStyle(chip, next);
+          var d = lsGet(LS_PSTAT);
+          if (!d[pid]) d[pid] = {};
+          d[pid][def.field] = next.value;
+          lsSet(LS_PSTAT, d);
+        });
+        cell.appendChild(lbl);
+        cell.appendChild(chip);
+        row.appendChild(cell);
+      });
+      body.insertBefore(row, body.firstChild);
+    });
+  }
+
+  /* ================================================================
+     MIGRATE HARDCODED TASKS TO po-tasks FORMAT (runs once)
+  ================================================================ */
+  function migrateHardcodedTasks() {
+    if (lsRaw(LS_MIG)) return; /* already migrated on this device */
+    var tasks = lsGet(LS_TASKS);
+    document.querySelectorAll('.project').forEach(function (proj) {
+      var pidEl = proj.querySelector('.project-id-mono');
+      if (!pidEl) return;
+      var pid = pidEl.textContent.trim();
+      if (tasks[pid] && tasks[pid].length > 0) return; /* don't overwrite existing */
+      var items = proj.querySelectorAll('.tasks-wrap .task-list .task');
+      if (!items.length) return;
+      var migrated = [];
+      items.forEach(function (item) {
+        var idEl   = item.querySelector('.task-id');
+        var nameEl = item.querySelector('.task-name');
+        migrated.push({
+          id: '',
+          taskId:   idEl   ? idEl.textContent.trim()   : '',
+          text:     nameEl ? nameEl.textContent.trim() : '',
+          assignee: '',
+          dueDate:  '',
+          legacy_id: idEl ? idEl.textContent.trim() : '',
+          status:   'not_started'
+        });
+      });
+      if (migrated.length) tasks[pid] = migrated;
+    });
+    try { localStorage.setItem(LS_TASKS, JSON.stringify(tasks)); } catch (e) {}
+    lsRawSet(LS_MIG, '1');
+  }
+
+  /* v2 migration: assign sequential T-xxxx IDs, normalize status vocabulary */
+  function migrateTasksV2() {
+    var LS_MIG2 = 'po-migrated-v2';
+    if (lsRaw(LS_MIG2)) return;
+    var ST_MAP = { todo: 'not_started', doing: 'in_progress' };
+    var tasks = lsGet(LS_TASKS);
+    var counter = 1;
+    Object.keys(tasks).forEach(function (pid) {
+      tasks[pid] = (tasks[pid] || []).map(function (t) {
+        if (ST_MAP[t.status]) t.status = ST_MAP[t.status];
+        if (!t.id) {
+          t.id = 'T-' + String(counter).padStart(4, '0');
+          if (!t.legacy_id && t.taskId) t.legacy_id = t.taskId;
+          counter++;
+        }
+        return t;
+      });
+    });
+    try { localStorage.setItem(LS_TASKS, JSON.stringify(tasks)); } catch (e) {}
+    lsRawSet(LS_MIG2, '1');
+  }
+
+  /* hide the old tasks-wrap elements (replaced by .po-task-section) */
+  function hideOldTasksWrap() {
+    document.querySelectorAll('.tasks-wrap').forEach(function (el) {
+      el.style.display = 'none';
+    });
+  }
+
+  /* ================================================================
+     TASKS (4-state + taskId + assignee + due date)
+  ================================================================ */
+  var TASK_ST = [
+    { v: 'not_started', icon: '○', title: 'Не начата'      },
+    { v: 'in_progress', icon: '◑', title: 'В работе'       },
+    { v: 'review',      icon: '◎', title: 'На проверке'    },
+    { v: 'blocked',     icon: '⧓', title: 'Заблокирована'  },
+    { v: 'done',        icon: '●', title: 'Готово'          },
+    { v: 'cancelled',   icon: '✕', title: 'Отменена'        },
+    { v: 'draft',       icon: '◌', title: 'Черновик'        }
+  ];
+
+  function getTasks(pid) { return lsGet(LS_TASKS)[pid] || []; }
+  function setTasks(pid, arr) { var d = lsGet(LS_TASKS); d[pid] = arr; lsSet(LS_TASKS, d); }
+
+  function updateProjProgress(proj, pid) {
+    var tasks = getTasks(pid);
+    var total = tasks.length;
+    var done  = tasks.filter(function (t) { return t.status === 'done'; }).length;
+    var badge = proj.querySelector('.task-badge');
+    if (badge) {
+      if (total === 0) { badge.textContent = '—'; badge.classList.add('task-badge-empty'); }
+      else { badge.textContent = done + '/' + total; badge.classList.remove('task-badge-empty'); }
+    }
+    var fill = proj.querySelector('.po-proj-prog-fill');
+    var lbl  = proj.querySelector('.po-proj-prog-lbl');
+    if (fill) fill.style.width = (total ? Math.round(done / total * 100) : 0) + '%';
+    if (lbl)  lbl.textContent  = total ? done + '/' + total : '';
+  }
+
+  function updateProgProgress(prog) {
+    var total = 0, done = 0;
+    prog.querySelectorAll('.project').forEach(function (proj) {
+      var m = proj.querySelector('.project-id-mono');
+      if (!m) return;
+      var ts = getTasks(m.textContent.trim());
+      total += ts.length; done += ts.filter(function (t) { return t.status === 'done'; }).length;
+    });
+    var pct = total ? Math.round(done / total * 100) : 0;
+    var fill = prog.querySelector('.po-prog-fill');
+    var lbl  = prog.querySelector('.po-prog-lbl');
+    if (fill) fill.style.width = pct + '%';
+    if (lbl)  lbl.textContent  = total ? done + '/' + total + ' задач' : 'нет задач';
+  }
+
+  function syncTaskEdit(body) {
+    var on = document.body.getAttribute('data-mode') === 'edit';
+    body.querySelectorAll('.po-task-text, .po-task-id-line, .po-task-assignee, .po-task-due').forEach(function (el) {
+      if (el.classList.contains('po-task-id-line')) return; /* ID not contenteditable */
+      el.contentEditable = on ? 'true' : 'false';
+    });
+  }
+
+  function renderTasks(pid, body, proj) {
+    var tasks = getTasks(pid);
+    var sec = body.querySelector('.po-task-section');
+    if (!sec) {
+      sec = document.createElement('div');
+      sec.className = 'po-task-section';
+      var hd = document.createElement('div');
+      hd.className = 'po-task-section-head';
+      hd.textContent = 'Задачи';
+      var ul = document.createElement('ul');
+      ul.className = 'po-task-list';
+      var ab = document.createElement('button');
+      ab.type = 'button';
+      ab.className = 'po-task-add';
+      ab.textContent = '+ Добавить задачу';
+      ab.addEventListener('click', function (e) { e.stopPropagation(); doAddTask(pid, body, proj); });
+      sec.appendChild(hd); sec.appendChild(ul); sec.appendChild(ab);
+      body.appendChild(sec);
+    }
+    var list = sec.querySelector('.po-task-list');
+    list.innerHTML = '';
+
+    tasks.forEach(function (t, i) {
+      var st = TASK_ST.find(function (s) { return s.v === t.status; }) || TASK_ST[0];
+      var li = document.createElement('li');
+      li.className = 'po-task-item';
+      li.dataset.st = st.v;
+
+      var cb = document.createElement('button');
+      cb.type = 'button'; cb.className = 'po-task-cb';
+      cb.textContent = st.icon; cb.title = st.title;
+      cb.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var a = getTasks(pid);
+        var sts = TASK_ST.map(function (s) { return s.v; });
+        a[i].status = sts[(sts.indexOf(a[i].status || 'not_started') + 1) % sts.length];
+        setTasks(pid, a);
+        renderTasks(pid, body, proj);
+        var pr = proj.closest('.program');
+        if (pr) updateProgProgress(pr);
+      });
+
+      var bd = document.createElement('div');
+      bd.className = 'po-task-body';
+
+      /* task ID line */
+      var idLine = document.createElement('span');
+      idLine.className = 'po-task-id-line';
+      idLine.textContent = t.id || t.taskId || '';
+
+      /* task text */
+      var txt = document.createElement('span');
+      txt.className = 'po-task-text';
+      txt.contentEditable = 'false'; txt.spellcheck = false;
+      txt.textContent = t.text || '';
+      txt.addEventListener('keydown', function (e) {
+        e.stopPropagation();
+        if (e.key === 'Enter') { e.preventDefault(); doAddTask(pid, body, proj); }
+      });
+      txt.addEventListener('blur', function () {
+        var a = getTasks(pid); if (a[i]) { a[i].text = txt.textContent; setTasks(pid, a); }
+      });
+
+      /* meta line: assignee + due */
+      var meta = document.createElement('div');
+      meta.className = 'po-task-meta';
+
+      var asgn = document.createElement('span');
+      asgn.className = 'po-task-assignee'; asgn.contentEditable = 'false'; asgn.spellcheck = false;
+      asgn.dataset.ph = 'Исполнитель';
+      asgn.textContent = t.assignee || '';
+      asgn.addEventListener('blur', function () {
+        var a = getTasks(pid); if (a[i]) { a[i].assignee = asgn.textContent.trim(); setTasks(pid, a); }
+      });
+
+      var due = document.createElement('span');
+      due.className = 'po-task-due'; due.contentEditable = 'false'; due.spellcheck = false;
+      due.dataset.ph = 'Срок';
+      due.textContent = t.dueDate || '';
+      due.addEventListener('blur', function () {
+        var a = getTasks(pid); if (a[i]) { a[i].dueDate = due.textContent.trim(); setTasks(pid, a); }
+      });
+
+      meta.appendChild(asgn); meta.appendChild(due);
+      bd.appendChild(idLine); bd.appendChild(txt); bd.appendChild(meta);
+
+      var del = document.createElement('button');
+      del.type = 'button'; del.className = 'po-task-del'; del.textContent = '\xd7';
+      del.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var a = getTasks(pid); a.splice(i, 1); setTasks(pid, a);
+        renderTasks(pid, body, proj);
+        var pr = proj.closest('.program'); if (pr) updateProgProgress(pr);
+      });
+
+      li.appendChild(cb); li.appendChild(bd); li.appendChild(del);
+      list.appendChild(li);
+    });
+
+    syncTaskEdit(body);
+    updateProjProgress(proj, pid);
+  }
+
+  function doAddTask(pid, body, proj) {
+    var a = getTasks(pid);
+    a.push({ taskId: '', text: '', assignee: '', dueDate: '', status: 'not_started' });
+    setTasks(pid, a);
+    renderTasks(pid, body, proj);
+    var items = body.querySelectorAll('.po-task-text');
+    if (items.length) { var last = items[items.length - 1]; last.contentEditable = 'true'; last.focus(); }
+  }
+
+  function initTasks() {
+    document.querySelectorAll('.project').forEach(function (proj) {
+      var pidEl = proj.querySelector('.project-id-mono');
+      if (!pidEl) return;
+      var pid = pidEl.textContent.trim();
+      var body = proj.querySelector('.project-body');
+      if (!body) return;
+      var badge = proj.querySelector('.task-badge');
+      if (badge && !proj.querySelector('.po-proj-prog')) {
+        var pg = document.createElement('span');
+        pg.className = 'po-proj-prog';
+        pg.innerHTML = '<span class="po-proj-prog-bar"><span class="po-proj-prog-fill" style="width:0%"></span></span><span class="po-proj-prog-lbl"></span>';
+        badge.parentNode.insertBefore(pg, badge.nextSibling);
+      }
+      renderTasks(pid, body, proj);
+    });
+    document.querySelectorAll('.program').forEach(function (prog) {
+      var head = prog.querySelector('.program-head');
+      if (!head || prog.querySelector('.po-prog-wrap')) return;
+      var wrap = document.createElement('div');
+      wrap.className = 'po-prog-wrap';
+      wrap.innerHTML = '<div class="po-prog-bar"><div class="po-prog-fill" style="width:0%"></div></div><span class="po-prog-lbl">нет задач</span>';
+      head.appendChild(wrap);
+      updateProgProgress(prog);
+    });
+  }
+
+  /* mode observer */
+  new MutationObserver(function (muts) {
+    muts.forEach(function (m) {
+      if (m.attributeName !== 'data-mode') return;
+      var on = document.body.getAttribute('data-mode') === 'edit';
+      setTextEditable(on);
+      document.querySelectorAll('.project-body').forEach(syncTaskEdit);
+      if (!on) hideRtBar();
+    });
+  }).observe(document.body, { attributes: true });
+
+  /* ================================================================
+     PUBLISH
+  ================================================================ */
+  var pubInp = document.getElementById('po-pub-inp');
+  var pubErr = document.getElementById('po-pub-err');
+
+  document.getElementById('po-pub-cancel').addEventListener('click', function () { closeModal('po-pub-modal'); });
+  document.getElementById('po-pub-modal').addEventListener('click', function (e) {
+    if (e.target === this) closeModal('po-pub-modal');
+  });
+  document.getElementById('po-pub-ok').addEventListener('click', doPublish);
+  pubInp.addEventListener('keydown', function (e) { if (e.key === 'Enter') doPublish(); });
+  document.getElementById('po-btn-pub').addEventListener('click', function () {
+    pubInp.value = ''; pubErr.textContent = '';
+    openModal('po-pub-modal');
+    setTimeout(function () { pubInp.focus(); }, 30);
+  });
+
+  function collectState() {
+    var progStatuses = {};
+    try { progStatuses = JSON.parse(localStorage.getItem('plan-timeline-statuses-v1') || '{}'); } catch (e) {}
+    return {
+      texts: lsGet(LS_TEXTS), tasks: lsGet(LS_TASKS),
+      projStatuses: lsGet(LS_PSTAT), progStatuses: progStatuses,
+      publishedAt: new Date().toISOString()
+    };
+  }
+
+  function doPublish() {
+    var pwd = pubInp.value;
+    if (!pwd) { pubErr.textContent = 'Введите пароль'; return; }
+    closeModal('po-pub-modal');
+    var btn = document.getElementById('po-btn-pub');
+    btn.disabled = true; btn.textContent = 'Публикация...';
+    fetch(WEBHOOK, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pwd, data: collectState() })
+    })
+      .then(function (r) {
+        if (!r.ok) return r.text().then(function (t) { throw new Error(t || 'HTTP ' + r.status); });
+        return r.json();
+      })
+      .then(function (resp) {
+        if (resp && resp.error) throw new Error(resp.error);
+        btn.textContent = '↑ Опубликовано ✓';
+        setTimeout(function () { btn.disabled = false; btn.textContent = '↑ Опубликовать'; }, 5000);
+      })
+      .catch(function (err) {
+        btn.disabled = false; btn.textContent = '↑ Опубликовать';
+        pubErr.textContent = 'Ошибка: ' + err.message;
+        openModal('po-pub-modal');
+        setTimeout(function () { pubInp.focus(); }, 30);
+      });
+  }
+
+  /* ================================================================
+     LOAD REMOTE DATA
+  ================================================================ */
+  function applyData(data) {
+    if (!data) return;
+    if (data.texts && Object.keys(data.texts).length) {
+      try { localStorage.setItem(LS_TEXTS, JSON.stringify(data.texts)); } catch (e) {}
+      textEls.forEach(function (el) {
+        var k = el.dataset.ek;
+        if (k && data.texts[k] !== undefined) el.innerHTML = sanitize(data.texts[k]);
+      });
+    }
+    if (data.tasks && Object.keys(data.tasks).length) {
+      try { localStorage.setItem(LS_TASKS, JSON.stringify(data.tasks)); } catch (e) {}
+      document.querySelectorAll('.project').forEach(function (proj) {
+        var pidEl = proj.querySelector('.project-id-mono');
+        var body  = proj.querySelector('.project-body');
+        if (!pidEl || !body) return;
+        renderTasks(pidEl.textContent.trim(), body, proj);
+      });
+      document.querySelectorAll('.program').forEach(updateProgProgress);
+    }
+    if (data.projStatuses && Object.keys(data.projStatuses).length) {
+      try { localStorage.setItem(LS_PSTAT, JSON.stringify(data.projStatuses)); } catch (e) {}
+      document.querySelectorAll('.project').forEach(function (proj) {
+        var pidEl = proj.querySelector('.project-id-mono');
+        if (!pidEl) return;
+        var pid = pidEl.textContent.trim();
+        var ps  = data.projStatuses[pid];
+        if (!ps) return;
+        PROJ_STATUS_DEF.forEach(function (def) {
+          var chip = proj.querySelector('.po-status-chip[data-field="' + def.field + '"]');
+          if (!chip) return;
+          var opt = def.options.find(function (o) { return o.value === ps[def.field]; });
+          if (opt) applyChipStyle(chip, opt);
+        });
+      });
+    }
+    if (data.progStatuses && Object.keys(data.progStatuses).length) {
+      try { localStorage.setItem('plan-timeline-statuses-v1', JSON.stringify(data.progStatuses)); } catch (e) {}
+      Object.keys(data.progStatuses).forEach(function (key) {
+        var parts = key.split(':'), field = parts.pop(), pid = parts.join(':');
+        var prog = document.querySelector('.program[data-program-id="' + pid + '"]');
+        if (!prog) return;
+        var editor = prog.querySelector('.status-editor[data-field="' + field + '"]');
+        if (!editor) return;
+        var chip = editor.querySelector('.status-chip');
+        if (!chip) return;
+        var v = data.progStatuses[key];
+        if (!v || !v.css) return;
+        chip.className = 'status-chip ' + v.css;
+        chip.textContent = v.label;
+        chip.dataset.current = v.css;
+      });
+    }
+  }
+
+  function loadRemote() {
+    fetch('https://deniyashin.github.io/plan_timeline/data.json?v=' + Date.now(), { cache: 'no-cache' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) { if (d) applyData(d); })
+      .catch(function () {});
+  }
+
+  /* ================================================================
+     INIT
+  ================================================================ */
+  migrateHardcodedTasks();   /* must run before initTasks */
+  migrateTasksV2();
+  initTextEditing();
+  injectProjStatuses();
+  initTasks();
+  hideOldTasksWrap();
+  setTextEditable(document.body.getAttribute('data-mode') === 'edit');
+  loadRemote();
+
+})();
+</script>
 </body>
