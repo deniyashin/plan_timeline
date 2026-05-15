@@ -263,6 +263,11 @@
   .assignee-chip.editable {
     padding-right: 2px;
   }
+  /* Hide interactive editor controls outside edit mode */
+  body:not([data-mode="edit"]) .assignee-remove { display: none !important; }
+  body:not([data-mode="edit"]) .assignee-chip.editable { padding-right: 6px; }
+  body:not([data-mode="edit"]) [data-action="add-assignee"] { display: none !important; }
+  body:not([data-mode="edit"]) .assignee-menu { display: none !important; }
   .assignee-remove {
     background: transparent;
     border: none;
@@ -4314,6 +4319,20 @@ body[data-mode="edit"] .po-status-chip:hover { opacity: 0.75; }
 .po-task-item[data-st="done"]        .po-task-cb { background: #D1FAE5; color: #065F46; }
 .po-task-item[data-st="cancelled"]   .po-task-cb { background: #F3F4F6; color: #9CA3AF; text-decoration: line-through; }
 .po-task-item[data-st="draft"]       .po-task-cb { background: #EEF2FF; color: #4338CA; }
+/* Status dropdown */
+.po-task-item { position: relative; }
+.po-task-st-drop {
+  position: absolute; left: 0; top: calc(100% + 4px); z-index: 400;
+  background: #FDFBF6; border: 1px solid #DDD5C5; border-radius: 7px;
+  list-style: none; margin: 0; padding: 4px 0;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.13); min-width: 140px;
+}
+.po-task-st-opt {
+  padding: 6px 12px; font-size: 12px; font-family: inherit; cursor: pointer;
+  color: #1F1D1A; white-space: nowrap; border-radius: 4px; margin: 0 3px;
+}
+.po-task-st-opt:hover { background: #F0EDE6; }
+.po-task-st-opt.current { font-weight: 600; background: #E8E2D8; }
 .po-task-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
 .po-task-id-line {
   font-family: "Geist Mono", monospace; font-size: 9.5px;
@@ -4810,16 +4829,37 @@ body[data-mode="edit"] .po-task-add { display: block; }
 
       var cb = document.createElement('button');
       cb.type = 'button'; cb.className = 'po-task-cb';
-      cb.textContent = st.icon; cb.title = st.title;
+      cb.textContent = st.title; cb.title = 'Изменить статус';
       cb.addEventListener('click', function (e) {
         e.stopPropagation();
-        var a = getTasks(pid);
-        var sts = TASK_ST.map(function (s) { return s.v; });
-        a[i].status = sts[(sts.indexOf(a[i].status || 'not_started') + 1) % sts.length];
-        setTasks(pid, a);
-        renderTasks(pid, body, proj);
-        var pr = proj.closest('.program');
-        if (pr) updateProgProgress(pr);
+        // Close any other open status dropdown
+        document.querySelectorAll('.po-task-st-drop').forEach(function (d) { if (d !== drop) d.remove(); });
+        if (cb.parentNode.querySelector('.po-task-st-drop')) {
+          cb.parentNode.querySelector('.po-task-st-drop').remove(); return;
+        }
+        var drop = document.createElement('ul');
+        drop.className = 'po-task-st-drop';
+        TASK_ST.forEach(function (s) {
+          var opt = document.createElement('li');
+          opt.className = 'po-task-st-opt' + (s.v === (t.status || 'not_started') ? ' current' : '');
+          opt.dataset.st = s.v;
+          opt.textContent = s.title;
+          opt.addEventListener('click', function (ev) {
+            ev.stopPropagation();
+            var a = getTasks(pid);
+            if (a[i]) a[i].status = s.v;
+            setTasks(pid, a);
+            renderTasks(pid, body, proj);
+            var pr = proj.closest('.program');
+            if (pr) updateProgProgress(pr);
+          });
+          drop.appendChild(opt);
+        });
+        cb.parentNode.appendChild(drop);
+        function closeDrop(ev) {
+          if (!drop.contains(ev.target) && ev.target !== cb) { drop.remove(); document.removeEventListener('click', closeDrop, true); }
+        }
+        setTimeout(function () { document.addEventListener('click', closeDrop, true); }, 0);
       });
 
       var bd = document.createElement('div');
