@@ -4234,10 +4234,11 @@ body[data-mode="edit"] .po-task-due[contenteditable="true"] {
 .po-task-del {
   background: transparent; border: none; color: transparent; cursor: pointer;
   font-size: 15px; padding: 0 2px; flex-shrink: 0; line-height: 1; transition: color 0.1s;
-  margin-top: 1px;
+  margin-top: 1px; display: none;
 }
-.po-task-item:hover .po-task-del { color: #8F897E; }
-.po-task-del:hover { color: #8B2635 !important; }
+body[data-mode="edit"] .po-task-del { display: block; }
+body[data-mode="edit"] .po-task-item:hover .po-task-del { color: #8F897E; }
+body[data-mode="edit"] .po-task-del:hover { color: #8B2635 !important; }
 .po-task-add {
   display: none; margin-top: 6px; font-family: inherit; font-size: 11px; color: #6B655C;
   background: transparent; border: 1px dashed #DDD5C5; padding: 4px 10px;
