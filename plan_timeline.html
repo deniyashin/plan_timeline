@@ -4487,6 +4487,10 @@ body[data-mode="edit"] .po-add-proj-btn { display: block; }
 }
 .po-task-id-line:not(:empty) { display: block; }
 body[data-mode="edit"] .po-task-id-line { display: block; }
+.po-task-updated {
+  font-family: "Geist Mono", monospace; font-size: 9.5px; color: #B0A898;
+  margin-left: auto; white-space: nowrap; flex-shrink: 0;
+}
 .po-task-text {
   font-size: 12.5px; line-height: 1.45; color: #1F1D1A;
   outline: none; word-break: break-word;
@@ -4960,7 +4964,23 @@ body[data-mode="edit"] .po-task-add { display: block; }
   var MONTHS_SHORT = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
   var MONTHS_FULL  = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
 
-  function makeAssigneeBtn(t, i, pid) {
+  function fmtUpdated(iso) {
+    if (!iso) return '';
+    var d = new Date(iso);
+    if (isNaN(d)) return '';
+    var now = new Date();
+    var hh = String(d.getHours()).padStart(2, '0');
+    var mm = String(d.getMinutes()).padStart(2, '0');
+    var time = hh + ':' + mm;
+    var sameDay = d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate();
+    if (sameDay) return 'сегодня ' + time;
+    var yesterday = new Date(now); yesterday.setDate(yesterday.getDate() - 1);
+    var isYesterday = d.getFullYear() === yesterday.getFullYear() && d.getMonth() === yesterday.getMonth() && d.getDate() === yesterday.getDate();
+    if (isYesterday) return 'вчера ' + time;
+    return d.getDate() + ' ' + MONTHS_SHORT[d.getMonth()] + ' ' + time;
+  }
+
+  function makeAssigneeBtn(t, i, pid, updSpan) {
     var btn = document.createElement('button');
     btn.type = 'button'; btn.className = 'po-task-asgn-btn';
 
@@ -5004,8 +5024,10 @@ body[data-mode="edit"] .po-task-add { display: block; }
       clr.onmouseleave = function () { clr.style.background = 'transparent'; };
       clr.addEventListener('click', function (ev) {
         ev.stopPropagation(); drop.remove();
-        var a = getTasks(pid); if (a[i]) { a[i].assignee = ''; setTasks(pid, a); }
-        t.assignee = ''; refresh('');
+        var ts = new Date().toISOString();
+        var a = getTasks(pid); if (a[i]) { a[i].assignee = ''; a[i].updatedAt = ts; setTasks(pid, a); }
+        t.assignee = ''; t.updatedAt = ts; refresh('');
+        if (updSpan) updSpan.textContent = fmtUpdated(ts);
       });
       drop.appendChild(clr);
 
@@ -5029,8 +5051,10 @@ body[data-mode="edit"] .po-task-add { display: block; }
         opt.appendChild(optAv); opt.appendChild(optNm);
         opt.addEventListener('click', function (ev) {
           ev.stopPropagation(); drop.remove();
-          var arr = getTasks(pid); if (arr[i]) { arr[i].assignee = code; setTasks(pid, arr); }
-          t.assignee = code; refresh(code);
+          var ts = new Date().toISOString();
+          var arr = getTasks(pid); if (arr[i]) { arr[i].assignee = code; arr[i].updatedAt = ts; setTasks(pid, arr); }
+          t.assignee = code; t.updatedAt = ts; refresh(code);
+          if (updSpan) updSpan.textContent = fmtUpdated(ts);
         });
         drop.appendChild(opt);
       });
@@ -5045,7 +5069,7 @@ body[data-mode="edit"] .po-task-add { display: block; }
     return btn;
   }
 
-  function makeDueBtn(t, i, pid) {
+  function makeDueBtn(t, i, pid, updSpan) {
     var btn = document.createElement('button');
     btn.type = 'button'; btn.className = 'po-task-due-btn';
 
@@ -5131,8 +5155,10 @@ body[data-mode="edit"] .po-task-add { display: block; }
             }
             cell.addEventListener('click', function (ev) {
               ev.stopPropagation(); cal.remove(); document.removeEventListener('click', closeC, true);
-              var arr = getTasks(pid); if (arr[i]) { arr[i].dueDate = isoStr; setTasks(pid, arr); }
-              t.dueDate = isoStr; refreshBtn(isoStr);
+              var ts = new Date().toISOString();
+              var arr = getTasks(pid); if (arr[i]) { arr[i].dueDate = isoStr; arr[i].updatedAt = ts; setTasks(pid, arr); }
+              t.dueDate = isoStr; t.updatedAt = ts; refreshBtn(isoStr);
+              if (updSpan) updSpan.textContent = fmtUpdated(ts);
             });
             grid.appendChild(cell);
           })(d2);
@@ -5147,8 +5173,10 @@ body[data-mode="edit"] .po-task-add { display: block; }
         clr.onmouseleave = function(){clr.style.opacity='1';};
         clr.addEventListener('click', function (ev) {
           ev.stopPropagation(); cal.remove(); document.removeEventListener('click', closeC, true);
-          var arr = getTasks(pid); if (arr[i]) { arr[i].dueDate = ''; setTasks(pid, arr); }
-          t.dueDate = ''; refreshBtn('');
+          var ts = new Date().toISOString();
+          var arr = getTasks(pid); if (arr[i]) { arr[i].dueDate = ''; arr[i].updatedAt = ts; setTasks(pid, arr); }
+          t.dueDate = ''; t.updatedAt = ts; refreshBtn('');
+          if (updSpan) updSpan.textContent = fmtUpdated(ts);
         });
         cal.appendChild(clr);
       }
@@ -5212,7 +5240,7 @@ body[data-mode="edit"] .po-task-add { display: block; }
           opt.addEventListener('click', function (ev) {
             ev.stopPropagation();
             var a = getTasks(pid);
-            if (a[i]) a[i].status = s.v;
+            if (a[i]) { a[i].status = s.v; a[i].updatedAt = new Date().toISOString(); }
             setTasks(pid, a);
             renderTasks(pid, body, proj);
             var pr = proj.closest('.program');
@@ -5244,16 +5272,24 @@ body[data-mode="edit"] .po-task-add { display: block; }
         e.stopPropagation();
         if (e.key === 'Enter') { e.preventDefault(); doAddTask(pid, body, proj); }
       });
+      var updSpan = document.createElement('span');
+      updSpan.className = 'po-task-updated';
+      updSpan.textContent = fmtUpdated(t.updatedAt || '');
+
       txt.addEventListener('blur', function () {
-        var a = getTasks(pid); if (a[i]) { a[i].text = txt.textContent; setTasks(pid, a); }
+        var ts = new Date().toISOString();
+        var a = getTasks(pid);
+        if (a[i]) { a[i].text = txt.textContent; a[i].updatedAt = ts; setTasks(pid, a); }
+        t.updatedAt = ts; updSpan.textContent = fmtUpdated(ts);
       });
 
-      /* meta line: assignee + due */
+      /* meta line: assignee + due + timestamp */
       var meta = document.createElement('div');
       meta.className = 'po-task-meta';
 
-      meta.appendChild(makeAssigneeBtn(t, i, pid));
-      meta.appendChild(makeDueBtn(t, i, pid));
+      meta.appendChild(makeAssigneeBtn(t, i, pid, updSpan));
+      meta.appendChild(makeDueBtn(t, i, pid, updSpan));
+      meta.appendChild(updSpan);
       bd.appendChild(idLine); bd.appendChild(txt); bd.appendChild(meta);
 
       var del = document.createElement('button');
@@ -5275,7 +5311,7 @@ body[data-mode="edit"] .po-task-add { display: block; }
 
   function doAddTask(pid, body, proj) {
     var a = getTasks(pid);
-    a.push({ taskId: '', text: '', assignee: '', dueDate: '', status: 'not_started' });
+    a.push({ taskId: '', text: '', assignee: '', dueDate: '', status: 'not_started', updatedAt: new Date().toISOString() });
     setTasks(pid, a);
     renderTasks(pid, body, proj);
     var items = body.querySelectorAll('.po-task-text');
