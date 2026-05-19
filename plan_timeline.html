@@ -512,12 +512,32 @@
     padding: 0 40px 56px;
     border-bottom: 1px solid var(--line);
   }
+  .changes-panel-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+  }
+  .changes-toggle-btn {
+    flex-shrink: 0;
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 3px 10px;
+    font-family: "Geist Mono", monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .changes-toggle-btn:hover { border-color: var(--ink); color: var(--ink); }
   .change-cards {
     display: flex;
     flex-direction: column;
     gap: 14px;
     margin-top: 18px;
   }
+  .change-cards[hidden] { display: none; }
   .change-card {
     background: var(--surface);
     border: 1px solid var(--line-soft);
@@ -1127,7 +1147,7 @@
   }
   .program-name {
     font-family: "Fraunces", serif;
-    font-size: 18px;
+    font-size: 21px;
     font-weight: 500;
     letter-spacing: -0.01em;
     line-height: 1.3;
@@ -1290,7 +1310,7 @@
     flex-shrink: 0;
   }
   .project-name {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 500;
     color: var(--ink);
     line-height: 1.35;
@@ -1842,6 +1862,8 @@ body[data-mode="edit"] .status-chip:hover {
   outline: 1px solid var(--ink);
   outline-offset: 1px;
 }
+.status-chip:focus { outline: none; }
+.status-chip { user-select: none; }
 body[data-mode="edit"] .status-chip::after {
   content: "▾";
   font-size: 8px;
@@ -2616,6 +2638,10 @@ body[data-mode="brief"] .project-deps-block { display: none; }
       <span class="hero-status-value"><span class="pill">На согласовании</span></span>
     </div>
     <div class="hero-status-cell">
+      <span class="hero-status-label">Модератор</span>
+      <span class="hero-status-value">Проектный офис<br><span style="font-size:0.87em;color:var(--ink-muted)">Антимонов Денис</span></span>
+    </div>
+    <div class="hero-status-cell">
       <span class="hero-status-label">Контур использования</span>
       <span class="hero-status-value">Учредители → Топ-менеджмент → Проектный офис</span>
     </div>
@@ -2640,8 +2666,11 @@ body[data-mode="brief"] .project-deps-block { display: none; }
 
 <section class="changes-panel">
   <div class="section-kicker">Портрет изменений</div>
-  <h2 class="legend-title">Пять направлений трансформации</h2>
-  <div class="change-cards">
+  <div class="changes-panel-header">
+    <h2 class="legend-title" style="margin:0">Пять направлений трансформации</h2>
+    <button type="button" id="changes-toggle-btn" class="changes-toggle-btn">▾ свернуть</button>
+  </div>
+  <div class="change-cards" id="change-cards" hidden>
     <article class="change-card" data-change="U-ALL-I-1" style="--ch:#8B2635; --ch-soft:#F3E4E6"><header class="change-card-head"><span class="change-card-code">I-1</span><h3 class="change-card-name">Финансовая устойчивость и экономика компании</h3><div class="change-card-stats"><span><b>6</b> прогр.</span><span><b>33</b> проектов</span></div><div class="change-card-roles"><span class="role-line role-line-compact" data-role="anchor" title="Якорь-учредитель"><span class="role-mark" aria-hidden="true">Я</span><span class="assignee-chip assignee-chip-sm" title="Олег Александрович · Учредитель"><span class="assignee-init">ОА</span><span class="assignee-last">Александрович</span></span></span><span class="role-line role-line-compact" data-role="owner" title="Владелец внедрения"><span class="role-mark" aria-hidden="true">В</span><span class="assignee-chip assignee-chip-sm" title="Екатерина Мездрикова · Финансовый директор"><span class="assignee-init">ЕМ</span><span class="assignee-last">Мездрикова</span></span></span><span class="role-line role-line-compact" data-role="methodologist" title="Методолог"><span class="role-mark" aria-hidden="true">М</span><span class="assignee-chip assignee-chip-sm" title="Олег Сергеевич · Учредитель"><span class="assignee-init">ОС</span><span class="assignee-last">Сергеевич</span></span></span></div></header><div class="change-card-brief"><b>Кратко.</b> Финансовая устойчивость и экономика компании.<div class="change-card-practice"><span class="card-summary-label">Что меняется на практике</span><p class="card-summary-value">У руководителей появится более прозрачная финансовая картина по своим зонам, а решения по расходам, зарплатам, марже и объектам перестанут жить в разрозненных контурах.</p></div></div><div class="change-card-short"><div class="field"><span class="field-label">Цель</span><p class="field-value">Перевести компанию к прозрачной и управляемой финансовой модели, в которой на уровне клиник, управляющей компании и производственных контуров понятны маржинальность, фонды, себестоимость, финансовая ответственность и логика принятия финансовых решений.</p></div><div class="field"><span class="field-label">Измеримый результат</span><p class="field-value">Ключевые финансовые решения и показатели управляются не по факту возникновения проблемы, а через планирование, контроль, прозрачные данные, понятные роли и устойчивые правила; клиники, УК, лаборатория, зарплатный контур, склад и юридическая структура встроены в общую финансовую модель.</p></div></div><div class="change-card-desc"><div class="field"><span class="field-label">Подробно</span><p class="field-value">Перестроить финансовую модель компании так, чтобы клиники, управляющая компания, лаборатория, складской и расходный контуры управлялись на общей логике цифр, ответственности и экономического результата.</p></div></div></article><article class="change-card" data-change="U-ALL-I-2" style="--ch:#1E6E7A; --ch-soft:#DEEAEC"><header class="change-card-head"><span class="change-card-code">I-2</span><h3 class="change-card-name">Управляемость через BI, статистики, дашборды и культуру работы с цифрами</h3><div class="change-card-stats"><span><b>5</b> прогр.</span><span><b>31</b> проектов</span></div><div class="change-card-roles"><span class="role-line role-line-compact" data-role="anchor" title="Якорь-учредитель"><span class="role-mark" aria-hidden="true">Я</span><span class="assignee-chip assignee-chip-sm" title="Арман Арамович · Учредитель"><span class="assignee-init">АА</span><span class="assignee-last">Арамович</span></span></span><span class="role-line role-line-compact" data-role="owner" title="Владелец внедрения"><span class="role-mark" aria-hidden="true">В</span><span class="assignee-chip assignee-chip-sm" title="Вардан Вазгенович · Учредитель"><span class="assignee-init">ВВ</span><span class="assignee-last">Вазгенович</span></span></span><span class="role-line role-line-compact" data-role="methodologist" title="Методолог"><span class="role-mark" aria-hidden="true">М</span><span class="assignee-chip assignee-chip-sm" title="Олег Сергеевич · Учредитель"><span class="assignee-init">ОС</span><span class="assignee-last">Сергеевич</span></span></span></div></header><div class="change-card-brief"><b>Кратко.</b> Управляемость через BI, статистики, дашборды и культуру работы с цифрами.<div class="change-card-practice"><span class="card-summary-label">Что меняется на практике</span><p class="card-summary-value">Отчеты и дашборды перестанут быть фоном. Руководители начнут работать по общей картине цифр, а отклонения станут основанием для действий, а не темой для споров.</p></div></div><div class="change-card-short"><div class="field"><span class="field-label">Цель</span><p class="field-value">Перевести компанию к управлению через общую систему статистик, дашбордов, функций, владельцев и управленческих отклонений, а не через разрозненные ощущения и ручное наблюдение.</p></div><div class="field"><span class="field-label">Измеримый результат</span><p class="field-value">Компания управляется через утвержденные статистики, дашборды, индексы, карты функций и регулярные координации по цифрам; руководители видят свои зоны ответственности, понимают отклонения и принимают решения на основе данных.</p></div></div><div class="change-card-desc"><div class="field"><span class="field-label">Подробно</span><p class="field-value">Собрать единый язык цифр для компании: твердые статистики, дашборды, индексы, карту функций и правила использования данных в управлении. Руководители должны видеть свой участок через понятные показатели и принимать решения на одной фактической базе.</p></div></div></article><article class="change-card" data-change="U-ALL-I-3" style="--ch:#B8750A; --ch-soft:#F5E8D0"><header class="change-card-head"><span class="change-card-code">I-3</span><h3 class="change-card-name">Пациентский путь, сервис, консультация, сопровождение и продукт</h3><div class="change-card-stats"><span><b>7</b> прогр.</span><span><b>44</b> проектов</span></div><div class="change-card-roles"><span class="role-line role-line-compact" data-role="anchor" title="Якорь-учредитель"><span class="role-mark" aria-hidden="true">Я</span><span class="assignee-chip assignee-chip-sm" title="Арман Арамович · Учредитель"><span class="assignee-init">АА</span><span class="assignee-last">Арамович</span></span></span><span class="role-line role-line-compact" data-role="owner" title="Владелец внедрения"><span class="role-mark" aria-hidden="true">В</span><span class="assignee-chip assignee-chip-sm" title="Алексей Краскевич · Руководитель"><span class="assignee-init">АК</span><span class="assignee-last">Краскевич</span></span></span><span class="role-line role-line-compact" data-role="methodologist" title="Методолог"><span class="role-mark" aria-hidden="true">М</span><span class="assignee-chip assignee-chip-sm" title="Даниэль Рон · Руководитель департамента продаж"><span class="assignee-init">ДР</span><span class="assignee-last">Рон</span></span></span></div></header><div class="change-card-brief"><b>Кратко.</b> Пациентский путь, сервис, консультация, сопровождение и продукт.<div class="change-card-practice"><span class="card-summary-label">Что меняется на практике</span><p class="card-summary-value">Пациент перестанет проходить через набор разрозненных касаний. Компания будет видеть его путь, качество консультации, сервисные точки, повторные контакты и логику дальнейшего сопровождения как одну систему.</p></div></div><div class="change-card-short"><div class="field"><span class="field-label">Цель</span><p class="field-value">Выстроить единый, измеримый и современный контур взаимодействия с пациентом: от первого обращения и консультации до лечения, сервиса, повторных контактов и цифровых коммуникаций.</p></div><div class="field"><span class="field-label">Измеримый результат</span><p class="field-value">Пациентский опыт становится наблюдаемым и управляемым по этапам: консультация понятна и контролируема, переход в активированный план лечения улучшается, сервисная функция оформлена, рекомендации и повторные обращения управляются как отдельные контуры, а цифровые каналы и продуктовая упаковка усиливают восприятие компании пациентом.</p></div></div><div class="change-card-desc"><div class="field"><span class="field-label">Подробно</span><p class="field-value">Собрать единый управляемый путь пациента: от первого обращения и консультации до лечения, сервиса, вторичного сопровождения, цифровых каналов и продуктовой упаковки. Индекс здоровья пациента должен стать общей опорой для лечения, коммуникации и сопровождения.</p></div></div></article><article class="change-card" data-change="U-ALL-I-4" style="--ch:#2F5233; --ch-soft:#DEE7DF"><header class="change-card-head"><span class="change-card-code">I-4</span><h3 class="change-card-name">Управленческий контур, оргструктура, мотивация и развитие руководителей</h3><div class="change-card-stats"><span><b>8</b> прогр.</span><span><b>50</b> проектов</span></div><div class="change-card-roles"><span class="role-line role-line-compact" data-role="anchor" title="Якорь-учредитель"><span class="role-mark" aria-hidden="true">Я</span><span class="assignee-chip assignee-chip-sm" title="Вардан Вазгенович · Учредитель"><span class="assignee-init">ВВ</span><span class="assignee-last">Вазгенович</span></span></span><span class="role-line role-line-compact" data-role="owner" title="Владелец внедрения"><span class="role-mark" aria-hidden="true">В</span><span class="assignee-chip assignee-chip-sm" title="Галина Боде · Руководитель HR"><span class="assignee-init">ГБ</span><span class="assignee-last">Боде</span></span></span><span class="role-line role-line-compact" data-role="methodologist" title="Методолог"><span class="role-mark" aria-hidden="true">М</span><span class="assignee-chip assignee-chip-sm" title="Олег Александрович · Учредитель"><span class="assignee-init">ОА</span><span class="assignee-last">Александрович</span></span></span></div></header><div class="change-card-brief"><b>Кратко.</b> Управленческий контур, оргструктура, мотивация и развитие руководителей.<div class="change-card-practice"><span class="card-summary-label">Что меняется на практике</span><p class="card-summary-value">Руководители будут яснее понимать свою роль, показатели и правила игры. Компания получит более устойчивую структуру, а обучение и кадровый резерв перестанут жить отдельно от управленческих задач.</p></div></div><div class="change-card-short"><div class="field"><span class="field-label">Цель</span><p class="field-value">Снизить зависимость компании от ручного управления учредителей и перевести управленческий слой в более устойчивую систему ролей, ответственности, мотивации, развития и внедрения изменений.</p></div><div class="field"><span class="field-label">Измеримый результат</span><p class="field-value">Компания получает более устойчивый управленческий слой: оргструктура работает, роли и зоны ответственности закреплены, руководители и сотрудники управляются через понятные KPI и мотивацию, действует контур выращивания руководителей и инициатив, а ключевые HR- и коммуникационные процессы перестают держаться на ручном тушении пожаров.</p></div></div><div class="change-card-desc"><div class="field"><span class="field-label">Подробно</span><p class="field-value">Усилить управленческий слой компании: закрепить роли и зоны ответственности, пересобрать оргструктуру, связать KPI и мотивацию с результатом, выстроить развитие руководителей и сделать путь инициатив более рабочим.</p></div></div></article><article class="change-card" data-change="U-ALL-I-5" style="--ch:#2E3A8A; --ch-soft:#DEE0EC"><header class="change-card-head"><span class="change-card-code">I-5</span><h3 class="change-card-name">Рост сети, стратегический маркетинг, инфраструктура и внутренние сервисы</h3><div class="change-card-stats"><span><b>10</b> прогр.</span><span><b>53</b> проектов</span></div><div class="change-card-roles"><span class="role-line role-line-compact" data-role="anchor" title="Якорь-учредитель"><span class="role-mark" aria-hidden="true">Я</span><span class="assignee-chip assignee-chip-sm" title="Арман Арамович · Учредитель"><span class="assignee-init">АА</span><span class="assignee-last">Арамович</span></span></span><span class="role-line role-line-compact" data-role="owner" title="Владелец внедрения"><span class="role-mark" aria-hidden="true">В</span><span class="assignee-chip assignee-chip-sm" title="Даниэль Рон · Руководитель департамента продаж"><span class="assignee-init">ДР</span><span class="assignee-last">Рон</span></span></span><span class="role-line role-line-compact" data-role="methodologist" title="Методолог"><span class="role-mark" aria-hidden="true">М</span><span class="assignee-chip assignee-chip-sm" title="Олег Сергеевич · Учредитель"><span class="assignee-init">ОС</span><span class="assignee-last">Сергеевич</span></span></span></div></header><div class="change-card-brief"><b>Кратко.</b> Рост сети, стратегический маркетинг, инфраструктура и внутренние сервисы.<div class="change-card-practice"><span class="card-summary-label">Что меняется на практике</span><p class="card-summary-value">Рост компании будет опираться не только на новые объекты, но и на более сильную модель спроса, внутреннюю готовность сотрудников, устойчивые поддерживающие процессы и более зрелую инфраструктуру.</p></div></div><div class="change-card-short"><div class="field"><span class="field-label">Цель</span><p class="field-value">Подготовить устойчивую базу для масштабирования компании: спроса, сети клиник, лаборатории, инфраструктуры, внутренних сервисов и обеспечивающих контуров, чтобы рост происходил без накопления хаоса и без провалов в управлении.</p></div><div class="field"><span class="field-label">Измеримый результат</span><p class="field-value">Компания способна расширять сеть, усиливать спрос, модернизировать лабораторию, развивать внутренние цифровые сервисы и поддерживать рост без критических разрывов между маркетингом, инфраструктурой, внутренними коммуникациями и обеспечивающими функциями.</p></div></div><div class="change-card-desc"><div class="field"><span class="field-label">Подробно</span><p class="field-value">Подготовить базу для роста компании: стратегический маркетинг и новые источники спроса, развитие сети и объектов, лабораторию, внутренний цифровой контур сотрудника, корпоративные коммуникации и обеспечивающие процессы.</p></div></div></article>
   </div>
 </section>
@@ -3262,12 +3291,14 @@ body[data-mode="brief"] .project-deps-block { display: none; }
     edit:     'Сейчас режим «Редактирование» · доступны панели редактирования и экспорт/импорт'
   };
   function setMode(mode) {
+    var _sy = window.scrollY;
     body.setAttribute('data-mode', mode);
     document.querySelectorAll('.mode-btn').forEach(b => {
       b.classList.toggle('active', b.getAttribute('data-mode') === mode);
     });
     if (banner) banner.textContent = MODE_LABELS[mode] || '';
     try { localStorage.setItem('plan-timeline-mode', mode); } catch (e) {}
+    requestAnimationFrame(function() { window.scrollTo(0, _sy); });
   }
   document.querySelectorAll('.mode-btn').forEach(btn => {
     btn.addEventListener('click', e => {
@@ -3282,6 +3313,28 @@ body[data-mode="brief"] .project-deps-block { display: none; }
     if (saved && MODE_LABELS[saved]) initialMode = saved;
   } catch (e) {}
   setMode(initialMode);
+
+  // -------- Changes section toggle --------
+  (function () {
+    var toggleBtn = document.getElementById('changes-toggle-btn');
+    var cards = document.getElementById('change-cards');
+    if (!toggleBtn || !cards) return;
+    var LS_CHANGES = 'po-changes-open';
+    var isOpen = false;
+    try { isOpen = localStorage.getItem(LS_CHANGES) === '1'; } catch (e) {}
+    function applyState() {
+      if (isOpen) {
+        cards.removeAttribute('hidden');
+        toggleBtn.textContent = '▴ свернуть';
+      } else {
+        cards.setAttribute('hidden', '');
+        toggleBtn.textContent = '▾ развернуть';
+      }
+      try { localStorage.setItem(LS_CHANGES, isOpen ? '1' : '0'); } catch (e) {}
+    }
+    applyState();
+    toggleBtn.addEventListener('click', function () { isOpen = !isOpen; applyState(); });
+  }());
 
   // -------- Quick views --------
   function buildQuickViewMarkers() {
@@ -3506,7 +3559,7 @@ body[data-mode="brief"] .project-deps-block { display: none; }
       const value = opt.getAttribute('data-value');
       const label = opt.getAttribute('data-label');
       const css = opt.getAttribute('data-css');
-      if (!pid) return;
+      if (!pid) { closeMenu(); return; }
       const chip = editor.querySelector('.status-chip');
       applyStatusToChip(chip, value, label, css);
       statuses[`${pid}:${field}`] = { value: label, label, css };
@@ -4270,7 +4323,7 @@ body[data-mode="brief"] .project-deps-block { display: none; }
 
     document.addEventListener('click', e => {
       if (!wrap.contains(e.target)) closePicker();
-    });
+    }, true);
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') closePicker();
     });
@@ -4297,6 +4350,7 @@ body[data-mode="brief"] .project-deps-block { display: none; }
   <span class="po-edit-bar-label">&#9998;&nbsp;Режим редактирования</span>
   <span class="po-edit-saved" id="po-edit-saved">Все изменения сохранены</span>
   <button class="po-btn-pub" id="po-btn-pub">&#8593; Опубликовать</button>
+  <button class="po-btn-reset" id="po-btn-reset" title="Сбросить все локальные изменения к исходным">&#8635; Сбросить изменения</button>
   <button class="po-btn-logout" id="po-btn-logout">Выйти из редактора</button>
 </div>
 
@@ -4363,6 +4417,12 @@ body[data-mode="edit"] { padding-bottom: 56px; }
   padding: 6px 14px; border-radius: 4px; cursor: pointer; transition: all 0.12s;
 }
 .po-btn-logout:hover { border-color: rgba(255,255,255,0.55); color: #fff; }
+.po-btn-reset {
+  background: transparent; border: 1px solid rgba(255,140,100,0.4);
+  color: rgba(255,160,120,0.85); font-family: inherit; font-size: 12px;
+  padding: 6px 14px; border-radius: 4px; cursor: pointer; transition: all 0.12s;
+}
+.po-btn-reset:hover { border-color: rgba(255,100,60,0.7); color: #ffb090; }
 
 /* === Rich text floating toolbar === */
 #po-rt-bar {
@@ -4424,6 +4484,19 @@ body[data-mode="edit"] .po-editable:empty::before {
 }
 body[data-mode="edit"] .po-status-chip { cursor: pointer; }
 body[data-mode="edit"] .po-status-chip:hover { opacity: 0.75; }
+.po-proj-owner-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: transparent; border: none; padding: 2px 4px; border-radius: 4px;
+  cursor: default; font-family: inherit; font-size: 11px; color: #8F897E;
+}
+body[data-mode="edit"] .po-proj-owner-btn { cursor: pointer; }
+body[data-mode="edit"] .po-proj-owner-btn:hover { background: #F0EDE6; }
+.po-proj-owner-av {
+  width: 18px; height: 18px; border-radius: 50%; background: #E8E2D8; color: #6B6560;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 7.5px; font-weight: 700; font-family: "Geist Mono", monospace; flex-shrink: 0;
+}
+.po-proj-owner-btn:focus { outline: none; }
 
 /* === Task editor === */
 .po-task-section { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #E8E1D2; }
@@ -4549,7 +4622,7 @@ body[data-mode="edit"] .po-task-id-line { display: block; }
   margin-left: auto; white-space: nowrap; flex-shrink: 0;
 }
 .po-task-text {
-  font-size: 12.5px; line-height: 1.45; color: #1F1D1A;
+  font-size: 14px; line-height: 1.45; color: #1F1D1A;
   outline: none; word-break: break-word;
 }
 .po-task-item[data-st="done"] .po-task-text { text-decoration: line-through; color: #8F897E; }
@@ -4647,6 +4720,19 @@ body[data-mode="edit"] .po-task-add { display: block; }
   document.getElementById('po-btn-logout').addEventListener('click', function () {
     var b = document.querySelector('.mode-btn[data-mode="brief"]');
     if (b) b.click();
+  });
+
+  /* reset all local changes */
+  document.getElementById('po-btn-reset').addEventListener('click', function () {
+    if (!confirm('Сбросить все локальные изменения? Тексты, задачи, статусы и созданные объекты вернутся к исходным из опубликованной версии.')) return;
+    var RESET_KEYS = [
+      'po-tasks', 'po-texts', 'po-proj-statuses',
+      'po-new-projects', 'po-new-programs', 'po-prog-months',
+      'plan-timeline-assignments-v2', 'plan-timeline-statuses-v1',
+      'po-doc-edited', 'po-published-at'
+    ];
+    RESET_KEYS.forEach(function (k) { try { localStorage.removeItem(k); } catch (e) {} });
+    location.reload();
   });
 
   /* ================================================================
@@ -4902,6 +4988,86 @@ body[data-mode="edit"] .po-task-add { display: block; }
         cell.appendChild(chip);
         row.appendChild(cell);
       });
+
+      /* --- Owner (Ответственный) cell --- */
+      (function () {
+        var ownerCell = document.createElement('span');
+        ownerCell.className = 'po-proj-status-cell';
+        var ownerLbl = document.createElement('span');
+        ownerLbl.className = 'po-proj-status-label';
+        ownerLbl.textContent = 'Ответственный';
+        var ownerBtn = document.createElement('button');
+        ownerBtn.type = 'button';
+        ownerBtn.className = 'po-proj-owner-btn';
+        var ownerAv = document.createElement('span');
+        ownerAv.className = 'po-proj-owner-av';
+        var ownerNm = document.createElement('span');
+        ownerNm.style.fontSize = '11px';
+
+        function refreshOwner(code) {
+          var a = code && window.ASSIGNEES && window.ASSIGNEES[code];
+          ownerAv.textContent = a ? a.initials : '—';
+          ownerNm.textContent = a ? a.last : 'не назначен';
+        }
+        var savedOwner = saved[pid] && saved[pid]['owner'];
+        refreshOwner(savedOwner || '');
+        ownerBtn.appendChild(ownerAv);
+        ownerBtn.appendChild(ownerNm);
+
+        ownerBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          if (document.body.getAttribute('data-mode') !== 'edit') return;
+          var existing = document.getElementById('po-proj-owner-drop');
+          if (existing) { existing.remove(); return; }
+          var drop = document.createElement('div');
+          drop.id = 'po-proj-owner-drop';
+          drop.style.cssText = 'position:fixed;z-index:700;background:#FDFBF6;border:1px solid #DDD5C5;border-radius:8px;min-width:200px;max-height:280px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,0.14);padding:4px 0';
+          var rect = ownerBtn.getBoundingClientRect();
+          drop.style.top  = (rect.bottom + 6) + 'px';
+          drop.style.left = rect.left + 'px';
+          /* Clear option */
+          var clearOpt = document.createElement('button');
+          clearOpt.type = 'button';
+          clearOpt.style.cssText = 'display:block;width:100%;background:transparent;border:none;border-bottom:1px solid #EDE8DF;padding:6px 12px;font-family:inherit;font-size:11px;color:#8B2635;cursor:pointer;text-align:left';
+          clearOpt.textContent = '✕ убрать ответственного';
+          clearOpt.addEventListener('click', function (ev) { ev.stopPropagation(); drop.remove(); document.removeEventListener('click', closeOwner, true); refreshOwner(''); var d = lsGet(LS_PSTAT); if (!d[pid]) d[pid] = {}; d[pid]['owner'] = ''; lsSet(LS_PSTAT, d); });
+          drop.appendChild(clearOpt);
+          Object.entries(window.ASSIGNEES || {}).forEach(function (pair) {
+            var code = pair[0], a = pair[1];
+            var opt = document.createElement('button');
+            opt.type = 'button';
+            opt.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;background:transparent;border:none;padding:5px 12px;font-family:inherit;font-size:12px;color:var(--ink);cursor:pointer;text-align:left';
+            opt.onmouseenter = function () { opt.style.background = '#F0EDE6'; };
+            opt.onmouseleave = function () { opt.style.background = 'transparent'; };
+            var av2 = document.createElement('span');
+            av2.style.cssText = 'flex-shrink:0;width:18px;height:18px;border-radius:50%;background:#E8E2D8;color:#6B6560;display:inline-flex;align-items:center;justify-content:center;font-size:7.5px;font-weight:700;font-family:"Geist Mono",monospace';
+            av2.textContent = a.initials || code;
+            var nm2 = document.createElement('span');
+            nm2.textContent = (a.last || code) + (a.first ? ' ' + a.first : '');
+            opt.appendChild(av2); opt.appendChild(nm2);
+            opt.addEventListener('click', function (ev) {
+              ev.stopPropagation();
+              drop.remove(); document.removeEventListener('click', closeOwner, true);
+              refreshOwner(code);
+              var d = lsGet(LS_PSTAT);
+              if (!d[pid]) d[pid] = {};
+              d[pid]['owner'] = code;
+              lsSet(LS_PSTAT, d);
+            });
+            drop.appendChild(opt);
+          });
+          document.body.appendChild(drop);
+          function closeOwner(ev) {
+            if (!drop.contains(ev.target) && ev.target !== ownerBtn) { drop.remove(); document.removeEventListener('click', closeOwner, true); }
+          }
+          setTimeout(function () { document.addEventListener('click', closeOwner, true); }, 0);
+        });
+
+        ownerCell.appendChild(ownerLbl);
+        ownerCell.appendChild(ownerBtn);
+        row.appendChild(ownerCell);
+      }());
+
       body.insertBefore(row, body.firstChild);
     });
   }
@@ -5523,6 +5689,18 @@ body[data-mode="edit"] .po-task-add { display: block; }
           var opt = def.options.find(function (o) { return o.value === ps[def.field]; });
           if (opt) applyChipStyle(chip, opt);
         });
+        /* restore owner */
+        if (ps['owner'] !== undefined) {
+          var ownerBtn = proj.querySelector('.po-proj-owner-btn');
+          if (ownerBtn) {
+            var code = ps['owner'];
+            var a = code && window.ASSIGNEES && window.ASSIGNEES[code];
+            var av = ownerBtn.querySelector('.po-proj-owner-av');
+            var nm = ownerBtn.querySelector('span:last-child');
+            if (av) av.textContent = a ? a.initials : '—';
+            if (nm) nm.textContent = a ? a.last : 'не назначен';
+          }
+        }
       });
     }
     if (data.progStatuses && Object.keys(data.progStatuses).length) {
