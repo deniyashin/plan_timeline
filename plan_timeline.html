@@ -885,6 +885,7 @@
     box-shadow: 0 8px 24px rgba(0,0,0,0.13);
     display: flex; flex-direction: column;
   }
+  .person-picker-popup[hidden] { display: none; }
   .person-picker-clear {
     background: transparent; border: none; border-bottom: 1px solid #EDE8DF;
     padding: 8px 12px; text-align: left; font-size: 11.5px; color: #8B2635;
@@ -2606,12 +2607,7 @@ body[data-mode="brief"] .project-deps-block { display: none; }
       <button class="mode-btn" type="button" data-mode="detailed">Детали</button>
       <button class="mode-btn" type="button" data-mode="edit">Редактирование</button>
     </div>
-    <button class="ghost-btn" type="button" id="btn-print" title="Распечатать в режиме «Кратко» (для PDF)">Печать</button><button class="ghost-btn" type="button" id="btn-deps-map">Карта зависимостей</button><div class="doc-actions">
-      <button class="ghost-btn" type="button" id="btn-export" title="Скачать назначения владельцев как JSON">Экспорт</button>
-      <button class="ghost-btn" type="button" id="btn-import" title="Загрузить назначения из JSON">Импорт</button>
-      <button class="ghost-btn" type="button" id="btn-reset-owners" title="Сбросить все назначения к исходным">Сброс</button>
-      <input type="file" id="file-import" accept="application/json,.json" hidden>
-    </div>
+    <button class="ghost-btn" type="button" id="btn-print" title="Распечатать в режиме «Кратко» (для PDF)">Печать</button><button class="ghost-btn" type="button" id="btn-deps-map">Карта зависимостей</button>
     <div class="doc-meta">
       <span><b>5</b> изменений</span>
       <span><b>38</b> программ</span>
@@ -2675,14 +2671,6 @@ body[data-mode="brief"] .project-deps-block { display: none; }
   </div>
 </section>
 
-<div class="unified-store-bar">
-  <span class="unified-store-label">Полное состояние</span>
-  <button class="ghost-btn" type="button" id="btn-save-state">Сохранить локально</button>
-  <button class="ghost-btn" type="button" id="btn-export-state">Экспортировать всё</button>
-  <button class="ghost-btn" type="button" id="btn-import-state">Импортировать всё</button>
-  <input type="file" id="file-import-state" accept="application/json,.json" hidden>
-  <span class="unified-store-status" id="unified-store-status"></span>
-</div>
 <div class="quick-views">
   <span class="quick-view-label">Быстрые выборки</span>
   <button class="quick-view-btn" type="button" data-quickview="mine">Только мои</button>
@@ -3013,77 +3001,6 @@ body[data-mode="brief"] .project-deps-block { display: none; }
     if (toastTimer) clearTimeout(toastTimer);
     toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
   }
-
-  // =====================================================================
-  // Import / export / reset
-  // =====================================================================
-  document.getElementById('btn-export').addEventListener('click', () => {
-    const effective = {};
-    document.querySelectorAll('.program[data-program-id]').forEach(prog => {
-      const id = prog.getAttribute('data-program-id');
-      effective[id] = effectiveAssignments(id);
-    });
-    const payload = {
-      version: 2,
-      exported_at: new Date().toISOString(),
-      assignments: effective,
-    };
-    const blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `plan-assignments-${new Date().toISOString().slice(0,10)}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    showToast('Экспортировано в JSON');
-  });
-
-  document.getElementById('btn-import').addEventListener('click', () => {
-    document.getElementById('file-import').click();
-  });
-  document.getElementById('file-import').addEventListener('change', (e) => {
-    const f = e.target.files && e.target.files[0];
-    if (!f) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        const data = JSON.parse(reader.result);
-        const imported = data && data.assignments;
-        if (!imported) throw new Error('No assignments field');
-        overrides = {};
-        Object.keys(imported).forEach(id => {
-          const a = imported[id] || {};
-          overrides[id] = {
-            anchor: Array.isArray(a.anchor) ? a.anchor : [],
-            owner: Array.isArray(a.owner) ? a.owner : [],
-            methodologist: Array.isArray(a.methodologist) ? a.methodologist : [],
-          };
-        });
-        saveOverrides(overrides);
-        document.querySelectorAll('.program[data-program-id]').forEach(prog => refreshProgramDisplay(prog));
-        updateFilterCounts();
-        applyFilters();
-        showToast('Импортировано из JSON');
-      } catch (err) {
-        showToast('Ошибка чтения JSON');
-        console.error(err);
-      }
-    };
-    reader.readAsText(f);
-    e.target.value = '';
-  });
-
-  document.getElementById('btn-reset-owners').addEventListener('click', () => {
-    if (!confirm('Сбросить все назначения к исходным?')) return;
-    overrides = {};
-    saveOverrides(overrides);
-    document.querySelectorAll('.program[data-program-id]').forEach(prog => refreshProgramDisplay(prog));
-    updateFilterCounts();
-    applyFilters();
-    showToast('Назначения сброшены');
-  });
 
   // =====================================================================
   // Filter counts
@@ -3497,9 +3414,9 @@ body[data-mode="brief"] .project-deps-block { display: none; }
   let statuses = loadStatuses();
 
   function applyStatusToChip(chip, value, label, cssClass) {
-    // Remove all old status-* / certainty-* / approval-* classes
+    // Remove old status-* / certainty-* / approval-* variant classes but keep the base status-chip class
     Array.from(chip.classList).forEach(c => {
-      if (/^(status-|certainty-|approval-)[a-z\-]+$/.test(c)) chip.classList.remove(c);
+      if (c !== 'status-chip' && /^(status-|certainty-|approval-)[a-z\-]+$/.test(c)) chip.classList.remove(c);
     });
     chip.classList.add(cssClass);
     chip.textContent = label;
@@ -3562,7 +3479,7 @@ body[data-mode="brief"] .project-deps-block { display: none; }
       if (!pid) { closeMenu(); return; }
       const chip = editor.querySelector('.status-chip');
       applyStatusToChip(chip, value, label, css);
-      statuses[`${pid}:${field}`] = { value: label, label, css };
+      statuses[`${pid}:${field}`] = { value, label, css };
       saveStatuses(statuses);
       closeMenu();
       return;
@@ -3657,69 +3574,6 @@ body[data-mode="brief"] .project-deps-block { display: none; }
     }
   });
 
-  // ===== Unified controls =====
-  const btnSave   = document.getElementById('btn-save-state');
-  const btnExport = document.getElementById('btn-export-state');
-  const btnImport = document.getElementById('btn-import-state');
-  const fileImp   = document.getElementById('file-import-state');
-
-  if (btnSave) btnSave.addEventListener('click', () => {
-    const state = gatherState();
-    safeWrite(KEY_UNIFIED, JSON.stringify(state));
-    showStoreStatus('Сохранено: ' + new Date().toLocaleTimeString('ru-RU'));
-  });
-
-  if (btnExport) btnExport.addEventListener('click', () => {
-    const state = gatherState();
-    const blob = new Blob([JSON.stringify(state, null, 2)], {type: 'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `plan-state-${new Date().toISOString().slice(0,10)}.json`;
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    showStoreStatus('Экспортировано полное состояние');
-  });
-
-  if (btnImport) btnImport.addEventListener('click', () => fileImp.click());
-  if (fileImp) fileImp.addEventListener('change', e => {
-    const f = e.target.files && e.target.files[0];
-    if (!f) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        const obj = JSON.parse(reader.result);
-        if (obj.version === 3) {
-          applyState(obj);
-          showStoreStatus('Импортировано. Перезагружаю...');
-          setTimeout(() => location.reload(), 700);
-        } else {
-          showStoreStatus('Несовместимый формат файла (требуется version=3)');
-        }
-      } catch (err) {
-        showStoreStatus('Ошибка чтения JSON');
-        console.error(err);
-      }
-    };
-    reader.readAsText(f);
-    e.target.value = '';
-  });
-
-  // On any meaningful change, also re-save unified state so it stays fresh.
-  // We listen to relevant events bubbling on body.
-  document.body.addEventListener('click', e => {
-    if (e.target.closest('.status-option') ||
-        e.target.closest('.assignee-option') ||
-        e.target.closest('[data-action="remove-assignee"]') ||
-        e.target.closest('.mode-btn')) {
-      setTimeout(() => {
-        safeWrite(KEY_UNIFIED, JSON.stringify(gatherState()));
-      }, 80);
-    }
-  });
-
-  // Initial sync to unified key
-  safeWrite(KEY_UNIFIED, JSON.stringify(gatherState()));
 })();
 </script>
 
