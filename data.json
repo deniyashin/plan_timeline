@@ -774,6 +774,67 @@
       "approval": "approved"
     }
   },
-  "progStatuses": {},
-  "publishedAt": "2026-05-15T14:20:03.985Z"
+  "progStatuses": {
+    "U-UKM-P-1.2:status": {
+      "value": "в проектировании",
+      "label": "в проектировании",
+      "css": "status-design"
+    },
+    "U-UKM-P-1.2:certainty": {
+      "value": "частично подтверждено",
+      "label": "частично подтверждено",
+      "css": "certainty-partial"
+    },
+    "U-CLN-P-1.1:certainty": {
+      "value": "подтверждено",
+      "label": "подтверждено",
+      "css": "certainty-confirmed"
+    },
+    "U-CLN-P-1.1:status": {
+      "value": "в проектировании",
+      "label": "в проектировании",
+      "css": "status-design"
+    },
+    "U-LEG-P-1.6:status": {
+      "value": "design",
+      "label": "в проектировании",
+      "css": "status-design"
+    },
+    "U-LEG-P-1.6:certainty": {
+      "value": "частично подтверждено",
+      "label": "частично подтверждено",
+      "css": "certainty-partial"
+    },
+    "U-CLN-P-1.1:approval": {
+      "value": "не согласовано",
+      "label": "не согласовано",
+      "css": "approval-not-approved"
+    },
+    "U-LEG-P-1.6:approval": {
+      "value": "not-approved",
+      "label": "не согласовано",
+      "css": "approval-not-approved"
+    },
+    "U-CHG-P-2.5:certainty": {
+      "value": "требует уточнения",
+      "label": "требует уточнения",
+      "css": "certainty-needs-clar"
+    },
+    "U-ALL-P-2.4:status": {
+      "value": "not-started",
+      "label": "не стартовало",
+      "css": "status-not-started"
+    },
+    "U-ALL-P-2.4:certainty": {
+      "value": "confirmed",
+      "label": "подтверждено",
+      "css": "certainty-confirmed"
+    },
+    "U-HRM-P-4.1:status": {
+      "value": "rollout",
+      "label": "во внедрении",
+      "css": "status-rollout"
+    }
+  },
+  "publishedAt": "2026-05-20T07:52:52.575Z"
 }
