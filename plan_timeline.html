@@ -2466,19 +2466,23 @@ body[data-mode="brief"] .project-deps-block { display: none; }
   .change-card-brief { font-size: 9.5pt !important; line-height: 1.4 !important; }
   .change-card-practice .card-summary-value { font-size: 9pt !important; }
   .timeline { max-width: 100% !important; padding: 0 !important; }
-  .month { page-break-inside: auto; margin-bottom: 6mm !important; padding: 0 !important; }
+  .month { display: block !important; page-break-inside: auto; margin-bottom: 6mm !important; padding: 0 !important; }
   .month-empty { display: none !important; }
-  .month-head { padding: 0 !important; margin-bottom: 2mm !important; }
+  .month-head { display: block !important; width: 100% !important; padding: 0 !important; margin-bottom: 2mm !important; }
   .month-label { font-size: 14pt !important; }
   .month-year { font-size: 9pt !important; }
   .month-stats { font-size: 8pt !important; }
-  .program-list { gap: 2mm !important; }
+  .program-list { display: block !important; width: 100% !important; gap: 2mm !important; }
   .program {
+    display: block !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
     background: white !important;
     border: 1pt solid #ccc !important;
     border-radius: 2pt !important;
     box-shadow: none !important;
     page-break-inside: avoid;
+    margin-bottom: 2mm !important;
   }
   .program-head { padding: 2mm 3mm !important; gap: 2mm !important; }
   .program-accent { width: 1.5mm !important; }
