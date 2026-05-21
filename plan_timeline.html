@@ -2905,7 +2905,10 @@ body[data-mode="edit"] .status-chip[data-action="open-status-menu"]:hover {
 }
 .month-nav-link:hover { background: #eef3f8; color: var(--ink); }
 .month-nav-link.is-current { background: var(--b24-blue); color: #ffffff; }
-@media (min-width: 1480px) { .timeline { padding-right: 88px; } }
+@media (min-width: 1480px) {
+  .timeline { padding-right: 88px; }
+  .filter-bar, .quick-views { margin-right: 68px; }
+}
 
 /* ── 13. Timeline / months ── */
 .timeline { max-width: none; padding: 28px 32px 72px; }
