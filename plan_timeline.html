@@ -2773,7 +2773,7 @@ body {
   border-bottom: 1px solid var(--line);
 }
 .quick-views { padding: 10px 32px; }
-.filter-bar { top: 52px; background: rgba(255,255,255,.96); }
+.filter-bar { top: 52px; background: rgba(255,255,255,.96); z-index: 100; }
 .quick-view-btn, .filter-chip, .ghost-btn-mini {
   border-radius: 999px;
   font-size: 12px;
@@ -2927,6 +2927,91 @@ body[data-mode="edit"] .status-chip[data-action="open-status-menu"]:hover {
   display: none !important;
 }
 
+/* ── 16. Month nav dimming when filter active ── */
+.month-nav-link.nav-dimmed { opacity: 0.2; pointer-events: none; }
+
+/* ── 17. Project comment field ── */
+.po-proj-comment {
+  margin: 0 16px 10px;
+  font-size: 12px;
+  color: var(--ink-muted);
+  line-height: 1.5;
+  min-height: 18px;
+}
+.po-proj-comment:empty::before {
+  content: attr(data-placeholder);
+  color: var(--ink-soft);
+  pointer-events: none;
+}
+body[data-mode="edit"] .po-proj-comment {
+  outline: 1px dashed var(--line);
+  border-radius: 4px;
+  padding: 4px 6px;
+  min-height: 28px;
+}
+
+/* ── 18. Search highlight ── */
+mark.search-hl {
+  background: #fff09e;
+  border-radius: 2px;
+  padding: 0 1px;
+  color: inherit;
+}
+mark.search-hl.search-hl-active {
+  background: #ffb946;
+  outline: 2px solid #ffb946;
+  border-radius: 3px;
+}
+.search-nav-btn {
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 11px;
+  cursor: pointer;
+  color: var(--ink-muted);
+  font-family: inherit;
+  line-height: 1;
+}
+.search-nav-btn:hover { background: var(--bg-alt); color: var(--ink); }
+.search-nav-count {
+  font-size: 11px;
+  color: var(--ink-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── 19. Task drag-and-drop ── */
+.po-task-drag {
+  flex-shrink: 0;
+  cursor: grab;
+  color: var(--ink-soft);
+  font-size: 15px;
+  line-height: 1;
+  padding: 1px 2px 1px 0;
+  user-select: none;
+  display: none;
+  align-items: center;
+}
+body[data-mode="edit"] .po-task-drag { display: flex; }
+.po-task-drag:active { cursor: grabbing; }
+.po-task-item.po-dragging { opacity: 0.35; }
+.po-task-item.po-drag-over { outline: 2px solid var(--b24-blue); border-radius: 4px; }
+
+/* ── 20. Print improvements ── */
+@media print {
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .po-proj-comment, .po-proj-status-row { display: block !important; }
+  .project-body { display: block !important; }
+  .project-body[hidden] { display: block !important; }
+  .project { page-break-inside: avoid; border: 1pt solid #ddd !important; margin-bottom: 2mm !important; }
+  .project-head { padding: 2mm 3mm !important; }
+  .project-name { font-size: 9pt !important; }
+  .timeline { padding: 0 !important; max-width: 100% !important; }
+  .hero, .legend-panel, .changes-panel { display: none !important; }
+}
+
 </style>
 </head>
 <body data-mode="brief">
@@ -3046,7 +3131,7 @@ body[data-mode="edit"] .status-chip[data-action="open-status-menu"]:hover {
           </button>
           <div class="person-picker-popup" id="person-picker-popup" hidden>
             <button class="person-picker-clear" type="button" id="person-picker-clear">✕ сбросить</button>
-            <div class="person-picker-list"><button class="person-picker-item" data-person-filter="AA" title="Арман Арамович · Учредитель · 15 программ"><span class="person-cf-code">АА</span><span class="person-picker-name">Арамович</span></button><button class="person-picker-item" data-person-filter="VV" title="Вардан Вазгенович · Учредитель · 8 программ"><span class="person-cf-code">ВВ</span><span class="person-picker-name">Вазгенович</span></button><button class="person-picker-item" data-person-filter="OS" title="Олег Сергеевич · Учредитель · 18 программ"><span class="person-cf-code">ОС</span><span class="person-picker-name">Сергеевич</span></button><button class="person-picker-item" data-person-filter="OA" title="Олег Александрович · Учредитель · 20 программ"><span class="person-cf-code">ОА</span><span class="person-picker-name">Александрович</span></button><button class="person-picker-item" data-person-filter="EM" title="Екатерина Мездрикова · Финансовый директор · 5 программ"><span class="person-cf-code">ЕМ</span><span class="person-picker-name">Мездрикова</span></button><button class="person-picker-item" data-person-filter="TP" title="Тамара Платухина · Главный бухгалтер · 1 программ"><span class="person-cf-code">ТП</span><span class="person-picker-name">Платухина</span></button><button class="person-picker-item" data-person-filter="GB" title="Галина Боде · Руководитель HR · 7 программ"><span class="person-cf-code">ГБ</span><span class="person-picker-name">Боде</span></button><button class="person-picker-item" data-person-filter="KM" title="Кристина Москаленко · Старший тренер, методолог · 2 программ"><span class="person-cf-code">КМ</span><span class="person-picker-name">Москаленко</span></button><button class="person-picker-item" data-person-filter="AG" title="Александр Гулевич · Руководитель IT · 2 программ"><span class="person-cf-code">АГ</span><span class="person-picker-name">Гулевич</span></button><button class="person-picker-item" data-person-filter="NA" title="Надежда Астафьева · РОП сети · 4 программ"><span class="person-cf-code">НА</span><span class="person-picker-name">Астафьева</span></button><button class="person-picker-item" data-person-filter="DR" title="Даниэль Рон · Руководитель департамента продаж · 8 программ"><span class="person-cf-code">ДР</span><span class="person-picker-name">Рон</span></button><button class="person-picker-item" data-person-filter="HA" title="Харламов Артем · Руководитель · 4 программ"><span class="person-cf-code">ХА</span><span class="person-picker-name">Харламов</span></button><button class="person-picker-item" data-person-filter="KR" title="Константин Резуненко · Руководитель · 1 программ"><span class="person-cf-code">КР</span><span class="person-picker-name">Резуненко</span></button><button class="person-picker-item" data-person-filter="KE" title="Краюшкина Елизавета · Проектный офис / методолог · 17 программ"><span class="person-cf-code">КЕ</span><span class="person-picker-name">Краюшкина</span></button><button class="person-picker-item" data-person-filter="AK" title="Алексей Краскевич · Руководитель · 5 программ"><span class="person-cf-code">АК</span><span class="person-picker-name">Краскевич</span></button><button class="person-picker-item" data-person-filter="DB" title="Динара Бикбаева · Руководитель · 4 программ"><span class="person-cf-code">ДБ</span><span class="person-picker-name">Бикбаева</span></button><button class="person-picker-item" data-person-filter="BO" title="Белый Олег Александрович · Методолог · 1 программ"><span class="person-cf-code">БО</span><span class="person-picker-name">Белый</span></button><button class="person-picker-item" data-person-filter="YD" title="Яшин Денис · Руководитель · 1 программ"><span class="person-cf-code">ЯД</span><span class="person-picker-name">Яшин</span></button><button class="person-picker-item" data-person-filter="CK" title="Чащин Кирилл · Руководитель (лаборатория) · 2 программ"><span class="person-cf-code">ЧК</span><span class="person-picker-name">Чащин</span></button><button class="person-picker-item person-picker-item-unit" data-person-filter="unit_training" title="Функция обучения · Подразделение · 1 программ"><span class="person-cf-code person-cf-code-unit">ФО</span><span class="person-picker-name">Функция обучения</span></button><button class="person-picker-item person-picker-item-unit" data-person-filter="unit_po" title="Проектный офис · Подразделение · 1 программ"><span class="person-cf-code person-cf-code-unit">ПО</span><span class="person-picker-name">Проектный офис</span></button><button class="person-picker-item person-picker-item-none" data-person-filter="__none__" title="Программы без назначений · 0"><span class="person-cf-code person-cf-code-empty">—</span><span class="person-picker-name">не назначен</span></button>
+            <div class="person-picker-list"><button class="person-picker-item" data-person-filter="AA" title="Арман Арамович · Учредитель · 15 программ"><span class="person-cf-code">АА</span><span class="person-picker-name">Арамович</span></button><button class="person-picker-item" data-person-filter="VV" title="Вардан Вазгенович · Учредитель · 8 программ"><span class="person-cf-code">ВВ</span><span class="person-picker-name">Вазгенович</span></button><button class="person-picker-item" data-person-filter="OS" title="Олег Сергеевич · Учредитель · 18 программ"><span class="person-cf-code">ОС</span><span class="person-picker-name">Сергеевич</span></button><button class="person-picker-item" data-person-filter="OA" title="Олег Александрович · Учредитель · 20 программ"><span class="person-cf-code">ОА</span><span class="person-picker-name">Александрович</span></button><button class="person-picker-item" data-person-filter="EM" title="Екатерина Мездрикова · Финансовый директор · 5 программ"><span class="person-cf-code">ЕМ</span><span class="person-picker-name">Мездрикова</span></button><button class="person-picker-item" data-person-filter="TP" title="Тамара Платухина · Главный бухгалтер · 1 программ"><span class="person-cf-code">ТП</span><span class="person-picker-name">Платухина</span></button><button class="person-picker-item" data-person-filter="GB" title="Галина Боде · Руководитель HR · 7 программ"><span class="person-cf-code">ГБ</span><span class="person-picker-name">Боде</span></button><button class="person-picker-item" data-person-filter="KM" title="Кристина Москаленко · Старший тренер, методолог · 2 программ"><span class="person-cf-code">КМ</span><span class="person-picker-name">Москаленко</span></button><button class="person-picker-item" data-person-filter="AG" title="Александр Гулевич · Руководитель IT · 2 программ"><span class="person-cf-code">АГ</span><span class="person-picker-name">Гулевич</span></button><button class="person-picker-item" data-person-filter="NA" title="Надежда Астафьева · РОП сети · 4 программ"><span class="person-cf-code">НА</span><span class="person-picker-name">Астафьева</span></button><button class="person-picker-item" data-person-filter="DR" title="Даниэль Рон · Руководитель департамента продаж · 8 программ"><span class="person-cf-code">ДР</span><span class="person-picker-name">Рон</span></button><button class="person-picker-item" data-person-filter="HA" title="Харламов Артем · Руководитель · 4 программ"><span class="person-cf-code">ХА</span><span class="person-picker-name">Харламов</span></button><button class="person-picker-item" data-person-filter="KR" title="Константин Резуненко · Руководитель · 1 программ"><span class="person-cf-code">КР</span><span class="person-picker-name">Резуненко</span></button><button class="person-picker-item" data-person-filter="KE" title="Краюшкина Елизавета · Проектный офис / методолог · 17 программ"><span class="person-cf-code">КЕ</span><span class="person-picker-name">Краюшкина</span></button><button class="person-picker-item" data-person-filter="AK" title="Алексей Краскевич · Руководитель · 5 программ"><span class="person-cf-code">АК</span><span class="person-picker-name">Краскевич</span></button><button class="person-picker-item" data-person-filter="DB" title="Динара Бикбаева · Руководитель · 4 программ"><span class="person-cf-code">ДБ</span><span class="person-picker-name">Бикбаева</span></button><button class="person-picker-item" data-person-filter="YD" title="Яшин Денис · Руководитель · 1 программ"><span class="person-cf-code">ЯД</span><span class="person-picker-name">Яшин</span></button><button class="person-picker-item" data-person-filter="CK" title="Чащин Кирилл · Руководитель (лаборатория) · 2 программ"><span class="person-cf-code">ЧК</span><span class="person-picker-name">Чащин</span></button><button class="person-picker-item person-picker-item-unit" data-person-filter="unit_training" title="Функция обучения · Подразделение · 1 программ"><span class="person-cf-code person-cf-code-unit">ФО</span><span class="person-picker-name">Функция обучения</span></button><button class="person-picker-item person-picker-item-unit" data-person-filter="unit_po" title="Проектный офис · Подразделение · 1 программ"><span class="person-cf-code person-cf-code-unit">ПО</span><span class="person-picker-name">Проектный офис</span></button><button class="person-picker-item person-picker-item-none" data-person-filter="__none__" title="Программы без назначений · 0"><span class="person-cf-code person-cf-code-empty">—</span><span class="person-picker-name">не назначен</span></button>
             </div>
           </div>
         </div>
@@ -3382,7 +3467,7 @@ body[data-mode="edit"] .status-chip[data-action="open-status-menu"]:hover {
   // =====================================================================
   // Filtering
   // =====================================================================
-  const state = { change: null, contour: null, source: null, role: 'any', person: null };
+  const state = { change: null, contour: null, source: null, role: 'any', persons: [] };
   const body = document.body;
   const summaryEl = document.getElementById('filter-summary');
 
@@ -3395,20 +3480,17 @@ body[data-mode="edit"] .status-chip[data-action="open-status-menu"]:hover {
       const label = codeEl ? codeEl.textContent : state.change;
       parts.push(`изменение ${label}`);
     }
-    if (state.person) {
-      let personLabel = state.person === '__none__' ? 'не назначен' : (ASSIGNEES[state.person] && ASSIGNEES[state.person].last) || state.person;
-      let rolePrefix = '';
-      if (state.role !== 'any') {
-        rolePrefix = ROLES[state.role].label.toLowerCase() + ': ';
-      }
-      parts.push(`${rolePrefix}${personLabel}`);
+    if (state.persons.length > 0) {
+      const personLabels = state.persons.map(p => p === '__none__' ? 'не назначен' : (ASSIGNEES[p] && ASSIGNEES[p].last) || p).join(', ');
+      const rolePrefix = state.role !== 'any' ? ROLES[state.role].label.toLowerCase() + ': ' : '';
+      parts.push(`${rolePrefix}${personLabels}`);
     }
     if (state.contour) parts.push(`контур: ${state.contour}`);
     return parts;
   }
 
   function applyFilters() {
-    const hasFilter = !!(state.change || state.contour || state.source || state.person);
+    const hasFilter = !!(state.change || state.contour || state.source || state.persons.length);
     body.classList.toggle('has-filter', hasFilter);
 
     // Summary
@@ -3432,7 +3514,7 @@ body[data-mode="edit"] .status-chip[data-action="open-status-menu"]:hover {
       el.classList.toggle('filter-on', state.source && el.getAttribute('data-source-filter') === state.source);
     });
     document.querySelectorAll('[data-person-filter]').forEach(el => {
-      el.classList.toggle('filter-on', state.person && el.getAttribute('data-person-filter') === state.person);
+      el.classList.toggle('filter-on', state.persons.includes(el.getAttribute('data-person-filter')));
     });
     // Role selector — "any" is default-on
     document.querySelectorAll('[data-role-filter]').forEach(el => {
@@ -3441,19 +3523,20 @@ body[data-mode="edit"] .status-chip[data-action="open-status-menu"]:hover {
 
     const programs = document.querySelectorAll('.program');
     programs.forEach(prog => {
-      const attrAll = (prog.getAttribute('data-assignees-all') || '').split(' ').filter(Boolean);
+      // Normalize BO → OA (same person)
+      const normalizeKey = k => k === 'BO' ? 'OA' : k;
+      const attrAll = (prog.getAttribute('data-assignees-all') || '').split(' ').filter(Boolean).map(normalizeKey);
       // Determine which assignees count for person filter depending on role
       let personAssignees;
       if (state.role === 'any') personAssignees = attrAll;
-      else personAssignees = (prog.getAttribute(`data-assignees-${state.role}`) || '').split(' ').filter(Boolean);
+      else personAssignees = (prog.getAttribute(`data-assignees-${state.role}`) || '').split(' ').filter(Boolean).map(normalizeKey);
 
       const changeMatch  = !state.change   || prog.getAttribute('data-change')   === state.change;
       const contourMatch = !state.contour  || prog.getAttribute('data-contour')  === state.contour;
       const sourceMatch  = !state.source   || prog.getAttribute('data-source')   === state.source;
       let personMatch = true;
-      if (state.person) {
-        if (state.person === '__none__') personMatch = personAssignees.length === 0;
-        else personMatch = personAssignees.indexOf(state.person) >= 0;
+      if (state.persons.length > 0) {
+        personMatch = state.persons.some(p => p === '__none__' ? personAssignees.length === 0 : personAssignees.indexOf(p) >= 0);
       }
       const selfMatches = changeMatch && contourMatch && sourceMatch && personMatch;
 
@@ -3482,6 +3565,15 @@ body[data-mode="edit"] .status-chip[data-action="open-status-menu"]:hover {
         mo.style.display = '';
       }
     });
+
+    // Dim month-nav links for months hidden by filter
+    (function() {
+      var navLinks = document.querySelectorAll('#month-nav-list .month-nav-link');
+      var months = document.querySelectorAll('section.month');
+      months.forEach(function(sec, i) {
+        if (navLinks[i]) navLinks[i].classList.toggle('nav-dimmed', sec.style.display === 'none');
+      });
+    })();
   }
 
   document.querySelectorAll('[data-change-filter]').forEach(el => {
@@ -3509,7 +3601,9 @@ body[data-mode="edit"] .status-chip[data-action="open-status-menu"]:hover {
   document.querySelectorAll('[data-person-filter]').forEach(el => {
     el.addEventListener('click', () => {
       const v = el.getAttribute('data-person-filter');
-      state.person = (state.person === v) ? null : v;
+      const idx = state.persons.indexOf(v);
+      if (idx >= 0) state.persons.splice(idx, 1);
+      else state.persons.push(v);
       applyFilters();
     });
   });
@@ -3521,7 +3615,7 @@ body[data-mode="edit"] .status-chip[data-action="open-status-menu"]:hover {
     });
   });
   document.getElementById('filter-reset').addEventListener('click', () => {
-    state.change = null; state.contour = null; state.source = null; state.person = null; state.role = 'any';
+    state.change = null; state.contour = null; state.source = null; state.persons = []; state.role = 'any';
     applyFilters();
   });
 })();
@@ -3975,37 +4069,121 @@ body[data-mode="edit"] .status-chip[data-action="open-status-menu"]:hover {
   // ===== Search =====
   function escapeRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
   function normalizeText(s) { return (s || '').toLowerCase().replace(/ё/g, 'е'); }
+  function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function highlightEl(el, q) {
+    if (!el) return;
+    var origText = el.dataset.origText !== undefined ? el.dataset.origText : el.textContent;
+    el.dataset.origText = origText;
+    if (!q) { el.textContent = origText; return; }
+    var norm = normalizeText(origText);
+    var idx = norm.indexOf(q);
+    if (idx < 0) { el.textContent = origText; return; }
+    var html = '', last = 0;
+    while (idx >= 0) {
+      html += escHtml(origText.slice(last, idx)) + '<mark class="search-hl">' + escHtml(origText.slice(idx, idx + q.length)) + '</mark>';
+      last = idx + q.length;
+      idx = norm.indexOf(q, last);
+    }
+    html += escHtml(origText.slice(last));
+    el.innerHTML = html;
+  }
+
   const searchEl = document.getElementById('filter-search');
   let searchTimer = null;
+  let searchMatches = [];
+  let searchCurIdx = -1;
+
+  function updateSearchNav() {
+    if (!searchNavCount || !searchNavUp || !searchNavDown) return;
+    if (searchMatches.length === 0) {
+      searchNavCount.textContent = '';
+      searchNavUp.style.display = 'none';
+      searchNavDown.style.display = 'none';
+    } else {
+      searchNavCount.textContent = (searchCurIdx + 1) + '/' + searchMatches.length;
+      searchNavUp.style.display = '';
+      searchNavDown.style.display = '';
+    }
+  }
+
+  function goToMatch(idx) {
+    searchMatches.forEach(function(m) { m.classList.remove('search-hl-active'); });
+    if (searchMatches.length === 0) return;
+    idx = ((idx % searchMatches.length) + searchMatches.length) % searchMatches.length;
+    searchCurIdx = idx;
+    var mark = searchMatches[idx];
+    mark.classList.add('search-hl-active');
+    mark.closest('.program, .project') && mark.closest('.program, .project').scrollIntoView({behavior: 'smooth', block: 'nearest'});
+    updateSearchNav();
+  }
+
   function runSearch() {
     const q = normalizeText(searchEl ? searchEl.value.trim() : '');
+    // Clear previous highlights
+    document.querySelectorAll('[data-orig-text]').forEach(function(el) {
+      el.textContent = el.dataset.origText;
+      delete el.dataset.origText;
+    });
+    searchMatches = [];
+    searchCurIdx = -1;
     if (!q) {
       document.body.classList.remove('has-search-active');
       document.querySelectorAll('.program').forEach(p => p.classList.remove('search-match'));
       document.querySelectorAll('.project').forEach(p => p.classList.remove('search-match'));
+      updateSearchNav();
       return;
     }
     document.body.classList.add('has-search-active');
     document.querySelectorAll('.program').forEach(prog => {
-      const name = normalizeText(prog.querySelector('.program-name') ? prog.querySelector('.program-name').textContent : '');
-      const id   = normalizeText(prog.getAttribute('data-program-id') || '');
-      let progMatches = name.includes(q) || id.includes(q);
-      // Also: matches if any inner project's name matches
+      const nameEl = prog.querySelector('.program-name');
+      const nameText = normalizeText(nameEl ? nameEl.textContent : '');
+      const id = normalizeText(prog.getAttribute('data-program-id') || '');
+      let progMatches = nameText.includes(q) || id.includes(q);
+      if (nameText.includes(q)) highlightEl(nameEl, q);
       let anyProjMatch = false;
       prog.querySelectorAll('.project').forEach(proj => {
-        const pn = normalizeText(proj.querySelector('.project-name') ? proj.querySelector('.project-name').textContent : '');
+        const pnEl = proj.querySelector('.project-name');
+        const pn = normalizeText(pnEl ? pnEl.textContent : '');
         const pid = normalizeText(proj.querySelector('.project-id-mono') ? proj.querySelector('.project-id-mono').textContent : '');
         const match = pn.includes(q) || pid.includes(q);
+        if (pn.includes(q)) highlightEl(pnEl, q);
         proj.classList.toggle('search-match', match);
         if (match) anyProjMatch = true;
       });
       prog.classList.toggle('search-match', progMatches || anyProjMatch);
     });
+    searchMatches = Array.from(document.querySelectorAll('mark.search-hl'));
+    if (searchMatches.length > 0) goToMatch(0);
+    else updateSearchNav();
   }
+
+  // Inject nav buttons into the search row
+  var searchNavUp = null, searchNavDown = null, searchNavCount = null;
   if (searchEl) {
+    searchNavUp = document.createElement('button');
+    searchNavUp.type = 'button'; searchNavUp.className = 'search-nav-btn'; searchNavUp.textContent = '▲';
+    searchNavUp.title = 'Предыдущий результат'; searchNavUp.style.display = 'none';
+    searchNavDown = document.createElement('button');
+    searchNavDown.type = 'button'; searchNavDown.className = 'search-nav-btn'; searchNavDown.textContent = '▼';
+    searchNavDown.title = 'Следующий результат'; searchNavDown.style.display = 'none';
+    searchNavCount = document.createElement('span');
+    searchNavCount.className = 'search-nav-count';
+    searchEl.insertAdjacentElement('afterend', searchNavCount);
+    searchNavCount.insertAdjacentElement('afterend', searchNavDown);
+    searchNavDown.insertAdjacentElement('afterend', searchNavUp);
+    searchNavUp.addEventListener('click', function() { goToMatch(searchCurIdx - 1); });
+    searchNavDown.addEventListener('click', function() { goToMatch(searchCurIdx + 1); });
     searchEl.addEventListener('input', () => {
       if (searchTimer) clearTimeout(searchTimer);
       searchTimer = setTimeout(runSearch, 120);
+    });
+    searchEl.addEventListener('keydown', function(e) {
+      if (searchMatches.length === 0) return;
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        goToMatch(e.shiftKey ? searchCurIdx - 1 : searchCurIdx + 1);
+      }
     });
   }
 })();
@@ -4463,16 +4641,17 @@ body[data-mode="edit"] .status-chip[data-action="open-status-menu"]:hover {
     function closePicker() { popup.hidden = true;  wrap.classList.remove('open'); }
 
     function updateTrigger() {
-      const v = state.person;
-      if (v) {
-        if (v === '__none__') {
-          avatar.textContent = '—'; avatar.className = 'person-cf-code person-cf-code-empty';
-          label.textContent  = 'не назначен';
+      const ps = state.persons;
+      if (ps.length > 0) {
+        if (ps.length === 1 && ps[0] !== '__none__') {
+          const a = ASSIGNEES[ps[0]];
+          avatar.textContent = a ? a.initials : ps[0];
+          avatar.className   = 'person-cf-code' + (UNITS && UNITS[ps[0]] ? ' person-cf-code-unit' : '');
+          label.textContent  = a ? a.last : ps[0];
         } else {
-          const a = ASSIGNEES[v];
-          avatar.textContent = a ? a.initials : v;
-          avatar.className   = 'person-cf-code' + (UNITS && UNITS[v] ? ' person-cf-code-unit' : '');
-          label.textContent  = a ? a.last : v;
+          avatar.textContent = String(ps.length);
+          avatar.className   = 'person-cf-code';
+          label.textContent  = ps.length + ' чел.';
         }
         trigger.classList.add('filter-on');
       } else {
@@ -4490,13 +4669,13 @@ body[data-mode="edit"] .status-chip[data-action="open-status-menu"]:hover {
     popup.addEventListener('click', e => {
       const item = e.target.closest('[data-person-filter]');
       if (!item) return;
-      // state.person is updated by the existing [data-person-filter] handler
-      setTimeout(() => { updateTrigger(); closePicker(); }, 0);
+      // state.persons is updated by the [data-person-filter] handler
+      setTimeout(() => { updateTrigger(); }, 0);
     });
 
     clearBtn.addEventListener('click', e => {
       e.stopPropagation();
-      state.person = null;
+      state.persons = [];
       applyFilters();
       updateTrigger();
       closePicker();
@@ -4704,9 +4883,8 @@ body[data-mode="edit"] .po-proj-owner-btn:hover { background: #F0EDE6; }
 .po-task-item[data-st="cancelled"]   .po-task-cb { background: #F3F4F6; color: #9CA3AF; text-decoration: line-through; }
 .po-task-item[data-st="draft"]       .po-task-cb { background: #EEF2FF; color: #4338CA; }
 /* Status dropdown */
-.po-task-item { position: relative; }
 .po-task-st-drop {
-  position: absolute; left: 0; top: calc(100% + 4px); z-index: 400;
+  position: fixed; z-index: 400;
   background: #FDFBF6; border: 1px solid #DDD5C5; border-radius: 7px;
   list-style: none; margin: 0; padding: 4px 0;
   box-shadow: 0 6px 20px rgba(0,0,0,0.13); min-width: 140px;
@@ -5077,6 +5255,8 @@ body[data-mode="edit"] .po-task-add { display: block; }
       proj.querySelectorAll('.project-body .field-value').forEach(function (el) {
         if (!el.dataset.ek) el.dataset.ek = 'proj:' + pid + ':fv:' + (fvIdx++);
       });
+      var nameEl = proj.querySelector('.project-name');
+      if (nameEl && !nameEl.dataset.ek) nameEl.dataset.ek = 'proj:' + pid + ':name';
     });
   }
 
@@ -5164,6 +5344,8 @@ body[data-mode="edit"] .po-task-add { display: block; }
           if (!d[pid]) d[pid] = {};
           d[pid][def.field] = next.value;
           lsSet(LS_PSTAT, d);
+          var pr = proj.closest('.program');
+          if (pr && def.field === 'status') updateProgProgress(pr);
         });
         cell.appendChild(lbl);
         cell.appendChild(chip);
@@ -5250,6 +5432,25 @@ body[data-mode="edit"] .po-task-add { display: block; }
       }());
 
       body.insertBefore(row, body.firstChild);
+
+      /* --- Comment field --- */
+      var commentKey = 'proj-comment-' + pid;
+      var commentEl = document.createElement('div');
+      commentEl.className = 'po-proj-comment po-editable';
+      commentEl.contentEditable = 'false';
+      commentEl.spellcheck = false;
+      commentEl.dataset.ek = commentKey;
+      commentEl.setAttribute('data-placeholder', 'Комментарий...');
+      var savedTexts = lsGet(LS_TEXTS);
+      if (savedTexts[commentKey] !== undefined) commentEl.innerHTML = sanitize(savedTexts[commentKey]);
+      commentEl.addEventListener('paste', function (e) {
+        e.preventDefault();
+        var text = (e.clipboardData || window.clipboardData).getData('text/plain');
+        document.execCommand('insertText', false, text);
+      });
+      commentEl.addEventListener('blur', function () { saveTextField(commentEl); });
+      textEls.push(commentEl);
+      body.appendChild(commentEl);
     });
   }
 
@@ -5347,18 +5548,23 @@ body[data-mode="edit"] .po-task-add { display: block; }
   }
 
   function updateProgProgress(prog) {
+    var saved = lsGet(LS_PSTAT);
     var total = 0, done = 0;
     prog.querySelectorAll('.project').forEach(function (proj) {
       var m = proj.querySelector('.project-id-mono');
       if (!m) return;
-      var ts = getTasks(m.textContent.trim());
-      total += ts.length; done += ts.filter(function (t) { return t.status === 'done'; }).length;
+      var pid = m.textContent.trim();
+      var ps = saved[pid] || {};
+      var st = ps.status || 'not-started';
+      if (st === 'cancelled') return;
+      total++;
+      if (st === 'done') done++;
     });
     var pct = total ? Math.round(done / total * 100) : 0;
     var fill = prog.querySelector('.po-prog-fill');
     var lbl  = prog.querySelector('.po-prog-lbl');
     if (fill) fill.style.width = pct + '%';
-    if (lbl)  lbl.textContent  = total ? done + '/' + total + ' задач' : 'нет задач';
+    if (lbl)  lbl.textContent  = total ? done + '/' + total + ' проектов' : 'нет проектов';
   }
 
   function syncTaskEdit(body) {
@@ -5621,24 +5827,59 @@ body[data-mode="edit"] .po-task-add { display: block; }
     var list = sec.querySelector('.po-task-list');
     list.innerHTML = '';
 
+    var dragSrcIdx = -1;
     tasks.forEach(function (t, i) {
       var st = TASK_ST.find(function (s) { return s.v === t.status; }) || TASK_ST[0];
       var li = document.createElement('li');
       li.className = 'po-task-item';
       li.dataset.st = st.v;
+      li.draggable = true;
+      li.addEventListener('dragstart', function (e) {
+        dragSrcIdx = i;
+        e.dataTransfer.effectAllowed = 'move';
+        setTimeout(function () { li.classList.add('po-dragging'); }, 0);
+      });
+      li.addEventListener('dragend', function () {
+        li.classList.remove('po-dragging');
+        list.querySelectorAll('.po-task-item').forEach(function (el) { el.classList.remove('po-drag-over'); });
+      });
+      li.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        list.querySelectorAll('.po-task-item').forEach(function (el) { el.classList.remove('po-drag-over'); });
+        if (dragSrcIdx !== i) li.classList.add('po-drag-over');
+      });
+      li.addEventListener('drop', function (e) {
+        e.stopPropagation();
+        li.classList.remove('po-drag-over');
+        if (dragSrcIdx < 0 || dragSrcIdx === i) return;
+        var a = getTasks(pid);
+        var moved = a.splice(dragSrcIdx, 1)[0];
+        a.splice(i, 0, moved);
+        dragSrcIdx = -1;
+        setTasks(pid, a);
+        renderTasks(pid, body, proj);
+      });
+
+      var drag = document.createElement('span');
+      drag.className = 'po-task-drag';
+      drag.textContent = '⠿';
+      drag.title = 'Перетащить';
 
       var cb = document.createElement('button');
       cb.type = 'button'; cb.className = 'po-task-cb';
       cb.textContent = st.title; cb.title = 'Изменить статус';
       cb.addEventListener('click', function (e) {
         e.stopPropagation();
-        // Close any other open status dropdown
-        document.querySelectorAll('.po-task-st-drop').forEach(function (d) { if (d !== drop) d.remove(); });
-        if (cb.parentNode.querySelector('.po-task-st-drop')) {
-          cb.parentNode.querySelector('.po-task-st-drop').remove(); return;
+        var existingDrop = document.querySelector('.po-task-st-drop');
+        if (existingDrop) {
+          var isOurs = existingDrop._ownerCb === cb;
+          existingDrop.remove();
+          if (isOurs) return;
         }
         var drop = document.createElement('ul');
         drop.className = 'po-task-st-drop';
+        drop._ownerCb = cb;
         TASK_ST.forEach(function (s) {
           var opt = document.createElement('li');
           opt.className = 'po-task-st-opt' + (s.v === (t.status || 'not_started') ? ' current' : '');
@@ -5655,7 +5896,10 @@ body[data-mode="edit"] .po-task-add { display: block; }
           });
           drop.appendChild(opt);
         });
-        cb.parentNode.appendChild(drop);
+        var rect = cb.getBoundingClientRect();
+        drop.style.top = (rect.bottom + 4) + 'px';
+        drop.style.left = rect.left + 'px';
+        document.body.appendChild(drop);
         function closeDrop(ev) {
           if (!drop.contains(ev.target) && ev.target !== cb) { drop.remove(); document.removeEventListener('click', closeDrop, true); }
         }
@@ -5708,7 +5952,7 @@ body[data-mode="edit"] .po-task-add { display: block; }
         var pr = proj.closest('.program'); if (pr) updateProgProgress(pr);
       });
 
-      li.appendChild(cb); li.appendChild(bd); li.appendChild(del);
+      li.appendChild(drag); li.appendChild(cb); li.appendChild(bd); li.appendChild(del);
       list.appendChild(li);
     });
 
