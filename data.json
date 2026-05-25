@@ -978,6 +978,32 @@
         "status": "not_started",
         "updatedAt": "2026-05-25T07:49:37.183Z"
       }
+    ],
+    "U-CLN-PR-1.1.5": [
+      {
+        "taskId": "",
+        "text": "Передать формирование ТБ на уровень клиник ",
+        "assignee": "OS",
+        "dueDate": "2026-04-01",
+        "status": "done",
+        "updatedAt": "2026-05-25T07:57:06.181Z"
+      },
+      {
+        "taskId": "",
+        "text": "Сформировать устойчивые проверки ТБ прии планировании ",
+        "assignee": "EM",
+        "dueDate": "2026-06-01",
+        "status": "done",
+        "updatedAt": "2026-05-25T08:05:21.779Z"
+      },
+      {
+        "taskId": "",
+        "text": "Вернуть формирование ТБ на уровень учредителей ",
+        "assignee": "OS",
+        "dueDate": "2026-05-29",
+        "status": "in_progress",
+        "updatedAt": "2026-05-25T08:05:47.519Z"
+      }
     ]
   },
   "projStatuses": {
@@ -1217,5 +1243,5 @@
       "css": "certainty-confirmed"
     }
   },
-  "publishedAt": "2026-05-25T07:52:36.811Z"
+  "publishedAt": "2026-05-25T08:06:00.194Z"
 }
