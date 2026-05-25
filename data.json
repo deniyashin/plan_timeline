@@ -86,23 +86,71 @@
         "id": "T-0006",
         "taskId": "U-CLN-Z-1.1.1.1",
         "text": "Передать финансовое планирование на уровень клиник как рабочую практику",
-        "assignee": "",
-        "dueDate": "",
+        "assignee": "OS",
+        "dueDate": "2026-04-01",
         "legacy_id": "U-CLN-Z-1.1.1.1",
         "status": "done",
-        "updatedAt": "2026-05-21T07:34:47.994Z"
+        "updatedAt": "2026-05-25T07:44:55.262Z"
+      },
+      {
+        "taskId": "",
+        "text": "Запустить пилот на уровне одной клиники ",
+        "assignee": "OS",
+        "dueDate": "2026-05-01",
+        "status": "done",
+        "updatedAt": "2026-05-25T07:45:00.293Z"
+      },
+      {
+        "taskId": "",
+        "text": "Запуск пилота на всех клиниках ",
+        "assignee": "OS",
+        "dueDate": "2026-05-04",
+        "status": "done",
+        "updatedAt": "2026-05-25T07:46:28.959Z"
+      },
+      {
+        "taskId": "",
+        "text": "Регулярный контроль выполнения финансового планирования ",
+        "assignee": "EM",
+        "dueDate": "2026-06-30",
+        "status": "in_progress",
+        "updatedAt": "2026-05-25T07:47:05.853Z"
       }
     ],
     "U-CLN-PR-1.1.4": [
       {
+        "taskId": "",
+        "text": "Создать модель мотивации руководителей на маржинальности с KPI ",
+        "assignee": "KE",
+        "dueDate": "2026-04-01",
+        "status": "done",
+        "updatedAt": "2026-05-25T07:50:16.640Z"
+      },
+      {
+        "taskId": "",
+        "text": "Согласовать модель мотивации руководителей клиник ",
+        "assignee": "OS",
+        "dueDate": "2026-04-01",
+        "status": "done",
+        "updatedAt": "2026-05-25T07:51:46.680Z"
+      },
+      {
+        "taskId": "",
+        "text": "Согласовать KPI руководителей клиник ",
+        "assignee": "KE",
+        "dueDate": "2026-04-17",
+        "status": "in_progress",
+        "updatedAt": "2026-05-25T07:52:23.543Z"
+      },
+      {
         "id": "T-0007",
         "taskId": "U-CLN-Z-1.1.4.1",
-        "text": "Запустить пробную новую оплату руководителей, привязанную к маржинальности",
-        "assignee": "",
-        "dueDate": "",
+        "text": "Запустить пробную новую оплату руководителей, привязанную к маржинальности как пилот в клинике после внедрения орг.структуры ",
+        "assignee": "OS",
+        "dueDate": "2026-05-31",
         "legacy_id": "U-CLN-Z-1.1.4.1",
-        "status": "in_progress",
-        "updatedAt": "2026-05-20T12:45:48.758Z"
+        "status": "not_started",
+        "updatedAt": "2026-05-25T07:50:46.213Z"
       }
     ],
     "T-LEG-PR-1.6.5": [
@@ -920,6 +968,16 @@
         "status": "not_started",
         "updatedAt": "2026-05-25T07:34:12.315Z"
       }
+    ],
+    "U-CLN-PR-1.1.2": [
+      {
+        "taskId": "",
+        "text": "Создать регламнт и описание для закрепления отвественности за фин.результат на уровне каждой клиники ",
+        "assignee": "OA",
+        "dueDate": "2026-05-31",
+        "status": "not_started",
+        "updatedAt": "2026-05-25T07:49:37.183Z"
+      }
     ]
   },
   "projStatuses": {
@@ -969,8 +1027,9 @@
       "approval": "approved"
     },
     "U-CLN-PR-1.1.2": {
-      "status": "in-progress",
-      "approval": "approved"
+      "status": "done",
+      "approval": "approved",
+      "owner": "OS"
     },
     "U-SKL-PR-1.4.1": {
       "status": "in-progress",
@@ -1158,5 +1217,5 @@
       "css": "certainty-confirmed"
     }
   },
-  "publishedAt": "2026-05-25T07:37:17.351Z"
+  "publishedAt": "2026-05-25T07:52:36.811Z"
 }
