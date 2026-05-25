@@ -26,7 +26,19 @@
     "proj:U-PAT-PR-3.5.2:name": "Функционал кабинета для пациента + посадочная для информаирования пациентов по заходу с маркетплейсов&nbsp;",
     "prog:U-PAT-P-3.5:fv:5": "У пациента есть цифровой личный кабинет как часть единого контура взаимодействия, который позволяет закрывать потребности в информировании как текущих пациентов, так и потенциальных.",
     "prog:U-PAT-P-3.5:fv:6": "<br>",
-    "proj:T-PAT-PR-3.5.6:name": "Аватар пациента и сквозной контекст по точкам контакта (воронка статусов)"
+    "proj:T-PAT-PR-3.5.6:name": "Аватар пациента и сквозной контекст по точкам контакта (воронка статусов)",
+    "proj:U-ALL-PR-2.4.3:name": "Карта пути сотрудника",
+    "proj:U-ALL-PR-2.4.4:name": "Точки контакта и владельцы функций",
+    "proj:U-ALL-PR-2.4.5:name": "Привязка функций к статистикам и ответственности",
+    "proj:U-ALL-PR-2.4.2:name": "Карта пациентского пути",
+    "proj:U-ALL-PR-2.4.1:name": "Карта функций компании",
+    "proj:U-HRM-PR-4.1.2:name": "Новая оргструктура клиник",
+    "prog:U-PAT-P-3.3:csv:3": "Полнота индекса здоровья для всех пацентов клиник",
+    "np-progdesc-U-NEW-P-1.5": "Создание сквозного регламента работы с начислениями заработной платы сотрудникам, формату трудоустройства, контролю аттестаций и прочих аспектов расчетов компании с сотрудниками. Создание сквозного регламента работы с должностями, регламентами, описаниями функций, формирования KPI и систем мотивации.&nbsp;",
+    "np-result-U-NEW-PR-1.5.1": "Получены и оцифрованы как реестр данных от всех подразделений компании в этом направлении, создан мастер-реестр сотрудников и данных&nbsp;",
+    "np-desc-U-NEW-PR-1.5.1": "Получить и привести в объединенный формат все имеющиеся данные компании.",
+    "np-result-U-NEW-PR-1.5.2": "Получен регламент начислений на уровне клиники по каждой существующей должности, передан для оцифровки начислений в 1С.",
+    "np-desc-U-NEW-PR-1.5.2": ""
   },
   "tasks": {
     "U-FIN-PR-1.2.2": [
@@ -238,19 +250,21 @@
         "id": "T-0016",
         "taskId": "T-HRM-Z-4.1.7.1",
         "text": "Посчитать объем ресурса, необходимый для полноценного закрытия техподдержки всех клиник",
-        "assignee": "",
+        "assignee": "AG",
         "dueDate": "",
         "legacy_id": "T-HRM-Z-4.1.7.1",
-        "status": "not_started"
+        "status": "not_started",
+        "updatedAt": "2026-05-25T09:07:36.474Z"
       },
       {
         "id": "T-0017",
         "taskId": "T-HRM-Z-4.1.7.2",
-        "text": "Нанять еще одного сотрудника в техническую поддержку",
-        "assignee": "",
+        "text": "Переформатировать штат тех.поддержки на формат: фиксированное кол-во специлаистов на земле, первая линия тех.поддержки удаленно из регионов ",
+        "assignee": "AG",
         "dueDate": "",
         "legacy_id": "T-HRM-Z-4.1.7.2",
-        "status": "not_started"
+        "status": "not_started",
+        "updatedAt": "2026-05-25T09:07:39.512Z"
       }
     ],
     "U-HRM-PR-4.2.1": [
@@ -978,6 +992,562 @@
         "status": "not_started",
         "updatedAt": "2026-05-25T07:49:37.183Z"
       }
+    ],
+    "U-CLN-PR-1.1.5": [
+      {
+        "taskId": "",
+        "text": "Передать формирование ТБ на уровень клиник ",
+        "assignee": "OS",
+        "dueDate": "2026-04-01",
+        "status": "done",
+        "updatedAt": "2026-05-25T07:57:06.181Z"
+      },
+      {
+        "taskId": "",
+        "text": "Сформировать устойчивые проверки ТБ прии планировании ",
+        "assignee": "EM",
+        "dueDate": "2026-06-01",
+        "status": "done",
+        "updatedAt": "2026-05-25T08:05:21.779Z"
+      },
+      {
+        "taskId": "",
+        "text": "Вернуть формирование ТБ на уровень учредителей ",
+        "assignee": "OS",
+        "dueDate": "2026-05-29",
+        "status": "in_progress",
+        "updatedAt": "2026-05-25T08:05:47.519Z"
+      }
+    ],
+    "U-ALL-PR-2.4.3": [
+      {
+        "taskId": "",
+        "text": "Создать путь сотрудника в компании",
+        "assignee": "KE",
+        "dueDate": "2026-04-27",
+        "status": "done",
+        "updatedAt": "2026-05-25T08:46:50.299Z"
+      },
+      {
+        "taskId": "",
+        "text": "Создать воронку пути и описание реперных точек, ответсвенных и действий ",
+        "assignee": "KE",
+        "dueDate": "2026-05-15",
+        "status": "done",
+        "updatedAt": "2026-05-25T08:47:15.732Z"
+      },
+      {
+        "taskId": "",
+        "text": "Создать прототип функционала для работы с сотрудниками, данными и о них и воронке ",
+        "assignee": "KE",
+        "dueDate": "2026-05-22",
+        "status": "done",
+        "updatedAt": "2026-05-25T08:48:40.668Z"
+      },
+      {
+        "taskId": "",
+        "text": "Согласовать создание функционала в б24 для работы с путем сотрудника на всех этапах ",
+        "assignee": "KE",
+        "dueDate": "2026-05-29",
+        "status": "in_progress",
+        "updatedAt": "2026-05-25T08:48:37.940Z"
+      },
+      {
+        "taskId": "",
+        "text": "Создать первую версию функционла с базой данных на имеющихся материалах по сотрудникам",
+        "assignee": "AG",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-05-25T08:49:04.429Z"
+      },
+      {
+        "taskId": "",
+        "text": "Создать интеграции с сервисами и воронками бизнес-процессов в Б24 для автоматизации работы с функционалом и получения всех данных по сотруднику ",
+        "assignee": "AG",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-05-25T08:49:38.376Z"
+      },
+      {
+        "taskId": "",
+        "text": "Создать версию \"Личного кабинета сотрудника\" для ознакомления со всеми данными и докумнетами",
+        "assignee": "AG",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-05-25T08:50:06.705Z"
+      }
+    ],
+    "U-ALL-PR-2.4.2": [
+      {
+        "taskId": "",
+        "text": "Создатььбазовую карту пути пациента ",
+        "assignee": "AK",
+        "dueDate": "2026-03-02",
+        "status": "done",
+        "updatedAt": "2026-05-25T08:50:47.467Z"
+      },
+      {
+        "taskId": "",
+        "text": "Создать на базе карту пути пацеинта матрицу зон отвественности и точек передачи пациента ",
+        "assignee": "AK",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-05-25T08:51:20.671Z"
+      },
+      {
+        "taskId": "",
+        "text": "Создать функциональную воронку в одной из систем, где собирать и видеть путь всех пациентов по всем клиникам, оцифровывать данные о пацеинтах как слепки ",
+        "assignee": "",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-05-25T08:51:57.369Z"
+      }
+    ],
+    "U-ALL-PR-2.4.1": [
+      {
+        "taskId": "",
+        "text": "Создать карту подчиненности организации",
+        "assignee": "GB",
+        "dueDate": "2026-04-01",
+        "status": "done",
+        "updatedAt": "2026-05-25T08:53:07.668Z"
+      },
+      {
+        "taskId": "",
+        "text": "Оцифровать для регулярного использования и свести данные из разных отделов по карте подчиненности",
+        "assignee": "KE",
+        "dueDate": "2026-05-11",
+        "status": "done",
+        "updatedAt": "2026-05-25T08:53:05.678Z"
+      },
+      {
+        "taskId": "",
+        "text": "Создать регламент начсилений, работы и трудоустрйоства, выявить из него список должностей и функций ",
+        "assignee": "KE",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-05-25T08:53:48.905Z"
+      }
+    ],
+    "U-ALL-PR-2.4.5": [
+      {
+        "taskId": "",
+        "text": "Сформировать на базе системы идексов карту сверки стастик и функций, конкретных ФИО в рамках функционала ПО для руководителей по сотрудникам",
+        "assignee": "KE",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-05-25T08:55:06.274Z"
+      }
+    ],
+    "U-HRM-PR-4.1.2": [
+      {
+        "taskId": "",
+        "text": "Собрать новую орг.структуру клиник ",
+        "assignee": "KE",
+        "dueDate": "2026-03-30",
+        "status": "done",
+        "updatedAt": "2026-05-25T08:56:49.475Z"
+      },
+      {
+        "taskId": "",
+        "text": "Согласовать новую орг.структуру и  провести демо ",
+        "assignee": "OS",
+        "dueDate": "2026-04-17",
+        "status": "done",
+        "updatedAt": "2026-05-25T08:57:12.936Z"
+      },
+      {
+        "taskId": "",
+        "text": "Запустить пилот внедрения орг.структуры в клинике ",
+        "assignee": "OS",
+        "dueDate": "2026-05-15",
+        "status": "in_progress",
+        "updatedAt": "2026-05-25T08:57:32.893Z"
+      },
+      {
+        "taskId": "",
+        "text": "Создать регламенты новых должностей по орг.структуре ",
+        "assignee": "KE",
+        "dueDate": "2026-03-30",
+        "status": "done",
+        "updatedAt": "2026-05-25T08:58:05.138Z"
+      },
+      {
+        "taskId": "",
+        "text": "Согласовать новые описания должностей ",
+        "assignee": "KE",
+        "dueDate": "2026-04-17",
+        "status": "done",
+        "updatedAt": "2026-05-25T08:58:28.588Z"
+      },
+      {
+        "taskId": "",
+        "text": "Внедрить и провести обучение по новым описаниям дожностей (ждем KPI и систему мотивации) ",
+        "assignee": "OS",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-05-25T08:58:53.295Z"
+      }
+    ],
+    "U-HRM-PR-4.1.3": [
+      {
+        "taskId": "",
+        "text": "На базе карты функций компании сформировать регламент пересечения и действий на грсницах функций или зон ответсвенности (ждем карту функций) ",
+        "assignee": "KE",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-05-25T08:59:59.509Z"
+      }
+    ],
+    "U-HRM-PR-4.1.4": [
+      {
+        "taskId": "",
+        "text": "Создать орг.структуру, описать должности, рассчитать систему мотивации",
+        "assignee": "KE",
+        "dueDate": "2026-04-17",
+        "status": "done",
+        "updatedAt": "2026-05-25T09:00:36.265Z"
+      },
+      {
+        "taskId": "",
+        "text": "На земле пересобрать конкретные ФИО под новую орг.структуру и логику ",
+        "assignee": "",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-05-25T09:01:02.031Z"
+      }
+    ],
+    "T-HRM-PR-4.1.6": [
+      {
+        "taskId": "",
+        "text": "Описать и разделить зоны отвесвенности ТП и разработки ",
+        "assignee": "AG",
+        "dueDate": "2026-03-02",
+        "status": "done",
+        "updatedAt": "2026-05-25T09:02:09.393Z"
+      },
+      {
+        "taskId": "",
+        "text": "Создать систему показателей для контроля каждого направления",
+        "assignee": "AG",
+        "dueDate": "2026-03-02",
+        "status": "done",
+        "updatedAt": "2026-05-25T09:02:33.978Z"
+      },
+      {
+        "taskId": "",
+        "text": "Сформировать для тех.поддержки автономный и оцифрованный регламент работы с обращениями. для минимизации перетекания задач в разработку",
+        "assignee": "AG",
+        "dueDate": "2026-06-26",
+        "status": "in_progress",
+        "updatedAt": "2026-05-25T09:03:35.691Z"
+      },
+      {
+        "taskId": "",
+        "text": "Сокращать процент загруженности разработки задачами тех.поддержки",
+        "assignee": "AG",
+        "dueDate": "2026-06-26",
+        "status": "in_progress",
+        "updatedAt": "2026-05-25T09:04:16.302Z"
+      },
+      {
+        "taskId": "",
+        "text": "Создать для тех.поддержки функционал работы с заявками понятный для сотрудников компании и контролируемый по активности сотрудников ТП ",
+        "assignee": "AG",
+        "dueDate": "2026-04-27",
+        "status": "done",
+        "updatedAt": "2026-05-25T09:04:57.555Z"
+      },
+      {
+        "taskId": "",
+        "text": "Начать работу с приоритезацией и проектным форматом работы над задачами разработки ",
+        "assignee": "AG",
+        "dueDate": "2026-05-11",
+        "status": "in_progress",
+        "updatedAt": "2026-05-25T09:05:30.426Z"
+      },
+      {
+        "taskId": "",
+        "text": "Сформировать проектный формат работы с крупными запросами/подразделениями с регулярными задачами для оценки реурсоёмкости каждого проекта как единицы ",
+        "assignee": "AG",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-05-25T09:06:10.809Z"
+      }
+    ],
+    "U-DAT-PR-2.2.1": [
+      {
+        "taskId": "",
+        "text": "Создать Идекс врача как отчет для работы на земле ",
+        "assignee": "KE",
+        "dueDate": "2026-02-09",
+        "status": "done",
+        "updatedAt": "2026-05-25T09:08:38.462Z"
+      },
+      {
+        "taskId": "",
+        "text": "Создать отчеты для контроля индекса врачей на уровне клинкии по разным специализациям",
+        "assignee": "KE",
+        "dueDate": "2026-04-13",
+        "status": "done",
+        "updatedAt": "2026-05-25T09:09:13.542Z"
+      },
+      {
+        "taskId": "",
+        "text": "Вернуться к логике индекса, создать индексы врачебного подразделения для руководителей на всех уровнях ",
+        "assignee": "KE",
+        "dueDate": "2026-06-15",
+        "status": "not_started",
+        "updatedAt": "2026-05-25T09:09:55.805Z"
+      }
+    ],
+    "U-DAT-PR-2.2.2": [
+      {
+        "taskId": "",
+        "text": "Создать модель оценки подразделений через индексы ",
+        "assignee": "KE",
+        "dueDate": "2026-04-17",
+        "status": "done",
+        "updatedAt": "2026-05-25T09:11:10.256Z"
+      },
+      {
+        "taskId": "",
+        "text": "Собрать конкретные индексы и показатели для каждого подразделения в компании ",
+        "assignee": "KE",
+        "dueDate": "2026-06-19",
+        "status": "in_progress",
+        "updatedAt": "2026-05-25T09:11:40.633Z"
+      }
+    ],
+    "U-DAT-PR-2.2.3": [
+      {
+        "taskId": "",
+        "text": "Создать модель расчета индексов областей, формата визуализации и управленческого использования ",
+        "assignee": "KE",
+        "dueDate": "2026-05-15",
+        "status": "done",
+        "updatedAt": "2026-05-25T09:12:48.224Z"
+      },
+      {
+        "taskId": "",
+        "text": "Разработать карту областей компании ",
+        "assignee": "KE",
+        "dueDate": "2026-06-05",
+        "status": "not_started",
+        "updatedAt": "2026-05-25T09:13:14.580Z"
+      }
+    ],
+    "U-DAT-PR-2.2.4": [
+      {
+        "taskId": "",
+        "text": "Провести анализ текущего формата обучения и оценки компетенций сотрудника ",
+        "assignee": "KE",
+        "dueDate": "2026-05-04",
+        "status": "done",
+        "updatedAt": "2026-05-25T09:13:48.989Z"
+      },
+      {
+        "taskId": "",
+        "text": "Создать систему хранения, оценки и развития компетенций у сотрудников компании (от задачи по пути сотрудника) ",
+        "assignee": "KE",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-05-25T09:15:20.845Z"
+      },
+      {
+        "taskId": "",
+        "text": "Создать систему внутреннего тестирования для каждой должности ",
+        "assignee": "GB",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-05-25T09:15:16.869Z"
+      },
+      {
+        "taskId": "",
+        "text": "Создать базу данных по курсам и компетенциям ",
+        "assignee": "AG",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-05-25T09:15:13.621Z"
+      },
+      {
+        "taskId": "",
+        "text": "Создать инедекс обученности как сущность ",
+        "assignee": "KE",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-05-25T09:15:10.050Z"
+      }
+    ],
+    "U-PAT-PR-3.3.1": [
+      {
+        "taskId": "",
+        "text": "Подкллючить и настроить Diagnocat для всех клиник",
+        "assignee": "AK",
+        "dueDate": "2026-06-22",
+        "status": "in_progress",
+        "updatedAt": "2026-05-25T09:29:43.428Z"
+      },
+      {
+        "taskId": "",
+        "text": "Создать функционал для презентации планов лечения и формирования единого общего плана лечения = индекса здоровья пациента ",
+        "assignee": "AK",
+        "dueDate": "2026-05-29",
+        "status": "in_progress",
+        "updatedAt": "2026-05-25T09:30:23.524Z"
+      },
+      {
+        "taskId": "",
+        "text": "Внедрить работу с созданием индекса здоровья и полной зубной формулой на этапе консультаций ",
+        "assignee": "NA",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-05-25T09:31:06.703Z"
+      }
+    ],
+    "U-PAT-PR-3.3.2": [
+      {
+        "taskId": "",
+        "text": "Создать базовое описание и регламент по индексу здоровья ",
+        "assignee": "KE",
+        "dueDate": "2026-03-13",
+        "status": "done",
+        "updatedAt": "2026-05-25T09:32:08.518Z"
+      },
+      {
+        "taskId": "",
+        "text": "Создать модель формирования ирндекса для каждого пациента, продумать функционал для этого и запустить настройку ",
+        "assignee": "AK",
+        "dueDate": "2026-05-15",
+        "status": "done",
+        "updatedAt": "2026-05-25T09:32:47.301Z"
+      },
+      {
+        "taskId": "",
+        "text": "Создать общий публичный регламент по работе с индексом здоровья пациента на уровне клиники: создание, обновление, поддержание, методы расчета ",
+        "assignee": "AK",
+        "dueDate": "2026-06-19",
+        "status": "in_progress",
+        "updatedAt": "2026-05-25T09:33:34.064Z"
+      },
+      {
+        "taskId": "",
+        "text": "Внедрить в работу индекс здоровья как сущность ",
+        "assignee": "OS",
+        "dueDate": "2026-07-31",
+        "status": "not_started",
+        "updatedAt": "2026-05-25T09:34:15.209Z"
+      }
+    ],
+    "U-PAT-PR-3.3.3": [
+      {
+        "taskId": "",
+        "text": "Включить индекс здоровья в модель коммуникации на этапах: консультация, АПЛ, вторичка, ЗПЛ ",
+        "assignee": "AK",
+        "dueDate": "",
+        "status": "in_progress",
+        "updatedAt": "2026-05-25T09:34:59.700Z"
+      },
+      {
+        "taskId": "",
+        "text": "Создать модель коммуникации через единый центр коммуникации для реанимации пациентов на модели индекса здоровья ",
+        "assignee": "DR",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-05-25T09:36:12.559Z"
+      }
+    ],
+    "U-NEW-PR-1.5.1": [
+      {
+        "taskId": "",
+        "text": "Данные от бухгалтерии по начислениям, ограничениям ТК РФ по оплате труда, кадровым данным ",
+        "assignee": "TP",
+        "dueDate": "2026-04-27",
+        "status": "done",
+        "updatedAt": "2026-05-25T09:47:05.845Z"
+      },
+      {
+        "taskId": "",
+        "text": "Данные от отдела персонала ",
+        "assignee": "GB",
+        "dueDate": "2026-04-27",
+        "status": "done",
+        "updatedAt": "2026-05-25T09:47:21.641Z"
+      },
+      {
+        "taskId": "",
+        "text": "Данные от юристов по шаблонам договоров ",
+        "assignee": "GB",
+        "dueDate": "2026-06-12",
+        "status": "in_progress",
+        "updatedAt": "2026-05-25T09:51:37.969Z"
+      },
+      {
+        "taskId": "",
+        "text": "Сборка данных в единый читаемый реестр и создание на его базе базовых регламентов ",
+        "assignee": "",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-05-25T09:51:33.479Z"
+      }
+    ],
+    "U-NEW-PR-1.5.2": [
+      {
+        "taskId": "",
+        "text": "Создать регламент надбавок и разовых премий",
+        "assignee": "KE",
+        "dueDate": "2026-05-22",
+        "status": "done",
+        "updatedAt": "2026-05-25T09:54:37.444Z"
+      },
+      {
+        "taskId": "",
+        "text": "Создать регламент по общей структуре трудоустройства, формата заработной платы, критериев ТК РФ для начислений ",
+        "assignee": "KE",
+        "dueDate": "2026-05-29",
+        "status": "in_progress",
+        "updatedAt": "2026-05-25T09:56:36.514Z"
+      },
+      {
+        "taskId": "",
+        "text": "Создать регламент окладных начислений ",
+        "assignee": "KE",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-05-25T09:54:50.854Z"
+      },
+      {
+        "taskId": "",
+        "text": "Создать регламент сдельных начислений ",
+        "assignee": "KE",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-05-25T09:56:42.709Z"
+      },
+      {
+        "taskId": "",
+        "text": "Создать регламент почасовых ставок ",
+        "assignee": "KE",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-05-25T09:56:45.043Z"
+      },
+      {
+        "taskId": "",
+        "text": "Создать регламент премиальных выплат и KPI ",
+        "assignee": "KE",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-05-25T09:56:48.912Z"
+      },
+      {
+        "taskId": "",
+        "text": "Создать регламент каждой должности по совокупным выплатам, модели расчета заработной платы ",
+        "assignee": "KE",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-05-25T09:56:52.992Z"
+      }
     ]
   },
   "projStatuses": {
@@ -1093,129 +1663,112 @@
       "status": "in-progress",
       "approval": "approved",
       "owner": "AK"
+    },
+    "U-ALL-PR-2.4.5": {
+      "status": "not-started",
+      "approval": "approved",
+      "owner": "KE"
+    },
+    "U-ALL-PR-2.4.4": {
+      "approval": "approved",
+      "owner": "KE"
+    },
+    "U-ALL-PR-2.4.3": {
+      "status": "in-progress",
+      "approval": "approved",
+      "owner": "KE"
+    },
+    "U-ALL-PR-2.4.2": {
+      "approval": "approved",
+      "status": "in-progress",
+      "owner": "AK"
+    },
+    "U-ALL-PR-2.4.1": {
+      "status": "in-progress",
+      "approval": "approved",
+      "owner": "KE"
+    },
+    "U-HRM-PR-4.1.2": {
+      "status": "in-progress",
+      "approval": "approved",
+      "owner": "OS"
+    },
+    "T-HRM-PR-4.1.6": {
+      "status": "in-progress",
+      "approval": "approved",
+      "owner": "AG"
+    },
+    "T-HRM-PR-4.1.7": {
+      "approval": "in-review",
+      "owner": "AG"
+    },
+    "U-DAT-PR-2.2.1": {
+      "status": "in-progress",
+      "approval": "approved",
+      "owner": "KE"
+    },
+    "U-DAT-PR-2.2.2": {
+      "status": "in-progress",
+      "approval": "approved",
+      "owner": "KE"
+    },
+    "U-DAT-PR-2.2.3": {
+      "status": "in-progress",
+      "approval": "approved",
+      "owner": "KE"
+    },
+    "U-DAT-PR-2.2.4": {
+      "owner": "KE",
+      "approval": "approved",
+      "status": "in-progress"
+    },
+    "U-PAT-PR-3.3.1": {
+      "status": "in-progress",
+      "approval": "approved",
+      "owner": "AK"
+    },
+    "U-PAT-PR-3.3.2": {
+      "status": "in-progress",
+      "approval": "approved",
+      "owner": "AK"
     }
   },
   "progStatuses": {
-    "U-UKM-P-1.2:status": {
-      "value": "в проектировании",
-      "label": "в проектировании",
-      "css": "status-design"
-    },
-    "U-UKM-P-1.2:certainty": {
-      "value": "частично подтверждено",
-      "label": "частично подтверждено",
-      "css": "certainty-partial"
-    },
-    "U-CLN-P-1.1:certainty": {
-      "value": "подтверждено",
-      "label": "подтверждено",
-      "css": "certainty-confirmed"
-    },
-    "U-CLN-P-1.1:status": {
-      "value": "rollout",
-      "label": "во внедрении",
-      "css": "status-rollout"
-    },
-    "U-LEG-P-1.6:status": {
+    "U-DAT-P-2.2:status": {
       "value": "design",
       "label": "в проектировании",
       "css": "status-design"
     },
-    "U-LEG-P-1.6:certainty": {
-      "value": "частично подтверждено",
-      "label": "частично подтверждено",
-      "css": "certainty-partial"
-    },
-    "U-CLN-P-1.1:approval": {
+    "U-DAT-P-2.2:approval": {
       "value": "approved",
       "label": "согласовано",
       "css": "approval-approved"
     },
-    "U-LEG-P-1.6:approval": {
-      "value": "not-approved",
-      "label": "не согласовано",
-      "css": "approval-not-approved"
+    "U-DAT-P-2.2:certainty": {
+      "value": "confirmed",
+      "label": "подтверждено",
+      "css": "certainty-confirmed"
     },
-    "U-CHG-P-2.5:certainty": {
-      "value": "требует уточнения",
-      "label": "требует уточнения",
-      "css": "certainty-needs-clar"
+    "U-PAT-P-3.3:status": {
+      "value": "design",
+      "label": "в проектировании",
+      "css": "status-design"
+    },
+    "U-PAT-P-3.3:approval": {
+      "value": "approved",
+      "label": "согласовано",
+      "css": "approval-approved"
+    },
+    "U-PAT-P-3.3:certainty": {
+      "value": "confirmed",
+      "label": "подтверждено",
+      "css": "certainty-confirmed"
     },
     "U-ALL-P-2.4:status": {
-      "value": "not-started",
-      "label": "не стартовало",
-      "css": "status-not-started"
-    },
-    "U-ALL-P-2.4:certainty": {
-      "value": "confirmed",
-      "label": "подтверждено",
-      "css": "certainty-confirmed"
-    },
-    "U-HRM-P-4.1:status": {
-      "value": "rollout",
-      "label": "во внедрении",
-      "css": "status-rollout"
-    },
-    "U-SKL-P-1.4:status": {
-      "value": "rollout",
-      "label": "во внедрении",
-      "css": "status-rollout"
-    },
-    "U-SKL-P-1.4:certainty": {
-      "value": "confirmed",
-      "label": "подтверждено",
-      "css": "certainty-confirmed"
-    },
-    "U-SKL-P-1.4:approval": {
-      "value": "approved",
-      "label": "согласовано",
-      "css": "approval-approved"
-    },
-    "U-HRM-P-4.3:status": {
       "value": "design",
       "label": "в проектировании",
       "css": "status-design"
-    },
-    "U-HRM-P-4.3:approval": {
-      "value": "approved",
-      "label": "согласовано",
-      "css": "approval-approved"
-    },
-    "U-HRM-P-4.3:certainty": {
-      "value": "confirmed",
-      "label": "подтверждено",
-      "css": "certainty-confirmed"
-    },
-    "T-HRM-P-4.8:status": {
-      "value": "not-started",
-      "label": "не стартовало",
-      "css": "status-not-started"
-    },
-    "U-CHT-P-5.7:status": {
-      "value": "design",
-      "label": "в проектировании",
-      "css": "status-design"
-    },
-    "U-CHT-P-5.7:certainty": {
-      "value": "confirmed",
-      "label": "подтверждено",
-      "css": "certainty-confirmed"
-    },
-    "U-PAT-P-3.5:status": {
-      "value": "design",
-      "label": "в проектировании",
-      "css": "status-design"
-    },
-    "U-PAT-P-3.5:approval": {
-      "value": "approved",
-      "label": "согласовано",
-      "css": "approval-approved"
-    },
-    "U-PAT-P-3.5:certainty": {
-      "value": "confirmed",
-      "label": "подтверждено",
-      "css": "certainty-confirmed"
     }
   },
-  "publishedAt": "2026-05-25T10:41:35.077Z"
+  "publishedAt": "2026-05-25T10:50:05.096Z"
 }
