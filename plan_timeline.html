@@ -1720,6 +1720,53 @@ body[data-mode="detailed"] .doc-actions {
   display: none !important;
 }
 
+/* ---- Режим «Проекты»: плоский список проектов по месяцам ---- */
+body[data-mode="projects"] .program-head { display: none !important; }
+body[data-mode="projects"] .program {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+body[data-mode="projects"] .program-body,
+body[data-mode="projects"] .program-body[hidden] {
+  display: block !important;
+}
+body[data-mode="projects"] .program-meta { display: none !important; }
+body[data-mode="projects"] .field-detailed,
+body[data-mode="projects"] .field-source,
+body[data-mode="projects"] .doc-actions,
+body[data-mode="projects"] .filter-group-advanced,
+body[data-mode="projects"] .legend-panel,
+body[data-mode="projects"] .change-card-desc,
+body[data-mode="projects"] .assignments-editor,
+body[data-mode="projects"] .changes-panel { display: none !important; }
+body[data-mode="projects"] .project-list { padding-left: 0 !important; }
+body[data-mode="projects"] .program-body { padding: 0 !important; }
+body[data-mode="projects"] .program-list { padding: 0 !important; }
+body[data-mode="projects"] .projects-header { display: none !important; }
+
+/* DnD для режима Проекты */
+body[data-mode="projects"] .project { cursor: grab; }
+body[data-mode="projects"] .project.po-proj-dragging {
+  opacity: 0.4;
+  cursor: grabbing;
+}
+.po-proj-drop-zone {
+  display: none;
+  min-height: 40px;
+  border: 2px dashed var(--line);
+  border-radius: 6px;
+  margin: 8px 0;
+  transition: background 0.15s, border-color 0.15s;
+}
+body[data-mode="projects"] .po-proj-drop-zone { display: block !important; }
+.po-proj-drop-zone.po-drop-active {
+  border-color: var(--ink);
+  background: rgba(31,29,26,0.04);
+}
+
 /* Edit mode shows everything including admin */
 body[data-mode="edit"] {
   /* default — all visible */
@@ -1732,6 +1779,26 @@ body[data-mode="edit"] .mode-btn[data-mode="edit"] {
   background: #B8750A;
   color: #FDFBF6;
 }
+
+/* Кнопки удаления программ и проектов */
+.po-delete-btn {
+  display: none;
+  background: transparent;
+  border: none;
+  color: transparent;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 0 5px;
+  flex-shrink: 0;
+  line-height: 1;
+  transition: color 0.12s;
+  border-radius: 3px;
+  margin-left: 4px;
+}
+body[data-mode="edit"] .po-delete-btn { display: inline-flex; align-items: center; }
+body[data-mode="edit"] .program-head:hover .po-delete-btn { color: #C8BFB0; }
+body[data-mode="edit"] .project-head:hover .po-delete-btn { color: #C8BFB0; }
+body[data-mode="edit"] .po-delete-btn:hover { color: #8B2635 !important; background: rgba(139,38,53,0.08); }
 
 /* Mode badge in hero */
 .mode-banner {
@@ -2938,6 +3005,7 @@ body[data-mode="edit"] .status-chip[data-action="open-status-menu"]:hover {
 .month-nav-link.nav-dimmed { opacity: 0.2; pointer-events: none; }
 
 /* ── 17. Project comment field ── */
+body:not([data-mode="edit"]) .po-proj-comment.po-comment-empty { display: none; }
 .po-proj-comment {
   margin: 0 16px 10px;
   font-size: 12px;
@@ -3028,8 +3096,8 @@ body[data-mode="edit"] .po-task-drag { display: flex; }
     <div class="doc-mark">План изменений <em>2026</em></div>
     <div class="mode-switcher" role="group" aria-label="Режим просмотра">
       <button class="mode-btn active" type="button" data-mode="brief">Кратко</button>
-      <button class="mode-btn" type="button" data-mode="working">Рабочий</button>
-      <button class="mode-btn" type="button" data-mode="detailed">Детали</button>
+      <button class="mode-btn" type="button" data-mode="detailed">Подробно</button>
+      <button class="mode-btn" type="button" data-mode="projects">Проекты</button>
       <button class="mode-btn" type="button" data-mode="edit">Редактирование</button>
     </div>
     <button class="ghost-btn" type="button" id="btn-print" title="Распечатать в режиме «Кратко» (для PDF)">Печать</button><button class="ghost-btn" type="button" id="btn-deps-map">Карта зависимостей</button>
@@ -3109,7 +3177,7 @@ body[data-mode="edit"] .po-task-drag { display: flex; }
   </button>
   <div class="filter-body" id="filter-body">
 <div class="filter-row filter-row-helpers">
-  <input type="search" class="filter-search" id="filter-search" placeholder="Поиск по названию программы или проекта..." autocomplete="off">
+  <input type="search" class="filter-search" id="filter-search" placeholder="Поиск по названию, задачам, описаниям..." autocomplete="off">
   <button type="button" class="ghost-btn-mini" id="btn-collapse-all">Свернуть все</button>
   <button type="button" class="ghost-btn-mini" id="btn-expand-all">Развернуть все</button>
 </div>
@@ -3634,8 +3702,8 @@ body[data-mode="edit"] .po-task-drag { display: flex; }
   const banner = document.getElementById('mode-banner');
   const MODE_LABELS = {
     brief:    'Сейчас режим «Кратко» · открыты только изменения и программы',
-    working:  'Сейчас режим «Рабочий» · видны программы, проекты и зависимости',
-    detailed: 'Сейчас режим «Детали» · видна вся методология и описания',
+    detailed: 'Сейчас режим «Подробно» · видна вся методология и описания',
+    projects: 'Сейчас режим «Проекты» · плоский список проектов по месяцам',
     edit:     'Сейчас режим «Редактирование» · доступны панели редактирования и экспорт/импорт'
   };
   function setMode(mode) {
@@ -4121,13 +4189,31 @@ body[data-mode="edit"] .po-task-drag { display: flex; }
     searchCurIdx = idx;
     var mark = searchMatches[idx];
     mark.classList.add('search-hl-active');
-    mark.closest('.program, .project') && mark.closest('.program, .project').scrollIntoView({behavior: 'smooth', block: 'nearest'});
+    // Раскрыть родительский проект, если закрыт
+    var proj = mark.closest('.project');
+    if (proj) {
+      var projBody = proj.querySelector('.project-body');
+      if (projBody && projBody.hasAttribute('hidden')) {
+        projBody.removeAttribute('hidden');
+        proj.classList.add('is-open');
+      }
+    }
+    // Раскрыть родительскую программу, если закрыта
+    var prog = mark.closest('.program');
+    if (prog) {
+      var progBody = prog.querySelector('.program-body');
+      if (progBody && progBody.hasAttribute('hidden')) {
+        progBody.removeAttribute('hidden');
+        prog.classList.add('is-open');
+      }
+    }
+    mark.scrollIntoView({behavior: 'smooth', block: 'nearest'});
     updateSearchNav();
   }
 
   function runSearch() {
     const q = normalizeText(searchEl ? searchEl.value.trim() : '');
-    // Clear previous highlights
+    // Очищаем предыдущие подсветки
     document.querySelectorAll('[data-orig-text]').forEach(function(el) {
       el.textContent = el.dataset.origText;
       delete el.dataset.origText;
@@ -4141,6 +4227,10 @@ body[data-mode="edit"] .po-task-drag { display: flex; }
       updateSearchNav();
       return;
     }
+    // Загружаем задачи из localStorage для поиска
+    var allTasks = {};
+    try { allTasks = JSON.parse(localStorage.getItem('po-tasks') || '{}'); } catch(e) {}
+
     document.body.classList.add('has-search-active');
     document.querySelectorAll('.program').forEach(prog => {
       const nameEl = prog.querySelector('.program-name');
@@ -4152,11 +4242,34 @@ body[data-mode="edit"] .po-task-drag { display: flex; }
       prog.querySelectorAll('.project').forEach(proj => {
         const pnEl = proj.querySelector('.project-name');
         const pn = normalizeText(pnEl ? pnEl.textContent : '');
-        const pid = normalizeText(proj.querySelector('.project-id-mono') ? proj.querySelector('.project-id-mono').textContent : '');
-        const match = pn.includes(q) || pid.includes(q);
+        const pidMonoEl = proj.querySelector('.project-id-mono');
+        const pid = normalizeText(pidMonoEl ? pidMonoEl.textContent : '');
+        let projMatches = pn.includes(q) || pid.includes(q);
         if (pn.includes(q)) highlightEl(pnEl, q);
-        proj.classList.toggle('search-match', match);
-        if (match) anyProjMatch = true;
+
+        // Поиск по уже отрисованным задачам
+        proj.querySelectorAll('.po-task-text').forEach(function(taskEl) {
+          if (normalizeText(taskEl.textContent).includes(q)) {
+            highlightEl(taskEl, q);
+            projMatches = true;
+          }
+        });
+
+        // Поиск по задачам из localStorage (ещё не отрисованным)
+        var projId = pidMonoEl ? pidMonoEl.textContent.trim() : '';
+        if (projId && allTasks[projId]) {
+          allTasks[projId].forEach(function(task) {
+            if (normalizeText(task.text || '').includes(q)) projMatches = true;
+          });
+        }
+
+        // Поиск по полям описания и комментарию (только проверка, без разрушения HTML)
+        proj.querySelectorAll('.field-value, .po-proj-comment').forEach(function(fieldEl) {
+          if (normalizeText(fieldEl.textContent).includes(q)) projMatches = true;
+        });
+
+        proj.classList.toggle('search-match', projMatches);
+        if (projMatches) anyProjMatch = true;
       });
       prog.classList.toggle('search-match', progMatches || anyProjMatch);
     });
@@ -5450,12 +5563,19 @@ body[data-mode="edit"] .po-task-add { display: block; }
       commentEl.setAttribute('data-placeholder', 'Комментарий...');
       var savedTexts = lsGet(LS_TEXTS);
       if (savedTexts[commentKey] !== undefined) commentEl.innerHTML = sanitize(savedTexts[commentKey]);
+      // Проставляем класс пустоты для скрытия вне редактирования
+      function _updateCommentEmpty() {
+        var isEmpty = commentEl.textContent.trim() === '' || commentEl.innerHTML === '<br>';
+        commentEl.classList.toggle('po-comment-empty', isEmpty);
+      }
+      _updateCommentEmpty();
       commentEl.addEventListener('paste', function (e) {
         e.preventDefault();
         var text = (e.clipboardData || window.clipboardData).getData('text/plain');
         document.execCommand('insertText', false, text);
       });
-      commentEl.addEventListener('blur', function () { saveTextField(commentEl); });
+      commentEl.addEventListener('blur', function () { saveTextField(commentEl); _updateCommentEmpty(); });
+      commentEl.addEventListener('input', _updateCommentEmpty);
       textEls.push(commentEl);
       body.appendChild(commentEl);
     });
@@ -6202,6 +6322,8 @@ body[data-mode="edit"] .po-task-add { display: block; }
         '</div>' +
         '<ol class="project-list"></ol>' +
       '</div>';
+    var phead = li.querySelector('.program-head');
+    if (phead) _addDeleteBtn(phead, function() { deleteProgram(li); });
     return li;
   }
 
@@ -6474,6 +6596,8 @@ body[data-mode="edit"] .po-task-add { display: block; }
         '<div class="field"><span class="field-label">Описание</span>' +
           '<p class="field-value" data-ek="np-desc-' + d.id + '"></p></div>' +
       '</div>';
+    var prjHead = li.querySelector('.project-head');
+    if (prjHead) _addDeleteBtn(prjHead, function() { deleteProject(li); });
     return li;
   }
 
@@ -6640,8 +6764,210 @@ body[data-mode="edit"] .po-task-add { display: block; }
   }
 
   /* ================================================================
+     РЕЖИМ ПРОЕКТЫ: DnD перенос между месяцами
+  ================================================================ */
+  var LS_PROJ_MONTHS = 'po-proj-month-moves';
+
+  function getProjMonthMoves() {
+    try { return JSON.parse(localStorage.getItem(LS_PROJ_MONTHS) || '{}'); } catch(e) { return {}; }
+  }
+  function saveProjMonthMoves(o) { try { localStorage.setItem(LS_PROJ_MONTHS, JSON.stringify(o)); flash(); } catch(e) {} }
+
+  function restoreProjectMonthMoves() {
+    var moves = getProjMonthMoves();
+    Object.keys(moves).forEach(function(projId) {
+      var targetMonthId = moves[projId];
+      var proj = null;
+      document.querySelectorAll('.project-id-mono').forEach(function(mono) {
+        if (mono.textContent.trim() === projId) proj = mono.closest('.project');
+      });
+      if (!proj) return;
+      var targetMonth = document.getElementById(targetMonthId);
+      if (!targetMonth || proj.closest('section.month, .month') === targetMonth) return;
+      var targetList = targetMonth.querySelector('.project-list');
+      if (targetList) targetList.appendChild(proj);
+    });
+  }
+
+  var _projDragSrc = null;
+
+  function initProjectsDnD() {
+    // Добавляем дроп-зоны к каждому месячному разделу
+    document.querySelectorAll('section.month, .month').forEach(function(sec) {
+      if (sec.querySelector('.po-proj-drop-zone')) return;
+      var zone = document.createElement('div');
+      zone.className = 'po-proj-drop-zone';
+      zone.textContent = 'Перетащите проект сюда';
+      zone.style.cssText = 'display:none;text-align:center;font-size:12px;color:var(--ink-soft);line-height:40px;';
+      sec.appendChild(zone);
+
+      zone.addEventListener('dragover', function(e) {
+        if (!_projDragSrc) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        zone.classList.add('po-drop-active');
+      });
+      zone.addEventListener('dragleave', function() {
+        zone.classList.remove('po-drop-active');
+      });
+      zone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        zone.classList.remove('po-drop-active');
+        if (!_projDragSrc) return;
+        var targetList = sec.querySelector('.project-list');
+        if (!targetList) {
+          // Создаём список проектов если его нет
+          var prog = sec.querySelector('.program');
+          if (!prog) return;
+          var progBody = prog.querySelector('.program-body');
+          if (!progBody) return;
+          targetList = document.createElement('ol');
+          targetList.className = 'project-list';
+          progBody.appendChild(targetList);
+        }
+        targetList.appendChild(_projDragSrc);
+        // Сохраняем перемещение
+        var pidEl = _projDragSrc.querySelector('.project-id-mono');
+        if (pidEl && sec.id) {
+          var moves = getProjMonthMoves();
+          moves[pidEl.textContent.trim()] = sec.id;
+          saveProjMonthMoves(moves);
+        }
+        _projDragSrc = null;
+      });
+    });
+
+    // Делаем проекты перетаскиваемыми
+    document.querySelectorAll('.project').forEach(function(proj) {
+      if (proj.dataset.projDndReady) return;
+      proj.dataset.projDndReady = '1';
+      proj.addEventListener('dragstart', function(e) {
+        if (document.body.getAttribute('data-mode') !== 'projects') return;
+        _projDragSrc = proj;
+        e.dataTransfer.effectAllowed = 'move';
+        setTimeout(function() { proj.classList.add('po-proj-dragging'); }, 0);
+      });
+      proj.addEventListener('dragend', function() {
+        proj.classList.remove('po-proj-dragging');
+        _projDragSrc = null;
+        document.querySelectorAll('.po-proj-drop-zone').forEach(function(z) { z.classList.remove('po-drop-active'); });
+      });
+    });
+  }
+
+  // Обновляем draggable-состояние при смене режима (наблюдатель уже есть, добавляем обработку)
+  (function() {
+    var _modeObs = new MutationObserver(function(muts) {
+      muts.forEach(function(m) {
+        if (m.attributeName !== 'data-mode') return;
+        var mode = document.body.getAttribute('data-mode');
+        document.querySelectorAll('.project').forEach(function(proj) {
+          proj.draggable = (mode === 'projects');
+        });
+      });
+    });
+    _modeObs.observe(document.body, { attributes: true });
+  }());
+
+  /* ================================================================
+     DELETE PROGRAMS / PROJECTS
+  ================================================================ */
+  var LS_DELETED = 'po-deleted';
+
+  function getDeleted() {
+    try { return JSON.parse(localStorage.getItem(LS_DELETED) || '{"programs":[],"projects":[]}'); } catch(e) { return {programs:[], projects:[]}; }
+  }
+  function saveDeleted(o) { try { localStorage.setItem(LS_DELETED, JSON.stringify(o)); flash(); } catch(e) {} }
+
+  function applyDeleted() {
+    var d = getDeleted();
+    (d.programs || []).forEach(function(id) {
+      var el = document.querySelector('.program[data-program-id="' + id + '"]');
+      if (el) el.remove();
+    });
+    (d.projects || []).forEach(function(pid) {
+      document.querySelectorAll('.project-id-mono').forEach(function(mono) {
+        if (mono.textContent.trim() === pid) {
+          var proj = mono.closest('.project');
+          if (proj) proj.remove();
+        }
+      });
+    });
+  }
+
+  function _cleanProjectData(pid) {
+    var texts = lsGet(LS_TEXTS);
+    Object.keys(texts).forEach(function(k) { if (k.indexOf(pid) !== -1) delete texts[k]; });
+    lsSet(LS_TEXTS, texts);
+    var tasks = lsGet(LS_TASKS);
+    delete tasks[pid];
+    lsSet(LS_TASKS, tasks);
+    var stat = lsGet(LS_PSTAT);
+    delete stat[pid];
+    lsSet(LS_PSTAT, stat);
+  }
+
+  function deleteProject(proj) {
+    var pidMonoEl = proj.querySelector('.project-id-mono');
+    var pid = pidMonoEl ? pidMonoEl.textContent.trim() : '';
+    var name = (proj.querySelector('.project-name') || {}).textContent || pid;
+    if (!confirm('Удалить проект «' + name + '»?\nЗадачи, статусы и тексты проекта будут удалены.')) return;
+    if (pid) _cleanProjectData(pid);
+    if (pid) {
+      var d = getDeleted();
+      if (d.projects.indexOf(pid) === -1) d.projects.push(pid);
+      saveDeleted(d);
+    }
+    var prog = proj.closest('.program');
+    proj.remove();
+    if (prog) { updateProgProgress(prog); }
+  }
+
+  function deleteProgram(prog) {
+    var progId = prog.getAttribute('data-program-id') || '';
+    var name = (prog.querySelector('.program-name') || {}).textContent || progId;
+    var projCount = prog.querySelectorAll('.project').length;
+    var msg = 'Удалить программу «' + name + '»?';
+    if (projCount > 0) msg += '\nВместе с ней будут удалены ' + projCount + ' проект(ов) и все их задачи.';
+    if (!confirm(msg)) return;
+    prog.querySelectorAll('.project-id-mono').forEach(function(mono) {
+      _cleanProjectData(mono.textContent.trim());
+    });
+    var d = getDeleted();
+    if (progId && d.programs.indexOf(progId) === -1) d.programs.push(progId);
+    saveDeleted(d);
+    prog.remove();
+  }
+
+  function _addDeleteBtn(headEl, handler) {
+    if (headEl.querySelector('.po-delete-btn')) return;
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'po-delete-btn';
+    btn.title = 'Удалить';
+    btn.innerHTML = '&#128465;';
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      handler();
+    });
+    headEl.appendChild(btn);
+  }
+
+  function initDeleteButtons() {
+    document.querySelectorAll('.program').forEach(function(prog) {
+      var head = prog.querySelector('.program-head');
+      if (head) _addDeleteBtn(head, function() { deleteProgram(prog); });
+    });
+    document.querySelectorAll('.project').forEach(function(proj) {
+      var head = proj.querySelector('.project-head');
+      if (head) _addDeleteBtn(head, function() { deleteProject(proj); });
+    });
+  }
+
+  /* ================================================================
      INIT
   ================================================================ */
+  applyDeleted();
   restoreNewPrograms();
   restoreNewProjects();
   migrateHardcodedTasks();   /* must run before initTasks */
@@ -6654,6 +6980,9 @@ body[data-mode="edit"] .po-task-add { display: block; }
   initMoveProgramBtns();
   initAddProjectBtns();
   hideOldTasksWrap();
+  initDeleteButtons();
+  restoreProjectMonthMoves();
+  initProjectsDnD();
   setTextEditable(document.body.getAttribute('data-mode') === 'edit');
   (function () { var _pa = localStorage.getItem('po-doc-edited') || localStorage.getItem('po-published-at'); if (_pa) updatePubStamp(_pa); }());
   loadRemote();
