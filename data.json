@@ -413,9 +413,9 @@
         "taskId": "",
         "text": "Транскрибация звонков первичного пациента",
         "assignee": "YD",
-        "dueDate": "",
+        "dueDate": "2026-06-30",
         "status": "in_progress",
-        "updatedAt": "2026-05-26T14:11:29.685Z"
+        "updatedAt": "2026-05-26T15:49:47.477Z"
       },
       {
         "id": "T-0027",
@@ -2042,5 +2042,5 @@
       "css": "certainty-confirmed"
     }
   },
-  "publishedAt": "2026-05-26T15:23:40.063Z"
+  "publishedAt": "2026-05-26T15:49:54.276Z"
 }
