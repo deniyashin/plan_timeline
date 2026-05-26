@@ -1761,7 +1761,8 @@ body[data-mode="projects"] .project.po-proj-dragging {
   margin: 8px 0;
   transition: background 0.15s, border-color 0.15s;
 }
-body[data-mode="projects"] .po-proj-drop-zone { display: block !important; }
+/* Drop zones show only while actively dragging */
+body.po-dnd-active .po-proj-drop-zone { display: block !important; }
 .po-proj-drop-zone.po-drop-active {
   border-color: var(--ink);
   background: rgba(31,29,26,0.04);
@@ -1811,7 +1812,6 @@ body[data-mode="edit"][data-base-mode="projects"] .field-source,
 body[data-mode="edit"][data-base-mode="projects"] .legend-panel,
 body[data-mode="edit"][data-base-mode="projects"] .change-card-desc,
 body[data-mode="edit"][data-base-mode="projects"] .changes-panel { display: none !important; }
-body[data-mode="edit"][data-base-mode="projects"] .po-proj-drop-zone { display: block !important; }
 body[data-mode="edit"][data-base-mode="projects"] .project { cursor: grab; }
 
 /* Кнопки удаления программ и проектов */
@@ -2908,26 +2908,59 @@ body {
 }
 .filter-reset { font-size: 12px; }
 
+/* ── Search toggle in nav ── */
+.nav-search-toggle {
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 5px 7px;
+  cursor: pointer;
+  color: var(--ink-muted);
+  display: flex;
+  align-items: center;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  flex-shrink: 0;
+}
+.nav-search-toggle:hover { background: var(--bg-alt); color: var(--ink); border-color: var(--b24-blue); }
+.nav-search-wrap {
+  display: none;
+  align-items: center;
+  gap: 6px;
+}
+body.nav-search-open .nav-search-wrap { display: flex; }
+body.nav-search-open .nav-search-toggle { display: none; }
+body.nav-search-open #btn-print,
+body.nav-search-open #btn-deps-map { display: none !important; }
+.nav-search-close {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--ink-muted);
+  padding: 4px 7px;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.nav-search-close:hover { color: var(--ink); background: var(--bg-alt); }
 /* ── Search in nav bar ── */
 .nav-search {
   flex: none !important;
   min-width: 0 !important;
-  width: 150px;
+  width: 220px;
   padding: 5px 10px;
   font-size: 12.5px;
   border-radius: 6px;
   border: 1px solid var(--line);
-  background: var(--bg-alt);
+  background: #fff;
   color: var(--ink);
   font-family: inherit;
   outline: none;
-  transition: width 0.2s, border-color 0.15s, box-shadow 0.15s;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
 .nav-search:focus {
-  width: 230px;
   border-color: var(--b24-blue);
   box-shadow: 0 0 0 2px rgba(47,198,246,.15);
-  background: #fff;
 }
 .nav-search::placeholder { color: var(--ink-soft); font-style: italic; }
 .nav-search + .search-nav-count { font-size: 11px; color: var(--ink-muted); white-space: nowrap; }
@@ -3014,6 +3047,7 @@ body[data-mode="edit"] .status-chip[data-action="open-status-menu"]:hover {
 .month-nav {
   display: flex !important;
   flex-direction: column;
+  z-index: 110;
   right: 12px;
   top: 180px;
   width: 46px;
@@ -3161,7 +3195,13 @@ body[data-mode="edit"] .po-task-drag { display: flex; }
       <button class="mode-btn" type="button" data-mode="projects">Проекты</button>
       <button class="mode-btn" type="button" data-mode="edit">Редактирование</button>
     </div>
-    <input type="search" class="filter-search nav-search" id="filter-search" placeholder="Поиск..." autocomplete="off">
+    <button class="nav-search-toggle" id="nav-search-toggle" type="button" title="Поиск" aria-label="Поиск">
+      <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="6.5" cy="6.5" r="4.5"/><line x1="10" y1="10" x2="13.5" y2="13.5"/></svg>
+    </button>
+    <div class="nav-search-wrap" id="nav-search-wrap">
+      <input type="search" class="filter-search nav-search" id="filter-search" placeholder="Поиск по документу..." autocomplete="off">
+      <button class="nav-search-close" id="nav-search-close" type="button" title="Закрыть" aria-label="Закрыть поиск">✕</button>
+    </div>
     <button class="ghost-btn" type="button" id="btn-print" title="Распечатать в режиме «Кратко» (для PDF)">Печать</button><button class="ghost-btn" type="button" id="btn-deps-map">Карта зависимостей</button>
     <div class="doc-meta">
       <span><b>5</b> изменений</span>
@@ -3598,6 +3638,12 @@ body[data-mode="edit"] .po-task-drag { display: flex; }
   filterToggle.addEventListener('click', () => {
     const collapsed = filterBar.getAttribute('data-collapsed') === 'true';
     setCollapsed(!collapsed);
+  });
+  // Close filter when clicking outside
+  document.addEventListener('click', function(e) {
+    if (filterBar.getAttribute('data-collapsed') === 'true') return;
+    if (filterBar.contains(e.target)) return;
+    setCollapsed(true);
   });
 
   // =====================================================================
@@ -4396,6 +4442,12 @@ body[data-mode="edit"] .po-task-drag { display: flex; }
       searchTimer = setTimeout(runSearch, 120);
     });
     searchEl.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        searchEl.value = '';
+        searchEl.dispatchEvent(new Event('input'));
+        closeNavSearch();
+        return;
+      }
       if (searchMatches.length === 0) return;
       if (e.key === 'Enter') {
         e.preventDefault();
@@ -4403,6 +4455,29 @@ body[data-mode="edit"] .po-task-drag { display: flex; }
       }
     });
   }
+
+  // ---- Nav search toggle ----
+  function openNavSearch() {
+    document.body.classList.add('nav-search-open');
+    if (searchEl) { searchEl.focus(); searchEl.select(); }
+  }
+  function closeNavSearch() {
+    document.body.classList.remove('nav-search-open');
+  }
+  var navToggle = document.getElementById('nav-search-toggle');
+  var navClose  = document.getElementById('nav-search-close');
+  if (navToggle) navToggle.addEventListener('click', openNavSearch);
+  if (navClose)  navClose.addEventListener('click', function() {
+    if (searchEl) { searchEl.value = ''; searchEl.dispatchEvent(new Event('input')); }
+    closeNavSearch();
+  });
+  // Ctrl+F / Cmd+F shortcut
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+      e.preventDefault();
+      openNavSearch();
+    }
+  });
 })();
 </script>
 
@@ -6939,13 +7014,18 @@ body[data-mode="edit"] .po-task-add { display: block; }
       if (proj.dataset.projDndReady) return;
       proj.dataset.projDndReady = '1';
       proj.addEventListener('dragstart', function(e) {
-        if (document.body.getAttribute('data-mode') !== 'projects') return;
+        var mode = document.body.getAttribute('data-mode');
+        var base = document.body.getAttribute('data-base-mode');
+        var isDnd = mode === 'projects' || (mode === 'edit' && base === 'projects');
+        if (!isDnd) return;
         _projDragSrc = proj;
         e.dataTransfer.effectAllowed = 'move';
+        document.body.classList.add('po-dnd-active');
         setTimeout(function() { proj.classList.add('po-proj-dragging'); }, 0);
       });
       proj.addEventListener('dragend', function() {
         proj.classList.remove('po-proj-dragging');
+        document.body.classList.remove('po-dnd-active');
         _projDragSrc = null;
         document.querySelectorAll('.po-proj-drop-zone').forEach(function(z) { z.classList.remove('po-drop-active'); });
       });
