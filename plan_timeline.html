@@ -1780,6 +1780,40 @@ body[data-mode="edit"] .mode-btn[data-mode="edit"] {
   color: #FDFBF6;
 }
 
+/* ---- Edit mode can only be entered from Подробно or Проекты ---- */
+body[data-mode="brief"] .mode-btn[data-mode="edit"] {
+  opacity: 0.35;
+  pointer-events: none;
+}
+/* Subtle indicator showing the base mode when editing */
+.mode-btn.base-mode-active {
+  background: rgba(184,117,10,0.12) !important;
+  color: var(--ch, #B8750A) !important;
+}
+
+/* ---- Edit mode preserving Проекты layout ---- */
+body[data-mode="edit"][data-base-mode="projects"] .program-head { display: none !important; }
+body[data-mode="edit"][data-base-mode="projects"] .program {
+  border: none !important;
+  background: transparent !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+body[data-mode="edit"][data-base-mode="projects"] .program-body,
+body[data-mode="edit"][data-base-mode="projects"] .program-body[hidden] { display: block !important; }
+body[data-mode="edit"][data-base-mode="projects"] .program-meta { display: none !important; }
+body[data-mode="edit"][data-base-mode="projects"] .project-list { padding-left: 0 !important; }
+body[data-mode="edit"][data-base-mode="projects"] .program-body { padding: 0 !important; }
+body[data-mode="edit"][data-base-mode="projects"] .program-list { padding: 0 !important; }
+body[data-mode="edit"][data-base-mode="projects"] .projects-header { display: none !important; }
+body[data-mode="edit"][data-base-mode="projects"] .field-detailed,
+body[data-mode="edit"][data-base-mode="projects"] .field-source,
+body[data-mode="edit"][data-base-mode="projects"] .legend-panel,
+body[data-mode="edit"][data-base-mode="projects"] .change-card-desc,
+body[data-mode="edit"][data-base-mode="projects"] .changes-panel { display: none !important; }
+body[data-mode="edit"][data-base-mode="projects"] .po-proj-drop-zone { display: block !important; }
+body[data-mode="edit"][data-base-mode="projects"] .project { cursor: grab; }
+
 /* Кнопки удаления программ и проектов */
 .po-delete-btn {
   display: none;
@@ -2874,6 +2908,31 @@ body {
 }
 .filter-reset { font-size: 12px; }
 
+/* ── Search in nav bar ── */
+.nav-search {
+  flex: none !important;
+  min-width: 0 !important;
+  width: 150px;
+  padding: 5px 10px;
+  font-size: 12.5px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--bg-alt);
+  color: var(--ink);
+  font-family: inherit;
+  outline: none;
+  transition: width 0.2s, border-color 0.15s, box-shadow 0.15s;
+}
+.nav-search:focus {
+  width: 230px;
+  border-color: var(--b24-blue);
+  box-shadow: 0 0 0 2px rgba(47,198,246,.15);
+  background: #fff;
+}
+.nav-search::placeholder { color: var(--ink-soft); font-style: italic; }
+.nav-search + .search-nav-count { font-size: 11px; color: var(--ink-muted); white-space: nowrap; }
+.nav-search ~ .search-nav-btn { padding: 4px 7px; font-size: 11px; height: 28px; }
+
 /* ── 9. Program cards ── */
 .program {
   background: var(--surface);
@@ -2953,6 +3012,8 @@ body[data-mode="edit"] .status-chip[data-action="open-status-menu"]:hover {
 
 /* ── 12. Month nav — narrow, numbers only ── */
 .month-nav {
+  display: flex !important;
+  flex-direction: column;
   right: 12px;
   top: 180px;
   width: 46px;
@@ -3100,6 +3161,7 @@ body[data-mode="edit"] .po-task-drag { display: flex; }
       <button class="mode-btn" type="button" data-mode="projects">Проекты</button>
       <button class="mode-btn" type="button" data-mode="edit">Редактирование</button>
     </div>
+    <input type="search" class="filter-search nav-search" id="filter-search" placeholder="Поиск..." autocomplete="off">
     <button class="ghost-btn" type="button" id="btn-print" title="Распечатать в режиме «Кратко» (для PDF)">Печать</button><button class="ghost-btn" type="button" id="btn-deps-map">Карта зависимостей</button>
     <div class="doc-meta">
       <span><b>5</b> изменений</span>
@@ -3177,7 +3239,6 @@ body[data-mode="edit"] .po-task-drag { display: flex; }
   </button>
   <div class="filter-body" id="filter-body">
 <div class="filter-row filter-row-helpers">
-  <input type="search" class="filter-search" id="filter-search" placeholder="Поиск по названию, задачам, описаниям..." autocomplete="off">
   <button type="button" class="ghost-btn-mini" id="btn-collapse-all">Свернуть все</button>
   <button type="button" class="ghost-btn-mini" id="btn-expand-all">Развернуть все</button>
 </div>
@@ -3706,28 +3767,64 @@ body[data-mode="edit"] .po-task-drag { display: flex; }
     projects: 'Сейчас режим «Проекты» · плоский список проектов по месяцам',
     edit:     'Сейчас режим «Редактирование» · доступны панели редактирования и экспорт/импорт'
   };
+  var _prevBaseMode = null;
+  try { _prevBaseMode = localStorage.getItem('plan-timeline-base-mode') || null; } catch(e) {}
+
   function setMode(mode) {
     var _sy = window.scrollY;
+    var currentMode = body.getAttribute('data-mode');
+
+    if (mode === 'edit') {
+      var baseMode = (currentMode === 'projects' || currentMode === 'detailed')
+        ? currentMode
+        : (_prevBaseMode || 'detailed');
+      if (currentMode !== 'projects' && currentMode !== 'detailed') return;
+      _prevBaseMode = baseMode;
+      try { localStorage.setItem('plan-timeline-base-mode', baseMode); } catch(e) {}
+      body.setAttribute('data-base-mode', baseMode);
+      body.setAttribute('data-mode', 'edit');
+      document.querySelectorAll('.mode-btn').forEach(b => {
+        var m = b.getAttribute('data-mode');
+        b.classList.toggle('active', m === 'edit');
+        b.classList.toggle('base-mode-active', m === baseMode);
+      });
+      if (banner) banner.textContent = MODE_LABELS.edit || '';
+      try { localStorage.setItem('plan-timeline-mode', 'edit'); } catch(e) {}
+      requestAnimationFrame(function() { window.scrollTo(0, _sy); });
+      return;
+    }
+
+    body.removeAttribute('data-base-mode');
     body.setAttribute('data-mode', mode);
     document.querySelectorAll('.mode-btn').forEach(b => {
       b.classList.toggle('active', b.getAttribute('data-mode') === mode);
+      b.classList.remove('base-mode-active');
     });
     if (banner) banner.textContent = MODE_LABELS[mode] || '';
     try { localStorage.setItem('plan-timeline-mode', mode); } catch (e) {}
     requestAnimationFrame(function() { window.scrollTo(0, _sy); });
   }
+
   document.querySelectorAll('.mode-btn').forEach(btn => {
     btn.addEventListener('click', e => {
       e.preventDefault();
-      setMode(btn.getAttribute('data-mode'));
+      var clickedMode = btn.getAttribute('data-mode');
+      var currentMode = body.getAttribute('data-mode');
+      if (clickedMode === 'edit' && currentMode === 'edit') {
+        setMode(_prevBaseMode || 'detailed');
+      } else {
+        setMode(clickedMode);
+      }
     });
   });
-  // Restore mode or default to brief
+
+  // Restore mode or default to brief; edit mode is not persisted across page loads
   let initialMode = 'brief';
   try {
     const saved = localStorage.getItem('plan-timeline-mode');
     if (saved && MODE_LABELS[saved]) initialMode = saved;
   } catch (e) {}
+  if (initialMode === 'edit') initialMode = _prevBaseMode || 'detailed';
   setMode(initialMode);
 
   // -------- Changes section toggle --------
@@ -6857,13 +6954,17 @@ body[data-mode="edit"] .po-task-add { display: block; }
 
   // Обновляем draggable-состояние при смене режима (наблюдатель уже есть, добавляем обработку)
   (function() {
+    function _syncDraggable() {
+      var mode = document.body.getAttribute('data-mode');
+      var base = document.body.getAttribute('data-base-mode');
+      var isDnd = mode === 'projects' || (mode === 'edit' && base === 'projects');
+      document.querySelectorAll('.project').forEach(function(proj) {
+        proj.draggable = isDnd;
+      });
+    }
     var _modeObs = new MutationObserver(function(muts) {
       muts.forEach(function(m) {
-        if (m.attributeName !== 'data-mode') return;
-        var mode = document.body.getAttribute('data-mode');
-        document.querySelectorAll('.project').forEach(function(proj) {
-          proj.draggable = (mode === 'projects');
-        });
+        if (m.attributeName === 'data-mode' || m.attributeName === 'data-base-mode') _syncDraggable();
       });
     });
     _modeObs.observe(document.body, { attributes: true });
