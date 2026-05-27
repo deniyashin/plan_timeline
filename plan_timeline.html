@@ -4293,6 +4293,8 @@ body[data-mode="edit"] .po-task-drag { display: flex; }
 
   function highlightEl(el, q) {
     if (!el) return;
+    // Don't highlight contentEditable fields — inserting <mark> into them would destroy user edits
+    if (el.contentEditable === 'true') return;
     var origText = el.dataset.origText !== undefined ? el.dataset.origText : el.textContent;
     el.dataset.origText = origText;
     if (!q) { el.textContent = origText; return; }
@@ -4352,7 +4354,7 @@ body[data-mode="edit"] .po-task-drag { display: flex; }
         prog.classList.add('is-open');
       }
     }
-    mark.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+    mark.scrollIntoView({behavior: 'smooth', block: 'center'});
     updateSearchNav();
   }
 
@@ -4360,7 +4362,16 @@ body[data-mode="edit"] .po-task-drag { display: flex; }
     const q = normalizeText(searchEl ? searchEl.value.trim() : '');
     // Очищаем предыдущие подсветки
     document.querySelectorAll('[data-orig-text]').forEach(function(el) {
-      el.textContent = el.dataset.origText;
+      if (el.contentEditable === 'true') {
+        // Element became editable after being highlighted — trigger blur to save edits,
+        // then strip mark wrappers without overwriting the user's current content
+        el.dispatchEvent(new Event('blur', { bubbles: true }));
+        el.querySelectorAll('mark.search-hl').forEach(function(m) {
+          m.replaceWith(document.createTextNode(m.textContent));
+        });
+      } else {
+        el.textContent = el.dataset.origText;
+      }
       delete el.dataset.origText;
     });
     searchMatches = [];
@@ -4445,9 +4456,7 @@ body[data-mode="edit"] .po-task-drag { display: flex; }
     });
     searchEl.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') {
-        searchEl.value = '';
-        searchEl.dispatchEvent(new Event('input'));
-        closeNavSearch();
+        dismissSearch();
         return;
       }
       if (searchMatches.length === 0) return;
@@ -4466,13 +4475,17 @@ body[data-mode="edit"] .po-task-drag { display: flex; }
   function closeNavSearch() {
     document.body.classList.remove('nav-search-open');
   }
+  function dismissSearch() {
+    var sy = window.scrollY;
+    if (searchEl) { searchEl.value = ''; searchEl.dispatchEvent(new Event('input')); }
+    closeNavSearch();
+    // Restore scroll position after DOM re-layout (hidden programs become visible again)
+    requestAnimationFrame(function() { window.scrollTo({ top: sy, behavior: 'instant' }); });
+  }
   var navToggle = document.getElementById('nav-search-toggle');
   var navClose  = document.getElementById('nav-search-close');
   if (navToggle) navToggle.addEventListener('click', openNavSearch);
-  if (navClose)  navClose.addEventListener('click', function() {
-    if (searchEl) { searchEl.value = ''; searchEl.dispatchEvent(new Event('input')); }
-    closeNavSearch();
-  });
+  if (navClose)  navClose.addEventListener('click', dismissSearch);
   // Ctrl+F / Cmd+F shortcut
   document.addEventListener('keydown', function(e) {
     if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
