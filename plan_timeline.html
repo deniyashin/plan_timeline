@@ -1812,7 +1812,6 @@ body[data-mode="edit"][data-base-mode="projects"] .field-source,
 body[data-mode="edit"][data-base-mode="projects"] .legend-panel,
 body[data-mode="edit"][data-base-mode="projects"] .change-card-desc,
 body[data-mode="edit"][data-base-mode="projects"] .changes-panel { display: none !important; }
-body[data-mode="edit"][data-base-mode="projects"] .project { cursor: grab; }
 
 /* Кнопки удаления программ и проектов */
 .po-delete-btn {
@@ -3476,6 +3475,8 @@ body[data-mode="edit"] .po-task-drag { display: flex; }
 
     const progHead = e.target.closest('.program-head');
     if (progHead) {
+      // In edit mode, clicks on editable content should focus for typing, not toggle
+      if (document.body.getAttribute('data-mode') === 'edit' && e.target.closest('.po-editable')) return;
       const prog = progHead.parentElement;
       const body = prog.querySelector('.program-body');
       const open = prog.classList.toggle('is-open');
@@ -3485,6 +3486,7 @@ body[data-mode="edit"] .po-task-drag { display: flex; }
     }
     const projHead = e.target.closest('.project-head');
     if (projHead) {
+      if (document.body.getAttribute('data-mode') === 'edit' && e.target.closest('.po-editable')) return;
       const proj = projHead.parentElement;
       const body = proj.querySelector('.project-body');
       const open = proj.classList.toggle('is-open');
@@ -5531,6 +5533,8 @@ body[data-mode="edit"] .po-task-add { display: block; }
     document.querySelectorAll('.program[data-program-id]').forEach(function (prog) {
       var pid = prog.getAttribute('data-program-id');
       var csvIdx = 0, fvIdx = 0;
+      var pnameEl = prog.querySelector('.program-head .program-name');
+      if (pnameEl && !pnameEl.dataset.ek) pnameEl.dataset.ek = 'prog:' + pid + ':name';
       prog.querySelectorAll('.card-summary-value').forEach(function (el) {
         if (el.querySelector('.status-editor')) return;
         if (!el.dataset.ek) el.dataset.ek = 'prog:' + pid + ':csv:' + (csvIdx++);
@@ -6936,7 +6940,7 @@ body[data-mode="edit"] .po-task-add { display: block; }
   }
 
   /* ================================================================
-     РЕЖИМ ПРОЕКТЫ: DnD перенос между месяцами
+     РЕЖИМ ПРОЕКТЫ: DnD перенос между месяцами (независим от Подробно)
   ================================================================ */
   var LS_PROJ_MONTHS = 'po-proj-month-moves';
 
@@ -6945,19 +6949,62 @@ body[data-mode="edit"] .po-task-add { display: block; }
   }
   function saveProjMonthMoves(o) { try { localStorage.setItem(LS_PROJ_MONTHS, JSON.stringify(o)); flash(); } catch(e) {} }
 
-  function restoreProjectMonthMoves() {
+  /* ---------- Snapshot оригинальных позиций (для Подробно) ---------- */
+  var _projOrigPositions = {}; /* projId -> { parent, nextSibling } */
+
+  function recordProjOrigPositions() {
+    _projOrigPositions = {};
+    document.querySelectorAll('.project').forEach(function(proj) {
+      var pidEl = proj.querySelector('.project-id-mono');
+      if (!pidEl) return;
+      var pid = pidEl.textContent.trim();
+      _projOrigPositions[pid] = { parent: proj.parentElement, nextSibling: proj.nextElementSibling };
+    });
+  }
+
+  function _findProjById(projId) {
+    var result = null;
+    document.querySelectorAll('.project-id-mono').forEach(function(mono) {
+      if (mono.textContent.trim() === projId) result = mono.closest('.project');
+    });
+    return result;
+  }
+
+  /* Применяем сохранённые перемещения (для режима Проекты) */
+  function applyProjectsModeOrder() {
     var moves = getProjMonthMoves();
     Object.keys(moves).forEach(function(projId) {
       var targetMonthId = moves[projId];
-      var proj = null;
-      document.querySelectorAll('.project-id-mono').forEach(function(mono) {
-        if (mono.textContent.trim() === projId) proj = mono.closest('.project');
-      });
+      var proj = _findProjById(projId);
       if (!proj) return;
       var targetMonth = document.getElementById(targetMonthId);
       if (!targetMonth || proj.closest('section.month, .month') === targetMonth) return;
       var targetList = targetMonth.querySelector('.project-list');
-      if (targetList) targetList.appendChild(proj);
+      if (!targetList) {
+        var prog = targetMonth.querySelector('.program');
+        if (!prog) return;
+        var progBody = prog.querySelector('.program-body');
+        if (!progBody) return;
+        targetList = document.createElement('ol');
+        targetList.className = 'project-list';
+        progBody.appendChild(targetList);
+      }
+      targetList.appendChild(proj);
+    });
+  }
+
+  /* Восстанавливаем оригинальные позиции (для режима Подробно) */
+  function restoreProjOrigPositions() {
+    Object.keys(_projOrigPositions).forEach(function(pid) {
+      var orig = _projOrigPositions[pid];
+      var proj = _findProjById(pid);
+      if (!proj || !orig || !orig.parent) return;
+      var ns = orig.nextSibling;
+      if (ns && ns.parentElement === orig.parent) {
+        orig.parent.insertBefore(proj, ns);
+      } else {
+        orig.parent.appendChild(proj);
+      }
     });
   }
 
@@ -6988,7 +7035,6 @@ body[data-mode="edit"] .po-task-add { display: block; }
         if (!_projDragSrc) return;
         var targetList = sec.querySelector('.project-list');
         if (!targetList) {
-          // Создаём список проектов если его нет
           var prog = sec.querySelector('.program');
           if (!prog) return;
           var progBody = prog.querySelector('.program-body');
@@ -6998,26 +7044,23 @@ body[data-mode="edit"] .po-task-add { display: block; }
           progBody.appendChild(targetList);
         }
         targetList.appendChild(_projDragSrc);
-        // Сохраняем перемещение
         var pidEl = _projDragSrc.querySelector('.project-id-mono');
         if (pidEl && sec.id) {
           var moves = getProjMonthMoves();
           moves[pidEl.textContent.trim()] = sec.id;
           saveProjMonthMoves(moves);
+          /* Обновляем snapshot: новая позиция становится текущей для режима Проекты */
         }
         _projDragSrc = null;
       });
     });
 
-    // Делаем проекты перетаскиваемыми
+    // Делаем проекты перетаскиваемыми только в режиме Проекты
     document.querySelectorAll('.project').forEach(function(proj) {
       if (proj.dataset.projDndReady) return;
       proj.dataset.projDndReady = '1';
       proj.addEventListener('dragstart', function(e) {
-        var mode = document.body.getAttribute('data-mode');
-        var base = document.body.getAttribute('data-base-mode');
-        var isDnd = mode === 'projects' || (mode === 'edit' && base === 'projects');
-        if (!isDnd) return;
+        if (document.body.getAttribute('data-mode') !== 'projects') return;
         _projDragSrc = proj;
         e.dataTransfer.effectAllowed = 'move';
         document.body.classList.add('po-dnd-active');
@@ -7032,19 +7075,28 @@ body[data-mode="edit"] .po-task-add { display: block; }
     });
   }
 
-  // Обновляем draggable-состояние при смене режима (наблюдатель уже есть, добавляем обработку)
+  /* Синхронизация draggable + применение/восстановление позиций при смене режима */
   (function() {
     function _syncDraggable() {
-      var mode = document.body.getAttribute('data-mode');
-      var base = document.body.getAttribute('data-base-mode');
-      var isDnd = mode === 'projects' || (mode === 'edit' && base === 'projects');
+      var isDnd = document.body.getAttribute('data-mode') === 'projects';
       document.querySelectorAll('.project').forEach(function(proj) {
         proj.draggable = isDnd;
       });
     }
+    var _prevObsMode = document.body.getAttribute('data-mode');
     var _modeObs = new MutationObserver(function(muts) {
       muts.forEach(function(m) {
-        if (m.attributeName === 'data-mode' || m.attributeName === 'data-base-mode') _syncDraggable();
+        if (m.attributeName !== 'data-mode' && m.attributeName !== 'data-base-mode') return;
+        _syncDraggable();
+        var newMode = document.body.getAttribute('data-mode');
+        if (newMode === _prevObsMode) return;
+        if (_prevObsMode === 'projects' && newMode !== 'projects') {
+          restoreProjOrigPositions();
+        }
+        if (newMode === 'projects' && _prevObsMode !== 'projects') {
+          applyProjectsModeOrder();
+        }
+        _prevObsMode = newMode;
       });
     });
     _modeObs.observe(document.body, { attributes: true });
@@ -7157,12 +7209,14 @@ body[data-mode="edit"] .po-task-add { display: block; }
   injectProjStatuses();
   initTasks();
   restoreProgramMonths();
+  recordProjOrigPositions();  /* snapshot before any project-mode moves */
   initAddProgramBtns();
   initMoveProgramBtns();
   initAddProjectBtns();
   hideOldTasksWrap();
   initDeleteButtons();
-  restoreProjectMonthMoves();
+  /* project month moves only in projects mode — applied on mode switch */
+  if (document.body.getAttribute('data-mode') === 'projects') applyProjectsModeOrder();
   initProjectsDnD();
   setTextEditable(document.body.getAttribute('data-mode') === 'edit');
   (function () { var _pa = localStorage.getItem('po-doc-edited') || localStorage.getItem('po-published-at'); if (_pa) updatePubStamp(_pa); }());
