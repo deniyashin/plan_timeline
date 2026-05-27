@@ -39,9 +39,6 @@
     "np-result-U-NEW-PR-1.5.2": "Получен регламент начислений на уровне клиники по каждой существующей должности, передан для оцифровки начислений в 1С.",
     "np-desc-U-NEW-PR-1.5.2": "",
     "proj-comment-U-HRM-PR-4.2.1": "",
-    "proj:U-SKL-PR-1.4.5:name": "СКУД и дисциплина движения материалов и сотрудников",
-    "np-result-U-SKL-PR-1.4.7": "а",
-    "np-desc-U-SKL-PR-1.4.7": "а",
     "proj:U-CLN-PR-1.1.5:name": "Выход клиник на устойчивую точку безубыточности",
     "proj:U-CCT-PR-3.4.1:name": "Новая система работы колл-центра",
     "proj:U-CCT-PR-3.4.2:name": "Вторичный контур как функция сопровождения пациента",
@@ -112,7 +109,10 @@
     "proj:U-HRM-PR-4.3.3:name": "Годовые контракты / соглашения сотрудников",
     "proj:U-HRM-PR-4.3.4:name": "Правила соблюдения и несоблюдения оргполитики",
     "proj:U-HRM-PR-4.3.5:name": "Причинно-следственная связь между результатом и вознаграждением",
-    "proj:T-HRM-PR-4.3.6:name": "Регламент взаимодействия руководителей с HR-контуром"
+    "proj:T-HRM-PR-4.3.6:name": "Регламент взаимодействия руководителей с HR-контуром",
+    "proj-comment-U-PAT-PR-3.5.5": "Проект аналитика",
+    "proj:U-DAT-PR-2.3.1:name": "Координации на основе статистик",
+    "proj:U-DAT-PR-2.3.2:name": "Регулярные советы и совещания по цифрам"
   },
   "tasks": {
     "U-FIN-PR-1.2.2": [
@@ -1786,6 +1786,48 @@
         "status": "not_started",
         "updatedAt": "2026-05-27T08:03:41.494Z"
       }
+    ],
+    "U-PAT-PR-3.5.5": [
+      {
+        "taskId": "",
+        "text": "Выявить, как будет отслеживаться аналитика",
+        "assignee": "",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-05-27T08:13:12.711Z"
+      },
+      {
+        "taskId": "",
+        "text": "Определить частоту анализа ",
+        "assignee": "",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-05-27T08:13:33.591Z"
+      },
+      {
+        "taskId": "",
+        "text": "Назначить верхнеуровнего ответственного",
+        "assignee": "",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-05-27T08:13:49.310Z"
+      },
+      {
+        "taskId": "",
+        "text": "Создать регламент для отчетности о том, как все это проходит",
+        "assignee": "",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-05-27T08:14:32.694Z"
+      },
+      {
+        "taskId": "",
+        "text": "Предоставить формат по улучшению и оценке предложений",
+        "assignee": "",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-05-27T08:15:12.091Z"
+      }
     ]
   },
   "projStatuses": {
@@ -1848,10 +1890,6 @@
       "approval": "approved"
     },
     "U-SKL-PR-1.4.3": {
-      "status": "in-progress",
-      "approval": "approved"
-    },
-    "U-SKL-PR-1.4.5": {
       "status": "in-progress",
       "approval": "approved"
     },
@@ -2024,6 +2062,10 @@
     "U-HRM-PR-4.3.3": {
       "owner": "GB",
       "approval": "approved"
+    },
+    "U-PAT-PR-3.5.5": {
+      "owner": "AK",
+      "approval": "approved"
     }
   },
   "progStatuses": {
@@ -2153,5 +2195,5 @@
       "css": "certainty-confirmed"
     }
   },
-  "publishedAt": "2026-05-27T08:07:08.783Z"
+  "publishedAt": "2026-05-27T08:17:34.300Z"
 }
