@@ -1,4 +1,41 @@
-﻿// === Filters + UI ===
+﻿// === Project-level month mapping (global helpers) ===
+const MONTHS = [
+  { domId: 'month-0',    key: '2026-04', label: 'Апрель 2026' },
+  { domId: 'month-1',   key: '2026-05', label: 'Май 2026' },
+  { domId: 'month-2',   key: '2026-06', label: 'Июнь 2026' },
+  { domId: 'month-3',   key: '2026-07', label: 'Июль 2026' },
+  { domId: 'month-4',   key: '2026-08', label: 'Август 2026' },
+  { domId: 'month-5',   key: '2026-09', label: 'Сентябрь 2026' },
+  { domId: 'month-6',   key: '2026-10', label: 'Октябрь 2026' },
+  { domId: 'month-7',   key: '2026-11', label: 'Ноябрь 2026' },
+  { domId: 'month-8',   key: '2026-12', label: 'Декабрь 2026' },
+  { domId: 'month-9',   key: '2027-01', label: 'Январь 2027' },
+  { domId: 'month-10',  key: '2027-02', label: 'Февраль 2027' },
+  { domId: 'month-11',  key: '2027-03', label: 'Март 2027' },
+  { domId: 'unscheduled', key: 'unscheduled', label: 'Без месяца' }
+];
+
+function monthKeyFromDomSection(section) {
+  const domId = section.id;
+  const found = MONTHS.find(m => m.domId === domId);
+  return found ? found.key : 'unscheduled';
+}
+function monthLabelFromKey(key) {
+  const found = MONTHS.find(m => m.key === key);
+  return found ? found.label : 'Без месяца';
+}
+function monthSortIndex(key) {
+  const idx = MONTHS.findIndex(m => m.key === key);
+  return idx === -1 ? MONTHS.length : idx;
+}
+function isValidMonthKey(key) {
+  return MONTHS.some(m => m.key === key);
+}
+function getProgramInstances(programId) {
+  return Array.from(document.querySelectorAll('.program[data-program-id="' + CSS.escape(programId) + '"]'));
+}
+
+// === Filters + UI ===
 (function() {
   // =====================================================================
   // Data mirrored from Python
@@ -208,8 +245,7 @@
       overrides[progId] = current;
       saveOverrides(overrides);
 
-      const prog = document.querySelector(`.program[data-program-id="${progId}"]`);
-      if (prog) refreshProgramDisplay(prog);
+      getProgramInstances(progId).forEach(prog => refreshProgramDisplay(prog));
       closeMenus();
       updateFilterCounts();
       applyFilters();
@@ -233,8 +269,7 @@
       overrides[progId] = current;
       saveOverrides(overrides);
 
-      const prog = document.querySelector(`.program[data-program-id="${progId}"]`);
-      if (prog) refreshProgramDisplay(prog);
+      getProgramInstances(progId).forEach(prog => refreshProgramDisplay(prog));
       updateFilterCounts();
       applyFilters();
 
@@ -415,6 +450,24 @@
         mo.style.display = (visible === 0 && !isEmpty) || (isEmpty) ? 'none' : '';
       } else {
         mo.style.display = '';
+      }
+    });
+
+    // Задача 8: скрыть программы без видимых (month-active) проектов
+    document.querySelectorAll('section.month').forEach(function (section) {
+      section.querySelectorAll('li.program').forEach(function (prog) {
+        if (prog.style.display === 'none') return; // уже скрыта renderTimeline
+        var hasVisible = Array.from(prog.querySelectorAll('li.project')).some(function (li) {
+          return li.style.display !== 'none';
+        });
+        if (!hasVisible) prog.style.display = 'none';
+      });
+      // Скрыть месяц если нет видимых программ с match-filter
+      if (hasFilter) {
+        var hasProg = Array.from(section.querySelectorAll('li.program')).some(function (prog) {
+          return prog.style.display !== 'none' && prog.classList.contains('match-filter');
+        });
+        if (!hasProg && !section.classList.contains('month-empty')) section.style.display = 'none';
       }
     });
 
@@ -735,14 +788,16 @@
   function hydrate() {
     Object.keys(statuses).forEach(key => {
       // key like "U-CLN-P-1.1:status"
-      const [pid, field] = key.split(':');
-      const prog = document.querySelector(`.program[data-program-id="${pid}"]`);
-      if (!prog) return;
-      const editor = prog.querySelector(`.status-editor[data-field="${field}"]`);
-      if (!editor) return;
-      const chip = editor.querySelector('.status-chip');
-      const v = statuses[key];
-      if (chip && v && v.css) applyStatusToChip(chip, v.value, v.label, v.css);
+      const parts = key.split(':');
+      const field = parts.pop();
+      const pid = parts.join(':');
+      getProgramInstances(pid).forEach(prog => {
+        const editor = prog.querySelector(`.status-editor[data-field="${field}"]`);
+        if (!editor) return;
+        const chip = editor.querySelector('.status-chip');
+        const v = statuses[key];
+        if (chip && v && v.css) applyStatusToChip(chip, v.value, v.label, v.css);
+      });
     });
   }
   hydrate();
@@ -1254,8 +1309,7 @@
         item.classList.add('active');
         document.body.classList.add('has-dispute-filter');
         ids.forEach(pid => {
-          const prog = document.querySelector(`.program[data-program-id="${pid}"]`);
-          if (prog) prog.classList.add('dispute-match');
+          getProgramInstances(pid).forEach(prog => prog.classList.add('dispute-match'));
         });
       });
     });
@@ -1659,6 +1713,163 @@
   function lsRaw(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function lsRawSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
 
+  /* ================================================================
+     PROJECT-MONTH MIGRATION  (Задача 2)
+  ================================================================ */
+  var LS_PROJMONTHS_V1 = 'po-project-months-v1';
+
+  function migrateProjectMonths() {
+    if (localStorage.getItem(LS_PROJMONTHS_V1)) return;
+    var progMonths = lsGet('po-prog-months');
+    var result = {};
+    document.querySelectorAll('li.project').forEach(function (li) {
+      var pidEl = li.querySelector('.project-id-mono');
+      var projectId = pidEl ? pidEl.textContent.trim() : '';
+      if (!projectId) return;
+      var programEl = li.closest('.program');
+      var programId = programEl ? programEl.getAttribute('data-program-id') : null;
+      var section   = li.closest('section.month');
+      var monthKey  = 'unscheduled';
+      if (programId && progMonths[programId] && isValidMonthKey(progMonths[programId])) {
+        monthKey = progMonths[programId];
+      } else if (section) {
+        monthKey = monthKeyFromDomSection(section);
+      }
+      result[projectId] = monthKey;
+    });
+    try { localStorage.setItem(LS_PROJMONTHS_V1, JSON.stringify(result)); } catch (e) {}
+  }
+
+  /* ================================================================
+     ASSIGN data-project-id ATTRIBUTES  (Задача 3)
+  ================================================================ */
+  function assignProjectIds() {
+    document.querySelectorAll('li.project').forEach(function (li) {
+      var pidEl = li.querySelector('.project-id-mono');
+      var projectId = pidEl ? pidEl.textContent.trim() : '';
+      if (projectId && !li.dataset.projectId) {
+        li.dataset.projectId = projectId;
+      }
+    });
+  }
+
+  /* ================================================================
+     READ / WRITE PROJECT MONTH  (Задача 4)
+  ================================================================ */
+  function getProjectMonth(projectId) {
+    var store = lsGet(LS_PROJMONTHS_V1);
+    var key = store[projectId];
+    return isValidMonthKey(key) ? key : 'unscheduled';
+  }
+
+  function setProjectMonth(projectId, monthKey) {
+    var store = lsGet(LS_PROJMONTHS_V1);
+    store[projectId] = isValidMonthKey(monthKey) ? monthKey : 'unscheduled';
+    try { localStorage.setItem(LS_PROJMONTHS_V1, JSON.stringify(store)); flash(); } catch (e) {}
+  }
+
+  /* ================================================================
+     UPDATE MONTH STATS  (Задача 9)
+  ================================================================ */
+  function updateMonthStats(sectionEl) {
+    var statsEl = sectionEl.querySelector('.month-stats');
+    if (!statsEl) return;
+    var monthKey = monthKeyFromDomSection(sectionEl);
+    var allProjects = Array.from(sectionEl.querySelectorAll('li.project[data-project-id]'));
+    var projectsInMonth = allProjects.filter(function (li) {
+      return getProjectMonth(li.dataset.projectId) === monthKey;
+    });
+    var programIds = new Set();
+    projectsInMonth.forEach(function (li) {
+      var prog = li.closest('.program[data-program-id]');
+      if (prog) programIds.add(prog.getAttribute('data-program-id'));
+    });
+    statsEl.textContent = programIds.size + ' программ · ' + projectsInMonth.length + ' проектов';
+  }
+
+  /* ================================================================
+     RENDER TIMELINE  (Задача 5)
+  ================================================================ */
+  function renderTimeline() {
+    /* 1. Remove all clone program instances */
+    document.querySelectorAll('.program[data-pm-clone]').forEach(function (el) { el.remove(); });
+
+    /* 2. Ensure all original programs are marked as master */
+    document.querySelectorAll('.program[data-program-id]').forEach(function (prog) {
+      prog.setAttribute('data-pm-master', '');
+    });
+
+    /* 3. Build month→{progId→[li]} map using stored month keys */
+    var byMonth = {};
+    document.querySelectorAll('li.project[data-project-id]').forEach(function (li) {
+      var pid = li.dataset.projectId;
+      var monthKey = getProjectMonth(pid);
+      var progEl = li.closest('.program[data-program-id]');
+      if (!progEl) return;
+      var progId = progEl.getAttribute('data-program-id');
+      if (!byMonth[monthKey]) byMonth[monthKey] = {};
+      if (!byMonth[monthKey][progId]) byMonth[monthKey][progId] = [];
+      byMonth[monthKey][progId].push(li);
+    });
+
+    /* 4. Reset all project visibility in master programs */
+    document.querySelectorAll('.program[data-pm-master] li.project').forEach(function (li) {
+      li.style.display = '';
+    });
+
+    /* 5. For each month section manage program instances */
+    MONTHS.forEach(function (m) {
+      var sec = document.getElementById(m.domId);
+      if (!sec) return;
+      var progList = sec.querySelector('.program-list');
+      if (!progList) return;
+      var monthPrograms = byMonth[m.key] || {};
+
+      Object.keys(monthPrograms).forEach(function (progId) {
+        var masterProg = progList.querySelector('.program[data-pm-master][data-program-id="' + CSS.escape(progId) + '"]');
+
+        if (masterProg) {
+          /* Master lives here: show only projects for this month */
+          masterProg.querySelectorAll('li.project[data-project-id]').forEach(function (li) {
+            li.style.display = (getProjectMonth(li.dataset.projectId) === m.key) ? '' : 'none';
+          });
+          masterProg.style.display = '';
+        } else {
+          /* Need a clone of the master in this section */
+          var globalMaster = document.querySelector('.program[data-pm-master][data-program-id="' + CSS.escape(progId) + '"]');
+          if (!globalMaster) return;
+          var clone = globalMaster.cloneNode(true);
+          clone.setAttribute('data-pm-clone', '');
+          clone.removeAttribute('data-pm-master');
+          /* Hide action buttons that have direct listeners and don't work on clones */
+          clone.querySelectorAll('.po-delete-btn, .po-prog-move-btn, .po-add-proj-btn').forEach(function (btn) {
+            btn.style.display = 'none';
+          });
+          /* Show only projects for this month */
+          clone.querySelectorAll('li.project[data-project-id]').forEach(function (li) {
+            li.style.display = (getProjectMonth(li.dataset.projectId) === m.key) ? '' : 'none';
+          });
+          /* Mark project-month-select in clone to avoid duplicate rendering */
+          clone.querySelectorAll('.po-proj-month-row').forEach(function (r) { r.style.display = 'none'; });
+          var addBtn = progList.querySelector('.po-add-prog-btn');
+          if (addBtn) progList.insertBefore(clone, addBtn);
+          else progList.appendChild(clone);
+        }
+      });
+
+      /* Hide master programs in this section that have 0 projects for this month */
+      progList.querySelectorAll('.program[data-pm-master]').forEach(function (prog) {
+        var progId = prog.getAttribute('data-program-id');
+        if (!monthPrograms[progId]) {
+          prog.style.display = 'none';
+        }
+      });
+
+      /* Update month stats */
+      updateMonthStats(sec);
+    });
+  }
+
   /* save flash */
   var savedEl = document.getElementById('po-edit-saved');
   var _ft;
@@ -1692,6 +1903,7 @@
     var RESET_KEYS = [
       'po-tasks', 'po-texts', 'po-proj-statuses',
       'po-new-projects', 'po-new-programs', 'po-prog-months',
+      'po-project-months-v1',
       'plan-timeline-assignments-v2', 'plan-timeline-statuses-v1',
       'po-doc-edited', 'po-published-at'
     ];
@@ -2039,6 +2251,35 @@
       }());
 
       body.insertBefore(row, body.firstChild);
+
+      /* --- Month picker row (Задача 6) --- */
+      (function () {
+        var monthRow = document.createElement('div');
+        monthRow.className = 'po-proj-month-row';
+        monthRow.style.cssText = 'display:flex;align-items:center;gap:8px;padding:4px 0 6px;font-size:11px;color:var(--ink-muted)';
+        var monthLbl = document.createElement('span');
+        monthLbl.className = 'po-proj-status-label';
+        monthLbl.textContent = 'Месяц проекта:';
+        var sel = document.createElement('select');
+        sel.className = 'project-month-select';
+        sel.style.cssText = 'font-family:inherit;font-size:11px;padding:2px 6px;border:1px solid #DDD5C5;border-radius:4px;background:#FDFBF6;color:var(--ink);cursor:pointer';
+        MONTHS.forEach(function (m) {
+          var opt = document.createElement('option');
+          opt.value = m.key;
+          opt.textContent = m.label;
+          sel.appendChild(opt);
+        });
+        sel.value = getProjectMonth(pid);
+        sel.addEventListener('change', function (e) {
+          e.stopPropagation();
+          if (document.body.getAttribute('data-mode') !== 'edit') return;
+          setProjectMonth(pid, sel.value);
+          renderTimeline();
+        });
+        monthRow.appendChild(monthLbl);
+        monthRow.appendChild(sel);
+        body.insertBefore(monthRow, row.nextSibling);
+      }());
 
       /* --- Comment field --- */
       var commentKey = 'proj-comment-' + pid;
@@ -2645,6 +2886,7 @@
     return {
       texts: lsGet(LS_TEXTS), tasks: lsGet(LS_TASKS),
       projStatuses: lsGet(LS_PSTAT), progStatuses: progStatuses,
+      projectMonths: lsGet(LS_PROJMONTHS_V1),
       publishedAt: new Date().toISOString()
     };
   }
@@ -2746,19 +2988,26 @@
       try { localStorage.setItem('plan-timeline-statuses-v1', JSON.stringify(data.progStatuses)); } catch (e) {}
       Object.keys(data.progStatuses).forEach(function (key) {
         var parts = key.split(':'), field = parts.pop(), pid = parts.join(':');
-        var prog = document.querySelector('.program[data-program-id="' + pid + '"]');
-        if (!prog) return;
-        var editor = prog.querySelector('.status-editor[data-field="' + field + '"]');
-        if (!editor) return;
-        var chip = editor.querySelector('.status-chip');
-        if (!chip) return;
-        var v = data.progStatuses[key];
-        if (!v || !v.css) return;
-        chip.className = 'status-chip ' + v.css;
-        chip.textContent = v.label;
-        chip.dataset.current = v.css;
+        getProgramInstances(pid).forEach(function (prog) {
+          var editor = prog.querySelector('.status-editor[data-field="' + field + '"]');
+          if (!editor) return;
+          var chip = editor.querySelector('.status-chip');
+          if (!chip) return;
+          var v = data.progStatuses[key];
+          if (!v || !v.css) return;
+          chip.className = 'status-chip ' + v.css;
+          chip.textContent = v.label;
+          chip.dataset.current = v.css;
+        });
       });
     }
+    /* Задача 10: restore projectMonths */
+    if (data.projectMonths && Object.keys(data.projectMonths).length) {
+      try { localStorage.setItem(LS_PROJMONTHS_V1, JSON.stringify(data.projectMonths)); } catch (e) {}
+    } else {
+      migrateProjectMonths();
+    }
+    renderTimeline();
   }
 
   function loadRemote() {
@@ -3426,8 +3675,7 @@
   function applyDeleted() {
     var d = getDeleted();
     (d.programs || []).forEach(function(id) {
-      var el = document.querySelector('.program[data-program-id="' + id + '"]');
-      if (el) el.remove();
+      getProgramInstances(id).forEach(function (el) { el.remove(); });
     });
     (d.projects || []).forEach(function(pid) {
       document.querySelectorAll('.project-id-mono').forEach(function(mono) {
@@ -3511,15 +3759,18 @@
   /* ================================================================
      INIT
   ================================================================ */
+  migrateProjectMonths();    /* must run first — migrates po-prog-months → po-project-months-v1 */
   applyDeleted();
   restoreNewPrograms();
   restoreNewProjects();
+  assignProjectIds();        /* add data-project-id to all li.project */
   migrateHardcodedTasks();   /* must run before initTasks */
   migrateTasksV2();
   initTextEditing();
   injectProjStatuses();
   initTasks();
   restoreProgramMonths();
+  renderTimeline();          /* initial render based on project months */
   recordProjOrigPositions();  /* snapshot before any project-mode moves */
   initAddProgramBtns();
   initMoveProgramBtns();
