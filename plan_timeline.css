@@ -3371,29 +3371,6 @@ body[data-mode="edit"] .po-add-proj-btn { display: block; }
 }
 .po-add-prog-btn:hover { background: #F5F1EA; border-color: #6B6560; color: #1F1D1A; }
 body[data-mode="edit"] .po-add-prog-btn { display: block; }
-/* Move-month button inside program head */
-.po-prog-move-btn {
-  display: none; background: transparent; border: 1px solid #DDD5C5; border-radius: 4px;
-  padding: 2px 8px; font-family: inherit; font-size: 10px; color: #8F897E; line-height: 1.4;
-  cursor: pointer; flex-shrink: 0; white-space: nowrap;
-  transition: background 0.1s, border-color 0.1s, color 0.1s;
-}
-.po-prog-move-btn:hover { background: #F0EDE6; border-color: #8F897E; color: #1F1D1A; }
-body[data-mode="edit"] .po-prog-move-btn { display: inline-flex; align-items: center; }
-/* Month pick dropdown */
-.po-month-pick-drop {
-  position: fixed; z-index: 700;
-  background: #FDFBF6; border: 1px solid #DDD5C5; border-radius: 8px;
-  min-width: 210px; max-height: 320px; overflow-y: auto;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.14); padding: 4px 0;
-}
-.po-month-pick-opt {
-  display: block; width: 100%; background: transparent; border: none;
-  padding: 7px 14px; font-family: inherit; font-size: 13px; color: #1F1D1A;
-  cursor: pointer; text-align: left;
-}
-.po-month-pick-opt:hover { background: #F0EDE6; }
-.po-month-pick-opt.current { background: #E8E2D8; font-weight: 600; cursor: default; }
 /* New project modal */
 .po-newproj-modal {
   display: none; position: fixed; inset: 0; z-index: 900;
