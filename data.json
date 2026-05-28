@@ -133,7 +133,11 @@
     "prog:U-CCT-P-3.4:fv:16": "Даниэль говорит об этом очень конкретно: во вторичном КЦ должна появиться отдельная функция работы с базами — страховые базы, спящие базы, думающие, отложенные, те, кого не закрыли с первой очереди. Это не просто CRM-гигиена, а отдельная трудовая функция внутри коммуникационного контура.",
     "proj-comment-U-PAT-PR-3.5.2": "Также сюда добавляется птуь для пациентов с маркетплейсов",
     "proj-comment-U-SLS-PR-3.2.2": "Это является задачей в продыдущем проекте 3.2.1",
-    "proj-comment-T-SLS-PR-3.2.6": "Это задача внутри проекта 3.2.1"
+    "proj-comment-T-SLS-PR-3.2.6": "Это задача внутри проекта 3.2.1",
+    "proj-comment-U-PAT-PR-3.1.1": "В этом проекте задействованы:<br>Денис Я. - для работы технически<br>Алексей К. - для связки<br>Денис А. - для поддержки актуальности",
+    "proj-comment-U-SRV-PR-3.1.2": "Этот проект является задачей для проекта 3.1.1",
+    "proj-comment-U-SRV-PR-3.1.4": "Ответственные - Елизавета и А.А.",
+    "proj-comment-U-SRV-PR-3.1.6": "<br>"
   },
   "tasks": {
     "U-FIN-PR-1.2.2": [
@@ -861,6 +865,14 @@
       }
     ],
     "T-PAT-PR-3.1.8": [
+      {
+        "taskId": "",
+        "text": "Начало в августе",
+        "assignee": "",
+        "dueDate": "2026-08-01",
+        "status": "not_started",
+        "updatedAt": "2026-05-28T14:42:57.602Z"
+      },
       {
         "id": "T-0051",
         "taskId": "T-PAT-Z-3.1.8.1",
@@ -2127,6 +2139,56 @@
         "status": "not_started",
         "updatedAt": "2026-05-28T14:27:26.302Z"
       }
+    ],
+    "U-SRV-PR-3.1.3": [
+      {
+        "taskId": "",
+        "text": "ПО начинает работу в конце июля",
+        "assignee": "unit_po",
+        "dueDate": "2026-07-31",
+        "status": "not_started",
+        "updatedAt": "2026-05-28T14:39:14.729Z"
+      }
+    ],
+    "U-SRV-PR-3.1.4": [
+      {
+        "taskId": "",
+        "text": "Начало в июле",
+        "assignee": "",
+        "dueDate": "2026-07-06",
+        "status": "not_started",
+        "updatedAt": "2026-05-28T14:40:52.111Z"
+      }
+    ],
+    "U-SRV-PR-3.1.5": [
+      {
+        "taskId": "",
+        "text": "Передать Динаре и Денису Я.",
+        "assignee": "",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-05-28T14:41:31.347Z"
+      }
+    ],
+    "U-SRV-PR-3.1.6": [
+      {
+        "taskId": "",
+        "text": "Передать Надежде и В.В.",
+        "assignee": "",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-05-28T14:42:19.727Z"
+      }
+    ],
+    "U-PAT-PR-3.1.7": [
+      {
+        "taskId": "",
+        "text": "Начало в августе",
+        "assignee": "",
+        "dueDate": "2026-08-01",
+        "status": "not_started",
+        "updatedAt": "2026-05-28T14:42:37.965Z"
+      }
     ]
   },
   "projStatuses": {
@@ -2403,6 +2465,29 @@
       "approval": "in-review"
     },
     "T-SLS-PR-3.2.9": {
+      "approval": "in-review"
+    },
+    "U-PAT-PR-3.1.1": {
+      "approval": "in-review"
+    },
+    "U-SRV-PR-3.1.3": {
+      "owner": "unit_po",
+      "approval": "in-review"
+    },
+    "U-SRV-PR-3.1.4": {
+      "owner": "AA",
+      "approval": "in-review"
+    },
+    "U-SRV-PR-3.1.5": {
+      "approval": "in-review"
+    },
+    "U-SRV-PR-3.1.6": {
+      "approval": "in-review"
+    },
+    "U-PAT-PR-3.1.7": {
+      "approval": "in-review"
+    },
+    "T-PAT-PR-3.1.8": {
       "approval": "in-review"
     }
   },
@@ -2777,5 +2862,5 @@
     "U-CHG-PR-4.5.5": "2027-03",
     "T-CHG-PR-0.1.1": "2027-03"
   },
-  "publishedAt": "2026-05-28T14:35:59.415Z"
+  "publishedAt": "2026-05-28T14:43:08.460Z"
 }
