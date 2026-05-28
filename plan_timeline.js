@@ -523,6 +523,11 @@ function getProgramInstances(programId) {
     state.change = null; state.contour = null; state.source = null; state.persons = []; state.role = 'any';
     applyFilters();
   });
+
+  /* Re-apply filters when renderTimeline creates new clones (Bug 3) */
+  document.addEventListener('po-timeline-rendered', function () {
+    applyFilters();
+  });
 })();
 
 // === Mode switcher ===
@@ -1771,13 +1776,18 @@ function getProgramInstances(programId) {
   /* ================================================================
      UPDATE MONTH STATS  (Задача 9)
   ================================================================ */
-  function updateMonthStats(sectionEl) {
+  function updateMonthStats(sectionEl, store) {
     var statsEl = sectionEl.querySelector('.month-stats');
     if (!statsEl) return;
     var monthKey = monthKeyFromDomSection(sectionEl);
+    /* Use master projects only (clones would double-count) */
     var allProjects = Array.from(sectionEl.querySelectorAll('li.project[data-project-id]'));
     var projectsInMonth = allProjects.filter(function (li) {
-      return getProjectMonth(li.dataset.projectId) === monthKey;
+      /* Skip projects inside clones */
+      if (li.closest('.program[data-pm-clone]')) return false;
+      var k = store && store[li.dataset.projectId];
+      var key = isValidMonthKey(k) ? k : 'unscheduled';
+      return key === monthKey;
     });
     var programIds = new Set();
     projectsInMonth.forEach(function (li) {
@@ -1791,6 +1801,9 @@ function getProgramInstances(programId) {
      RENDER TIMELINE  (Задача 5)
   ================================================================ */
   function renderTimeline() {
+    /* 0. Ensure every project has data-project-id (covers dynamically added projects) */
+    assignProjectIds();
+
     /* 1. Remove all clone program instances */
     document.querySelectorAll('.program[data-pm-clone]').forEach(function (el) { el.remove(); });
 
@@ -1799,12 +1812,18 @@ function getProgramInstances(programId) {
       prog.setAttribute('data-pm-master', '');
     });
 
-    /* 3. Build month→{progId→[li]} map using stored month keys */
+    /* 3. Build month→{progId→[li]} map — read store once for performance */
+    var monthStore = lsGet(LS_PROJMONTHS_V1);
+    function _projMonth(pid) {
+      var k = monthStore[pid];
+      return isValidMonthKey(k) ? k : 'unscheduled';
+    }
+
     var byMonth = {};
     document.querySelectorAll('li.project[data-project-id]').forEach(function (li) {
       var pid = li.dataset.projectId;
-      var monthKey = getProjectMonth(pid);
-      var progEl = li.closest('.program[data-program-id]');
+      var monthKey = _projMonth(pid);
+      var progEl = li.closest('.program[data-pm-master]');
       if (!progEl) return;
       var progId = progEl.getAttribute('data-program-id');
       if (!byMonth[monthKey]) byMonth[monthKey] = {};
@@ -1831,7 +1850,7 @@ function getProgramInstances(programId) {
         if (masterProg) {
           /* Master lives here: show only projects for this month */
           masterProg.querySelectorAll('li.project[data-project-id]').forEach(function (li) {
-            li.style.display = (getProjectMonth(li.dataset.projectId) === m.key) ? '' : 'none';
+            li.style.display = (_projMonth(li.dataset.projectId) === m.key) ? '' : 'none';
           });
           masterProg.style.display = '';
         } else {
@@ -1841,15 +1860,15 @@ function getProgramInstances(programId) {
           var clone = globalMaster.cloneNode(true);
           clone.setAttribute('data-pm-clone', '');
           clone.removeAttribute('data-pm-master');
-          /* Hide action buttons that have direct listeners and don't work on clones */
+          /* Hide action buttons that rely on direct event listeners and don't work on clones */
           clone.querySelectorAll('.po-delete-btn, .po-prog-move-btn, .po-add-proj-btn').forEach(function (btn) {
             btn.style.display = 'none';
           });
           /* Show only projects for this month */
           clone.querySelectorAll('li.project[data-project-id]').forEach(function (li) {
-            li.style.display = (getProjectMonth(li.dataset.projectId) === m.key) ? '' : 'none';
+            li.style.display = (_projMonth(li.dataset.projectId) === m.key) ? '' : 'none';
           });
-          /* Mark project-month-select in clone to avoid duplicate rendering */
+          /* Hide month-select row in clones (edit actions belong to the master) */
           clone.querySelectorAll('.po-proj-month-row').forEach(function (r) { r.style.display = 'none'; });
           var addBtn = progList.querySelector('.po-add-prog-btn');
           if (addBtn) progList.insertBefore(clone, addBtn);
@@ -1866,8 +1885,11 @@ function getProgramInstances(programId) {
       });
 
       /* Update month stats */
-      updateMonthStats(sec);
+      updateMonthStats(sec, monthStore);
     });
+
+    /* 6. Re-apply active filter state to newly created clones */
+    document.dispatchEvent(new CustomEvent('po-timeline-rendered'));
   }
 
   /* save flash */
@@ -2256,7 +2278,8 @@ function getProgramInstances(programId) {
       (function () {
         var monthRow = document.createElement('div');
         monthRow.className = 'po-proj-month-row';
-        monthRow.style.cssText = 'display:flex;align-items:center;gap:8px;padding:4px 0 6px;font-size:11px;color:var(--ink-muted)';
+        var _editNow = document.body.getAttribute('data-mode') === 'edit';
+        monthRow.style.cssText = 'align-items:center;gap:8px;padding:4px 0 6px;font-size:11px;color:var(--ink-muted);display:' + (_editNow ? 'flex' : 'none');
         var monthLbl = document.createElement('span');
         monthLbl.className = 'po-proj-status-label';
         monthLbl.textContent = 'Месяц проекта:';
@@ -2851,6 +2874,14 @@ function getProgramInstances(programId) {
     });
   }
 
+  function syncMonthRowVisibility(on) {
+    document.querySelectorAll('.po-proj-month-row').forEach(function (row) {
+      /* Never show in clones */
+      if (row.closest('.program[data-pm-clone]')) { row.style.display = 'none'; return; }
+      row.style.display = on ? '' : 'none';
+    });
+  }
+
   /* mode observer */
   new MutationObserver(function (muts) {
     muts.forEach(function (m) {
@@ -2858,6 +2889,7 @@ function getProgramInstances(programId) {
       var on = document.body.getAttribute('data-mode') === 'edit';
       setTextEditable(on);
       document.querySelectorAll('.project-body').forEach(syncTaskEdit);
+      syncMonthRowVisibility(on);
       if (!on) hideRtBar();
     });
   }).observe(document.body, { attributes: true });
@@ -3759,10 +3791,10 @@ function getProgramInstances(programId) {
   /* ================================================================
      INIT
   ================================================================ */
-  migrateProjectMonths();    /* must run first — migrates po-prog-months → po-project-months-v1 */
   applyDeleted();
   restoreNewPrograms();
   restoreNewProjects();
+  migrateProjectMonths();    /* after DOM is populated with new progs/projs */
   assignProjectIds();        /* add data-project-id to all li.project */
   migrateHardcodedTasks();   /* must run before initTasks */
   migrateTasksV2();
