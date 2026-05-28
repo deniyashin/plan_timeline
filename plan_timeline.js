@@ -1861,7 +1861,7 @@ function getProgramInstances(programId) {
           clone.setAttribute('data-pm-clone', '');
           clone.removeAttribute('data-pm-master');
           /* Hide action buttons that rely on direct event listeners and don't work on clones */
-          clone.querySelectorAll('.po-delete-btn, .po-prog-move-btn, .po-add-proj-btn').forEach(function (btn) {
+          clone.querySelectorAll('.po-delete-btn, .po-add-proj-btn').forEach(function (btn) {
             btn.style.display = 'none';
           });
           /* Show only projects for this month */
@@ -3216,8 +3216,6 @@ function getProgramInstances(programId) {
       pl2.after(ab2);
     }
 
-    /* inject move-month button */
-    _injectMoveBtn(li);
 
     /* inject progress bar */
     var head = li.querySelector('.program-head');
@@ -3243,96 +3241,6 @@ function getProgramInstances(programId) {
   }
 
   /* ---- month-move picker ---- */
-  function _injectMoveBtn(progLi) {
-    var head = progLi.querySelector('.program-head');
-    if (!head || head.querySelector('.po-prog-move-btn')) return;
-    var idMono = head.querySelector('.program-id-mono');
-    if (!idMono) return;
-    var btn = document.createElement('button');
-    btn.type = 'button'; btn.className = 'po-prog-move-btn'; btn.textContent = '↕ месяц';
-    btn.addEventListener('click', function (e) { e.stopPropagation(); _openMonthPicker(progLi, btn); });
-    idMono.after(btn);
-  }
-
-  function _openMonthPicker(progLi, anchorEl) {
-    document.querySelectorAll('.po-month-pick-drop').forEach(function (d) { d.remove(); });
-    var currentSec = progLi.closest('section.month');
-    var drop = document.createElement('div');
-    drop.className = 'po-month-pick-drop';
-    var rect = anchorEl.getBoundingClientRect();
-    drop.style.top  = (rect.bottom + 4) + 'px';
-    drop.style.left = rect.left + 'px';
-
-    document.querySelectorAll('section.month').forEach(function (sec) {
-      var lbl  = sec.querySelector('.month-label');
-      var yr   = sec.querySelector('.month-year');
-      var text = (lbl ? lbl.textContent : sec.id) + (yr ? ' ' + yr.textContent : '');
-      var isCur = sec === currentSec;
-      var opt = document.createElement('button');
-      opt.type = 'button';
-      opt.className = 'po-month-pick-opt' + (isCur ? ' current' : '');
-      opt.textContent = text + (isCur ? ' ✓' : '');
-      if (!isCur) {
-        opt.addEventListener('click', function (ev) {
-          ev.stopPropagation(); drop.remove();
-          document.removeEventListener('click', closeM, true);
-          _moveProgramToMonth(progLi, sec);
-        });
-      }
-      drop.appendChild(opt);
-    });
-
-    document.body.appendChild(drop);
-    function closeM(ev) {
-      if (!drop.contains(ev.target) && ev.target !== anchorEl) {
-        drop.remove(); document.removeEventListener('click', closeM, true);
-      }
-    }
-    setTimeout(function () { document.addEventListener('click', closeM, true); }, 0);
-  }
-
-  function _moveProgramToMonth(progLi, targetSec) {
-    var progId = progLi.getAttribute('data-program-id');
-    var targetList = targetSec.querySelector('.program-list');
-    if (!targetList) return;
-
-    /* move DOM — insert before the add-prog button if present */
-    var addBtn = targetSec.querySelector('.po-add-prog-btn');
-    if (addBtn) targetList.after(progLi); /* temp, then fix */
-    targetList.appendChild(progLi);
-
-    /* save to po-prog-months */
-    var pm = getProgMonths();
-    pm[progId] = targetSec.id;
-    saveProgMonths(pm);
-
-    /* if it's a new program, update po-new-programs creation month too */
-    var np = getNewProgs();
-    var moved = false;
-    Object.keys(np).forEach(function (mId) {
-      np[mId] = (np[mId] || []).filter(function (d) {
-        if (d.id === progId) { moved = true; if (!np[targetSec.id]) np[targetSec.id] = []; np[targetSec.id].push(d); return false; }
-        return true;
-      });
-    });
-    if (moved) saveNewProgs(np);
-  }
-
-  function initAddProgramBtns() {
-    document.querySelectorAll('section.month').forEach(function (sec) {
-      var progList = sec.querySelector('.program-list');
-      if (!progList) return;
-      var btn = document.createElement('button');
-      btn.type = 'button'; btn.className = 'po-add-prog-btn'; btn.textContent = '+ Добавить программу';
-      btn.addEventListener('click', function (e) { e.stopPropagation(); _openPmModal(sec); });
-      progList.after(btn);
-    });
-  }
-
-  function initMoveProgramBtns() {
-    document.querySelectorAll('.program[data-program-id]').forEach(_injectMoveBtn);
-  }
-
   /* ================================================================
      NEW PROJECT CREATION
   ================================================================ */
@@ -3805,7 +3713,6 @@ function getProgramInstances(programId) {
   renderTimeline();          /* initial render based on project months */
   recordProjOrigPositions();  /* snapshot before any project-mode moves */
   initAddProgramBtns();
-  initMoveProgramBtns();
   initAddProjectBtns();
   hideOldTasksWrap();
   initDeleteButtons();
