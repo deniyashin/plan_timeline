@@ -1,0 +1,17 @@
+# Инструменты разработки — не публикуем на GitHub Pages
+node_modules/
+package.json
+package-lock.json
+
+# Локальные бэкапы — хранятся только на машине
+Легаси v1.0 монолит/
+
+# n8n workflow — содержит секреты (токены, webhook URL)
+plan_timeline_n8n.json
+
+# Claude Code (локальные настройки IDE)
+.claude/
+
+# Системное
+.DS_Store
+Thumbs.db

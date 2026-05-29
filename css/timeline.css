@@ -1,0 +1,115 @@
+﻿  /* ===== Timeline ===== */
+  .timeline {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 40px 40px 80px;
+    position: relative;
+  }
+  .month {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 32px;
+    padding: 40px 0;
+    border-top: 1px solid var(--line);
+    position: relative;
+  }
+  .month:first-child { border-top: none; padding-top: 20px; }
+  .month-empty { opacity: 0.55; }
+  .month-head {
+    display: contents;
+  }
+  .month-axis {
+    position: sticky;
+    top: 120px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    align-self: start;
+  }
+  .month-num {
+    font-family: "Geist Mono", monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    letter-spacing: 0.05em;
+  }
+  .month-dot {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--ink);
+    position: relative;
+    flex-shrink: 0;
+  }
+  .month-empty .month-dot { background: transparent; border: 1.5px solid var(--ink-soft); }
+  .month-dot::before {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 30px;
+    width: 1px;
+    height: calc(100% + 100vh);
+    background: var(--line);
+    z-index: -1;
+  }
+  .month-title-wrap {
+    padding-top: 2px;
+  }
+  .month-title {
+    font-family: "Fraunces", serif;
+    font-size: 36px;
+    font-weight: 400;
+    font-variation-settings: "opsz" 48, "SOFT" 20;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+  .month-label { color: var(--ink); }
+  .month-year {
+    color: var(--ink-soft);
+    font-style: italic;
+    font-weight: 300;
+    margin-left: 4px;
+  }
+  .month-stats {
+    font-family: "Geist Mono", monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .month-body {
+    grid-column: 2;
+    margin-top: 20px;
+  }
+  .month-breakdown {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+    border-bottom: 1px dashed var(--line);
+  }
+  .chrow-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: "Geist Mono", monospace;
+    font-size: 11px;
+    color: var(--ink-muted);
+  }
+  .chrow-dot {
+    width: 8px; height: 8px; border-radius: 2px;
+  }
+  .chrow-code { color: var(--ink); font-weight: 500; }
+  .chrow-count { color: var(--ink-soft); }
+
+  .empty-month {
+    padding: 20px 0;
+    color: var(--ink-soft);
+    font-style: italic;
+    font-family: "Fraunces", serif;
+    font-size: 17px;
+    max-width: 540px;
+  }
+

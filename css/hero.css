@@ -1,0 +1,141 @@
+﻿  /* ===== Toast (edit feedback) ===== */
+  .toast {
+    position: fixed;
+    bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--ink);
+    color: var(--bg);
+    padding: 10px 18px;
+    border-radius: 4px;
+    font-size: 13px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.25s ease;
+    z-index: 200;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ===== Hero ===== */
+  .hero {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 64px 40px 48px;
+    border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+  .po-pub-stamp {
+    position: absolute;
+    top: 24px; right: 40px;
+    font-family: "Geist Mono", monospace;
+    text-align: right;
+    line-height: 1.5;
+    pointer-events: none;
+  }
+  .po-pub-stamp-label {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .po-pub-stamp-time {
+    display: block;
+    font-size: 11px;
+    color: var(--ink-muted);
+  }
+  .hero-kicker {
+    font-family: "Geist Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    margin-bottom: 22px;
+  }
+  .hero h1 {
+    font-family: "Fraunces", serif;
+    font-weight: 400;
+    font-size: clamp(36px, 5vw, 62px);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    font-variation-settings: "opsz" 144, "SOFT" 20;
+    margin-bottom: 24px;
+    max-width: 900px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--ink-muted);
+  }
+  .hero-lede {
+    font-size: 17px;
+    line-height: 1.55;
+    color: var(--ink-muted);
+    max-width: 680px;
+  }
+
+  /* ===== Legend panel ===== */
+  .legend-panel {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 36px 40px;
+    border-bottom: 1px solid var(--line);
+  }
+  .section-kicker {
+    font-family: "Geist Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .legend-title {
+    font-family: "Fraunces", serif;
+    font-size: 19px;
+    font-weight: 500;
+    margin-bottom: 18px;
+    letter-spacing: -0.01em;
+  }
+
+  .legend-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px 20px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background 0.15s;
+    border: 1px solid transparent;
+  }
+  .legend-item:hover { background: var(--surface); border-color: var(--line-soft); }
+  .legend-item.filter-on {
+    background: var(--surface);
+    border-color: var(--ink);
+  }
+  .legend-swatch {
+    width: 14px; height: 14px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .legend-code {
+    font-family: "Geist Mono", monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: 0.05em;
+    width: 28px;
+    white-space: nowrap;
+  }
+  .legend-name {
+    font-size: 13px;
+    color: var(--ink-muted);
+  }
+

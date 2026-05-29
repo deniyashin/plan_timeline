@@ -1,0 +1,91 @@
+﻿  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #F8F5EF;
+    --bg-alt: #F2EDE3;
+    --surface: #FDFBF6;
+    --ink: #1F1D1A;
+    --ink-muted: #6B655C;
+    --ink-soft: #8F897E;
+    --line: #DDD5C5;
+    --line-soft: #E8E1D2;
+    --accent: #1F1D1A;
+    --ch-out: #5A554C;
+    --radius: 6px;
+    --shadow-sm: 0 1px 0 rgba(31,29,26,.04);
+    --shadow-md: 0 2px 8px rgba(31,29,26,.06), 0 0 0 1px rgba(31,29,26,.03);
+  }
+
+  body {
+    font-family: "Geist", -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.55;
+    font-size: 15px;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.005em;
+  }
+
+  .mono { font-family: "Geist Mono", ui-monospace, monospace; }
+
+  /* ===== Top ===== */
+  .doc-top {
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(12px);
+    background: rgba(248, 245, 239, 0.92);
+  }
+  .doc-top-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 14px 40px;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+  }
+  .doc-mark {
+    font-family: "Fraunces", serif;
+    font-weight: 500;
+    font-size: 20px;
+    font-variation-settings: "opsz" 24, "SOFT" 0;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .doc-mark em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--ink-muted);
+  }
+  .doc-meta {
+    color: var(--ink-soft);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-left: auto;
+    display: flex; gap: 18px;
+  }
+  .doc-meta b { color: var(--ink); font-weight: 500; }
+  .doc-actions {
+    display: flex;
+    gap: 4px;
+    margin-left: 20px;
+  }
+  .ghost-btn {
+    font-family: inherit;
+    font-size: 11.5px;
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--ink-muted);
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.12s;
+    letter-spacing: 0.02em;
+  }
+  .ghost-btn:hover {
+    border-color: var(--ink);
+    color: var(--ink);
+  }
