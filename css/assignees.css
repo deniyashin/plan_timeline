@@ -1,0 +1,264 @@
+﻿
+  /* ===== Assignee chips (used everywhere a person is displayed) ===== */
+  .assignee-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 1px 8px 1px 1px;
+    border-radius: 100px;
+    background: var(--bg-alt);
+    border: 1px solid var(--line-soft);
+    font-size: 11.5px;
+    line-height: 1.3;
+    flex-shrink: 0;
+    max-width: 180px;
+    transition: background 0.12s, border-color 0.12s;
+  }
+  .assignee-chip .assignee-init {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--bg);
+    font-family: "Geist Mono", monospace;
+    font-size: 9.5px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .assignee-chip .assignee-last {
+    color: var(--ink);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .assignee-chip.assignee-chip-empty {
+    background: transparent;
+    border-style: dashed;
+  }
+  .assignee-chip-empty .assignee-init {
+    background: transparent;
+    color: var(--ink-soft);
+    border: 1px dashed var(--line);
+  }
+  .assignee-chip-empty .assignee-last {
+    color: var(--ink-soft);
+    font-style: italic;
+    font-weight: 400;
+  }
+  .assignee-chip-unit .assignee-init {
+    background: var(--bg-alt);
+    color: var(--ink);
+    border: 1px solid var(--line);
+  }
+  .assignee-chip-sm {
+    font-size: 10.5px;
+    padding: 1px 6px 1px 1px;
+  }
+  .assignee-chip-sm .assignee-init { width: 18px; height: 18px; font-size: 8.5px; }
+  .assignee-chip-sm .assignee-last { max-width: 80px; }
+
+  /* ===== Role lines (in program head, compact) ===== */
+  .program-roles-slot {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    flex-shrink: 1;
+    min-width: 0;
+    align-items: center;
+    padding-left: 4px;
+    border-left: 1px solid var(--line-soft);
+    max-width: 360px;
+  }
+  .role-line-compact {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .role-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px; height: 16px;
+    border-radius: 3px;
+    background: var(--ink);
+    color: var(--bg);
+    font-family: "Geist Mono", monospace;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0;
+    flex-shrink: 0;
+  }
+  .role-line[data-role="owner"] .role-mark { background: #4A5548; }
+  .role-line[data-role="methodologist"] .role-mark { background: #7A6B4A; }
+
+  /* ===== Assignments editor (inside program body) ===== */
+  .assignments-editor {
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius);
+  }
+  .field-label-main {
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    color: var(--ink);
+    margin-bottom: 10px;
+    display: block;
+  }
+  .role-editor-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .role-editor-row {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 16px;
+    align-items: start;
+    padding: 10px 0;
+    border-top: 1px dashed var(--line-soft);
+    position: relative;
+  }
+  .role-editor-row:first-child { border-top: none; padding-top: 0; }
+  .role-editor-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .role-editor-head .role-mark {
+    width: 20px; height: 20px;
+    font-size: 10.5px;
+  }
+  .role-editor-head .role-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .role-editor-head .role-hint {
+    font-size: 11px;
+    color: var(--ink-soft);
+    font-style: italic;
+    width: 100%;
+    margin-left: 28px;
+    margin-top: -4px;
+  }
+  .role-editor-body {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+  }
+  .role-assignees-current {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .assignee-chip.editable {
+    padding-right: 2px;
+  }
+  /* Hide interactive editor controls outside edit mode */
+  body:not([data-mode="edit"]) .assignee-remove { display: none !important; }
+  body:not([data-mode="edit"]) .assignee-chip.editable { padding-right: 6px; }
+  body:not([data-mode="edit"]) [data-action="add-assignee"] { display: none !important; }
+  body:not([data-mode="edit"]) .assignee-menu { display: none !important; }
+  .assignee-remove {
+    background: transparent;
+    border: none;
+    color: var(--ink-soft);
+    font-size: 14px;
+    cursor: pointer;
+    padding: 0 5px;
+    line-height: 1;
+    border-radius: 3px;
+    transition: all 0.1s;
+  }
+  .assignee-remove:hover {
+    background: var(--ink);
+    color: var(--bg);
+  }
+  .ghost-btn-mini {
+    font-family: inherit;
+    font-size: 11.5px;
+    color: var(--ink-muted);
+    background: transparent;
+    border: 1px dashed var(--line);
+    padding: 3px 9px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+  .ghost-btn-mini:hover {
+    border-style: solid;
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+  .assignee-menu {
+    position: absolute;
+    left: 0; top: calc(100% + 4px);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: 0 8px 24px rgba(31,29,26,0.12);
+    z-index: 60;
+    padding: 4px;
+    min-width: 340px;
+    max-width: 400px;
+    max-height: 360px;
+    overflow-y: auto;
+  }
+  .assignee-options { list-style: none; margin: 0; padding: 0; }
+  .assignee-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .assignee-option:hover { background: var(--bg-alt); }
+  .assignee-option-sep {
+    border-top: 1px solid var(--line-soft);
+    margin: 4px 10px;
+    list-style: none;
+  }
+  .assignee-option-init {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px; height: 24px;
+    font-size: 10.5px;
+    background: var(--ink);
+    color: var(--bg);
+    border-radius: 50%;
+    font-family: "Geist Mono", monospace;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .assignee-option-init-empty {
+    background: transparent;
+    color: var(--ink-soft);
+    border: 1px dashed var(--line);
+  }
+  .assignee-option-unit .assignee-option-init {
+    background: var(--bg-alt);
+    color: var(--ink);
+    border: 1px solid var(--line);
+  }
+  .assignee-option-label {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    font-size: 13px;
+  }
+  .assignee-option-label b { font-weight: 500; color: var(--ink); }
+  .assignee-option-role {
+    font-size: 11px;
+    color: var(--ink-soft);
+  }
+

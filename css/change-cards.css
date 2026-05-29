@@ -1,0 +1,147 @@
+﻿  /* ===== Change cards (details for the 5 changes) ===== */
+  .changes-panel {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 40px 56px;
+    border-bottom: 1px solid var(--line);
+  }
+  .changes-panel-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+  }
+  .changes-toggle-btn {
+    flex-shrink: 0;
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 3px 10px;
+    font-family: "Geist Mono", monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .changes-toggle-btn:hover { border-color: var(--ink); color: var(--ink); }
+  .change-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 18px;
+  }
+  .change-cards[hidden] { display: none; }
+  .change-card {
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius);
+    padding: 22px 26px 22px 30px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.15s;
+    display: grid;
+    grid-template-columns: 240px 1fr 1.7fr;
+    column-gap: 32px;
+    align-items: start;
+  }
+  .change-card::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    background: var(--ch);
+  }
+  .change-card:hover {
+    border-color: var(--ch);
+  }
+  .change-card-head {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 0;
+  }
+  .change-card-code {
+    font-family: "Geist Mono", monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ch);
+    background: var(--ch-soft);
+    padding: 4px 10px;
+    border-radius: 3px;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    align-self: flex-start;
+  }
+  .change-card-name {
+    font-family: "Fraunces", serif;
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    line-height: 1.22;
+    color: var(--ink);
+  }
+  .change-card-stats {
+    font-family: "Geist Mono", monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
+    display: flex;
+    gap: 14px;
+    margin-top: 2px;
+  }
+  .change-card-stats b {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .change-card-short,
+  .change-card-desc {
+    display: grid;
+    gap: 16px;
+    min-width: 0;
+  }
+  .change-card-short .field-value,
+  .change-card-desc .field-value {
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+  .change-card-desc {
+    padding-left: 28px;
+    border-left: 1px solid var(--line-soft);
+  }
+  .change-card-short .field,
+  .change-card-desc .field {
+    margin-bottom: 0;
+    min-width: 0;
+  }
+  .change-card-short .field-label,
+  .change-card-desc .field-label {
+    margin-bottom: 6px;
+  }
+
+  @media (max-width: 1100px) {
+    .change-card {
+      grid-template-columns: 220px 1fr;
+      row-gap: 18px;
+    }
+    .change-card-desc {
+      grid-column: 1 / -1;
+      padding-left: 0;
+      padding-top: 16px;
+      border-left: none;
+      border-top: 1px solid var(--line-soft);
+    }
+  }
+  @media (max-width: 720px) {
+    .change-card {
+      grid-template-columns: 1fr;
+      padding: 18px 20px 18px 24px;
+    }
+    .change-card-desc { grid-column: auto; }
+  }
+
+  /* Keep change codes on a single line everywhere */
+  .cf-code,
+  .chrow-code {
+    white-space: nowrap;
+  }
+

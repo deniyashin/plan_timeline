@@ -1,0 +1,391 @@
+﻿  /* ===== Programs ===== */
+  .program-list, .project-list, .task-list { list-style: none; }
+  .program-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .program {
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius);
+    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+    overflow: hidden;
+  }
+  .program:hover:not(.is-open) { border-color: var(--line); }
+  .program.is-open {
+    border-color: var(--ink);
+    background: var(--surface);
+    box-shadow: 0 2px 12px rgba(31,29,26,0.06);
+  }
+
+  .program-head {
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 14px 20px 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+    color: inherit;
+    position: relative;
+    flex-wrap: wrap;
+  }
+  .program-accent {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+  }
+  .program-kind,
+  .project-kind {
+    font-family: "Geist Mono", monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    padding: 3px 6px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    font-weight: 500;
+  }
+  .program-kind {
+    background: var(--ink);
+    color: var(--bg);
+    letter-spacing: 0.18em;
+  }
+  .project-kind {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    font-size: 9px;
+  }
+  .contour-chip {
+    font-family: "Geist Mono", monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+    background: var(--bg-alt);
+    padding: 3px 6px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    min-width: 36px;
+    text-align: center;
+  }
+  .contour-chip-lg {
+    font-size: 11px;
+    padding: 4px 7px;
+    min-width: 40px;
+  }
+  .src-tag {
+    font-family: "Geist Mono", monospace;
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    border: 1px solid var(--line);
+    width: 16px; height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .program-name {
+    font-family: "Fraunces", serif;
+    font-size: 21px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    flex: 1;
+    min-width: 240px;
+    color: var(--ink);
+  }
+  .program-id-mono {
+    font-family: "Geist Mono", monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+  }
+  .project-count {
+    font-family: "Geist Mono", monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink);
+    background: var(--bg-alt);
+    padding: 2px 8px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    min-width: 26px;
+    text-align: center;
+  }
+  .chev {
+    width: 8px; height: 8px;
+    border-right: 1.5px solid var(--ink-muted);
+    border-bottom: 1.5px solid var(--ink-muted);
+    transform: rotate(45deg);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .chev-lg { width: 9px; height: 9px; }
+  .program.is-open > .program-head .chev,
+  .project.is-open > .project-head .chev {
+    transform: rotate(-135deg);
+    margin-top: 4px;
+  }
+
+  .program-body {
+    border-top: 1px solid var(--line-soft);
+    background: var(--bg);
+  }
+  .program-body[hidden],
+  .project-body[hidden] {
+    display: none !important;
+  }
+  .program-meta {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--line-soft);
+    display: grid;
+    gap: 16px;
+  }
+
+  /* ===== Fields (shared) ===== */
+  .field-label {
+    font-family: "Geist Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .field-value {
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.55;
+  }
+  .empty-field .field-value { color: var(--ink-soft); font-style: italic; }
+  .field-source {
+    border-left: 2px solid var(--line);
+    padding-left: 12px;
+    margin-left: 2px;
+  }
+  .field-source .field-value {
+    color: var(--ink-muted);
+    font-size: 13px;
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  /* ===== Projects ===== */
+  .projects-header {
+    padding: 14px 24px 10px;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    background: var(--bg);
+  }
+  .projects-header-label {
+    font-family: "Geist Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .projects-header-count {
+    font-family: "Geist Mono", monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink);
+    background: var(--bg-alt);
+    padding: 2px 7px;
+    border-radius: 3px;
+  }
+  .project-list {
+    list-style: none;
+    margin: 0;
+    padding: 0 16px 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    counter-reset: project-idx;
+  }
+  .project {
+    background: var(--bg-alt);
+    border: 1px solid transparent;
+    border-radius: 4px;
+    transition: background 0.12s, border-color 0.12s;
+  }
+  .project:hover:not(.is-open) { background: rgba(31,29,26,0.035); }
+  .project.is-open {
+    background: var(--surface);
+    border-color: var(--line-soft);
+  }
+
+  .project-head {
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 10px 16px 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+    color: inherit;
+    position: relative;
+    flex-wrap: wrap;
+  }
+  .project-accent {
+    flex-shrink: 0;
+    width: 3px;
+    height: 22px;
+    border-radius: 2px;
+    margin-right: 2px;
+  }
+  .project-index {
+    font-family: "Geist Mono", monospace;
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    min-width: 20px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .project-name {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.35;
+    flex: 1;
+    min-width: 200px;
+  }
+  .project-id-mono {
+    font-family: "Geist Mono", monospace;
+    font-size: 10px;
+    color: var(--ink-soft);
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+  }
+  .task-badge {
+    font-family: "Geist Mono", monospace;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 2px 6px;
+    border-radius: 3px;
+    min-width: 22px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .task-badge-empty { color: var(--ink-soft); background: transparent; }
+  .project-body {
+    padding: 4px 20px 18px 22px;
+    display: grid;
+    gap: 14px;
+    border-top: 1px solid var(--line-soft);
+  }
+
+  /* ===== Tasks ===== */
+  .tasks-wrap {
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+  }
+  .tasks-empty {
+    background: transparent;
+    border: 1px dashed var(--line);
+  }
+  .tasks-heading {
+    font-family: "Geist Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .tasks-empty-note {
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-style: italic;
+  }
+  .task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .task {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 13px;
+    line-height: 1.5;
+    padding-left: 14px;
+    position: relative;
+  }
+  .task::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 10px;
+    width: 6px; height: 1px;
+    background: var(--ink-soft);
+  }
+  .task-id {
+    font-family: "Geist Mono", monospace;
+    font-size: 10px;
+    color: var(--ink-soft);
+    letter-spacing: 0.03em;
+    flex-shrink: 0;
+    padding-top: 2px;
+    min-width: 140px;
+  }
+  .task-name { color: var(--ink); }
+
+  /* ===== Filtering state ===== */
+  body.has-filter .program:not(.match-filter),
+  body.has-filter .project:not(.match-filter) {
+    display: none;
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 1100px) {
+    .contour-filter .cf-label,
+    .owner-filter .cf-label { display: none; }
+    .contour-filter,
+    .owner-filter { padding-right: 8px; }
+  }
+  @media (max-width: 840px) {
+    .doc-top-inner, .hero, .legend-panel, .changes-panel, .filter-bar, .timeline {
+      padding-left: 24px; padding-right: 24px;
+    }
+    .month {
+      grid-template-columns: 1fr;
+      gap: 8px;
+      padding: 24px 0;
+    }
+    .month-axis { position: static; }
+    .month-body { grid-column: 1; margin-top: 12px; }
+    .month-dot::before { display: none; }
+    .month-title { font-size: 28px; }
+    .doc-meta { display: none; }
+    .program-head, .project-head { flex-wrap: wrap; }
+    .program-id-mono, .project-id-mono { width: 100%; margin-left: 50px; }
+    .filter-bar { top: 52px; padding: 16px 24px; }
+    .hero h1 { font-size: 32px; }
+  }
+
+  /* ===== Print ===== */
+  @media print {
+    body { background: white; }
+    .doc-top, .filter-bar { display: none; }
+    .program-body, .project-body { display: block !important; }
+    .program-body[hidden], .project-body[hidden] { display: block !important; }
+    .chev { display: none; }
+    * { box-shadow: none !important; }
+  }
+

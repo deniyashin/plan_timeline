@@ -1,0 +1,287 @@
+﻿  /* ===== Filter bar (collapsible) ===== */
+  .filter-bar {
+    max-width: 1280px;
+    margin: 0 auto;
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 53px;
+    background: rgba(248, 245, 239, 0.96);
+    backdrop-filter: blur(12px);
+    z-index: 40;
+  }
+  .filter-toggle {
+    width: 100%;
+    padding: 12px 40px;
+    background: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+    transition: background 0.12s;
+  }
+  .filter-toggle:hover { background: rgba(0,0,0,0.015); }
+  .filter-toggle-icon {
+    display: inline-block;
+    width: 14px; height: 14px;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .filter-toggle-icon::before,
+  .filter-toggle-icon::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0;
+    height: 1.5px;
+    background: var(--ink);
+    border-radius: 1px;
+  }
+  .filter-toggle-icon::before { top: 3px; width: 12px; }
+  .filter-toggle-icon::after { top: 9px; width: 8px; left: 2px; }
+  .filter-toggle-label {
+    font-family: "Geist Mono", monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    color: var(--ink);
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .filter-summary {
+    font-size: 12px;
+    color: var(--ink-soft);
+    font-style: italic;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .filter-summary.has-active {
+    color: var(--ink);
+    font-style: normal;
+    font-weight: 500;
+  }
+  .filter-toggle::after {
+    content: "";
+    width: 7px; height: 7px;
+    border-right: 1.5px solid var(--ink-muted);
+    border-bottom: 1.5px solid var(--ink-muted);
+    transform: rotate(45deg);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+    margin-top: -2px;
+  }
+  .filter-bar[data-collapsed="false"] .filter-toggle::after {
+    transform: rotate(-135deg);
+    margin-top: 2px;
+  }
+  .filter-body {
+    padding: 4px 40px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-top: 1px dashed var(--line-soft);
+  }
+  .filter-bar[data-collapsed="true"] .filter-body { display: none; }
+  .filter-row {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .filter-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .filter-group-people-full {
+    flex: 1 1 100%;
+    align-items: flex-start;
+  }
+  .filter-chips-inline {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+  .filter-divider {
+    width: 1px;
+    align-self: stretch;
+    background: var(--line);
+    margin: 2px 4px;
+  }
+  .filter-divider-v {
+    width: 1px;
+    height: 20px;
+    background: var(--line);
+    margin: 0 4px;
+  }
+  .filter-label {
+    font-family: "Geist Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    padding: 6px 4px 6px 0;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+
+  /* Unified filter chip style */
+  .filter-chip {
+    font-family: inherit;
+    font-size: 11px;
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--ink-muted);
+    padding: 4px 9px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.12s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 1.25;
+  }
+  .filter-chip:hover {
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+  .filter-chip.filter-on {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+  .cf-code {
+    font-family: "Geist Mono", monospace;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  .cf-label {
+    font-size: 11.5px;
+    font-weight: 400;
+    color: inherit;
+    opacity: 0.8;
+  }
+  .filter-chip.filter-on .cf-label { opacity: 1; }
+  .cf-dot {
+    display: inline-block;
+    width: 9px; height: 9px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .cf-dot-empty {
+    background: transparent;
+    border: 1px dashed var(--line);
+  }
+
+  /* People filter chips (pill-shaped, with round initials badge) */
+  .person-filter {
+    border-radius: 100px;
+    padding: 4px 9px 4px 4px;
+  }
+  .person-cf-code {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--bg);
+    font-size: 9.5px;
+    font-weight: 600;
+    font-family: "Geist Mono", monospace;
+  }
+  .person-filter.filter-on .person-cf-code {
+    background: var(--bg);
+    color: var(--ink);
+  }
+  .person-cf-code-unit {
+    background: var(--bg-alt);
+    color: var(--ink);
+    border: 1px solid var(--line);
+  }
+  .person-filter.filter-on .person-cf-code-unit {
+    background: var(--bg);
+  }
+  .person-cf-code-empty {
+    background: transparent;
+    color: var(--ink-soft);
+    border: 1px dashed var(--line);
+  }
+  .person-filter.filter-on .person-cf-code-empty {
+    background: var(--bg);
+    border-color: var(--bg);
+  }
+
+  /* Person picker popup */
+  .person-picker-wrap { position: relative; display: inline-flex; }
+  .person-picker-btn { display: inline-flex; align-items: center; gap: 5px; }
+  .person-picker-btn .person-cf-code { flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 9.5px; font-weight: 600; font-family: "Geist Mono", monospace; }
+  .person-picker-caret { font-size: 10px; color: var(--ink-soft); transition: transform 0.15s; }
+  .person-picker-wrap.open .person-picker-caret { transform: rotate(180deg); }
+  .person-picker-popup {
+    position: absolute; top: calc(100% + 6px); left: 0; z-index: 300;
+    background: #FDFBF6; border: 1px solid #DDD5C5; border-radius: 8px;
+    min-width: 210px; max-height: 320px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.13);
+    display: flex; flex-direction: column;
+  }
+  .person-picker-popup[hidden] { display: none; }
+  .person-picker-clear {
+    background: transparent; border: none; border-bottom: 1px solid #EDE8DF;
+    padding: 8px 12px; text-align: left; font-size: 11.5px; color: #8B2635;
+    font-family: inherit; cursor: pointer; flex-shrink: 0;
+  }
+  .person-picker-clear:hover { background: #FEE2E2; }
+  .person-picker-list { overflow-y: auto; flex: 1; padding: 4px 0; }
+  .person-picker-item {
+    display: flex; align-items: center; gap: 8px; width: 100%;
+    background: transparent; border: none; padding: 6px 12px;
+    font-family: inherit; font-size: 13px; color: var(--ink); cursor: pointer;
+    text-align: left; white-space: nowrap;
+  }
+  .person-picker-item:hover { background: #F0EDE6; }
+  .person-picker-item.filter-on { background: #E8E2D8; font-weight: 600; }
+  .person-picker-name { flex: 1; }
+  .person-picker-item .person-cf-code { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; font-family: "Geist Mono", monospace; background: var(--ink); color: var(--bg); }
+  .person-picker-item .person-cf-code-unit { background: var(--bg-alt); color: var(--ink); border: 1px solid var(--line); }
+  .person-picker-item .person-cf-code-empty { background: transparent; color: var(--ink-soft); border: 1px dashed var(--line); }
+  .person-picker-item-none .person-picker-name { font-style: italic; color: var(--ink-soft); }
+  /* Keep trigger active state same as other filter-chips */
+  .person-picker-btn.filter-on .person-cf-code { background: var(--bg); color: var(--ink); }
+
+  /* Role filter — the role mark in the chip takes color according to role */
+  .role-filter .role-mark {
+    background: var(--ink);
+  }
+  .role-filter[data-role-filter="owner"] .role-mark { background: #4A5548; }
+  .role-filter[data-role-filter="methodologist"] .role-mark { background: #7A6B4A; }
+  .role-filter.filter-on .role-mark {
+    background: var(--bg);
+    color: var(--ink);
+  }
+
+  /* Change filter chips use their own color as swatch */
+  .change-filter .cf-dot {
+    background: var(--ch, var(--ink));
+  }
+
+  .filter-reset {
+    font-size: 12px;
+    color: var(--ink-muted);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    margin-left: auto;
+    padding: 6px 0;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  .filter-reset:hover { color: var(--ink); }
+
