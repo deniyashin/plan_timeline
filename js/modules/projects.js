@@ -443,27 +443,31 @@
       });
     });
 
-    // Делаем проекты перетаскиваемыми только в режиме Проекты
-    document.querySelectorAll('.project').forEach(function(proj) {
-      if (proj.dataset.projDndReady) return;
-      proj.dataset.projDndReady = '1';
-      proj.addEventListener('dragstart', function(e) {
+    // Глобальная делегация dragstart/dragend — работает и для клонов программ.
+    // Клоны создаются через cloneNode(true) и не получают слушателей событий,
+    // поэтому регистрация на каждый элемент не подходит.
+    if (!document._projDragDelegated) {
+      document._projDragDelegated = true;
+      document.addEventListener('dragstart', function(e) {
         if (document.body.getAttribute('data-mode') !== 'projects') return;
+        var proj = e.target.closest('.project[draggable="true"]');
+        if (!proj) return;
         _projDragSrc = proj;
         e.dataTransfer.effectAllowed = 'move';
         document.body.classList.add('po-dnd-active');
         setTimeout(function() { proj.classList.add('po-proj-dragging'); }, 0);
       });
-      proj.addEventListener('dragend', function() {
-        proj.classList.remove('po-proj-dragging');
+      document.addEventListener('dragend', function(e) {
+        var proj = e.target.closest('.project');
+        if (proj) proj.classList.remove('po-proj-dragging');
         document.body.classList.remove('po-dnd-active');
         _projDragSrc = null;
         document.querySelectorAll('.po-proj-drop-zone').forEach(function(z) { z.classList.remove('po-drop-active'); });
       });
-    });
+    }
   }
 
-  /* Синхронизация draggable при смене режима */
+  /* Синхронизация draggable при смене режима и после перерисовки тайм-лайна */
   (function() {
     function _syncDraggable() {
       var isDnd = document.body.getAttribute('data-mode') === 'projects';
@@ -478,6 +482,8 @@
       });
     });
     _modeObs.observe(document.body, { attributes: true });
+    // renderTimeline создаёт новые клоны — нужно заново проставить draggable
+    document.addEventListener('po-timeline-rendered', _syncDraggable);
   }());
 
   /* ================================================================
