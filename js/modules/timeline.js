@@ -95,6 +95,10 @@
 
     /* 3. Build month→{progId→[li]} map — read store once for performance */
     var monthStore = lsGet(LS_PROJMONTHS_V1);
+    /* Порядок программ по DOM для правильной вставки клонов */
+    var _globalProgOrder = Array.from(
+      document.querySelectorAll('.program[data-pm-master][data-program-id]')
+    ).map(function(p) { return p.getAttribute('data-program-id'); });
     function _projMonth(pid) {
       var k = monthStore[pid];
       return isValidMonthKey(k) ? k : 'unscheduled';
@@ -125,7 +129,14 @@
       if (!progList) return;
       var monthPrograms = byMonth[m.key] || {};
 
-      Object.keys(monthPrograms).forEach(function (progId) {
+      /* Сортируем программы месяца по глобальному порядку из DOM */
+      var _monthProgIds = Object.keys(monthPrograms);
+      _monthProgIds.sort(function(a, b) {
+        var ia = _globalProgOrder.indexOf(a);
+        var ib = _globalProgOrder.indexOf(b);
+        return (ia === -1 ? 99999 : ia) - (ib === -1 ? 99999 : ib);
+      });
+      _monthProgIds.forEach(function (progId) {
         var masterProg = progList.querySelector('.program[data-pm-master][data-program-id="' + CSS.escape(progId) + '"]');
 
         if (masterProg) {
@@ -169,7 +180,15 @@
       updateMonthStats(sec, monthStore);
     });
 
-    /* 6. Re-apply active filter state to newly created clones */
+    /* 6. Sync project-month-select values in master programs to current stored month */
+    document.querySelectorAll('.program[data-pm-master] li.project[data-project-id] .project-month-select').forEach(function(sel) {
+      var proj = sel.closest('.project[data-project-id]');
+      if (!proj) return;
+      var newVal = _projMonth(proj.dataset.projectId);
+      if (sel.value !== newVal) sel.value = newVal;
+    });
+
+    /* 7. Re-apply active filter state to newly created clones */
     document.dispatchEvent(new CustomEvent('po-timeline-rendered'));
   }
   window.migrateProjectMonths  = migrateProjectMonths;
