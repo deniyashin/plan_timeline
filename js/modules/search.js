@@ -6,7 +6,7 @@
   // Approval progress bar
   function updateApprovalProgress() {
     let total = 0, approved = 0, review = 0, rework = 0, not_approved = 0;
-    document.querySelectorAll('.program[data-program-id]').forEach(prog => {
+    document.querySelectorAll('.program[data-program-id]:not([data-pm-clone])').forEach(prog => {
       total++;
       const chip = prog.querySelector('.status-editor[data-field="approval"] .status-chip');
       if (!chip) { not_approved++; return; }
