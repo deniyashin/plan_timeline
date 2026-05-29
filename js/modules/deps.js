@@ -53,7 +53,7 @@
   function updateDisputedCounters() {
     let needsClar = 0, needsRework = 0, noOwner = 0;
     const flagMap = { 'needs-clar': [], 'needs-rework': [], 'no-owner': [] };
-    document.querySelectorAll('.program[data-program-id]').forEach(prog => {
+    document.querySelectorAll('.program[data-program-id]:not([data-pm-clone])').forEach(prog => {
       const cChip = prog.querySelector('.status-editor[data-field="certainty"] .status-chip');
       const aChip = prog.querySelector('.status-editor[data-field="approval"] .status-chip');
       const ownerStr = prog.getAttribute('data-assignees-owner') || '';
@@ -121,7 +121,7 @@
     const body = document.getElementById('deps-map-body');
     if (!body) return;
     const reverse = buildReverseDeps();
-    const programs = Array.from(document.querySelectorAll('.program[data-program-id]'));
+    const programs = Array.from(document.querySelectorAll('.program[data-program-id]:not([data-pm-clone])'));
     const rows = [];
     programs.forEach(prog => {
       const pid = prog.getAttribute('data-program-id');

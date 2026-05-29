@@ -76,13 +76,10 @@
   initTasks();
   restoreProgramMonths();
   renderTimeline();          /* initial render based on project months */
-  recordProjOrigPositions();  /* snapshot before any project-mode moves */
   initAddProgramBtns();
   initAddProjectBtns();
   hideOldTasksWrap();
   initDeleteButtons();
-  /* project month moves only in projects mode — applied on mode switch */
-  if (document.body.getAttribute('data-mode') === 'projects') applyProjectsModeOrder();
   initProjectsDnD();
   setTextEditable(document.body.getAttribute('data-mode') === 'edit');
   (function () { var _pa = localStorage.getItem('po-doc-edited') || localStorage.getItem('po-published-at'); if (_pa) updatePubStamp(_pa); }());

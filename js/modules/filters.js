@@ -214,7 +214,7 @@
   function updateFilterCounts() {
     const roleCounts = {};
     let noneCount = 0;
-    document.querySelectorAll('.program[data-program-id]').forEach(prog => {
+    document.querySelectorAll('.program[data-program-id]:not([data-pm-clone])').forEach(prog => {
       const all = (prog.getAttribute('data-assignees-all') || '').split(' ').filter(Boolean);
       if (all.length === 0) noneCount++;
       const inc = (attr, role) => {

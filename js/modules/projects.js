@@ -329,6 +329,11 @@
     var li = buildProjectLi(d);
     if (projList) projList.appendChild(li);
 
+    /* register data-project-id and month in po-project-months-v1 */
+    li.dataset.projectId = id;
+    var _sec = prog.closest('section.month');
+    setProjectMonth(id, _sec ? monthKeyFromDomSection(_sec) : 'unscheduled');
+
     /* persist */
     var np = getNewProjects();
     if (!np[progId]) np[progId] = [];
@@ -383,6 +388,7 @@
     if (pbody) renderTasks(id, pbody, li);
     syncTaskEdit(pbody);
     updateProgProgress(prog);
+    renderTimeline();
   }
 
   function initAddProjectBtns() {
@@ -399,73 +405,9 @@
   }
 
   /* ================================================================
-     РЕЖИМ ПРОЕКТЫ: DnD перенос между месяцами (независим от Подробно)
+     РЕЖИМ ПРОЕКТЫ: DnD перенос между месяцами
+     Перемещение управляется через setProjectMonth + renderTimeline.
   ================================================================ */
-  var LS_PROJ_MONTHS = 'po-proj-month-moves';
-
-  function getProjMonthMoves() {
-    try { return JSON.parse(localStorage.getItem(LS_PROJ_MONTHS) || '{}'); } catch(e) { return {}; }
-  }
-  function saveProjMonthMoves(o) { try { localStorage.setItem(LS_PROJ_MONTHS, JSON.stringify(o)); flash(); } catch(e) {} }
-
-  /* ---------- Snapshot оригинальных позиций (для Подробно) ---------- */
-  var _projOrigPositions = {}; /* projId -> { parent, nextSibling } */
-
-  function recordProjOrigPositions() {
-    _projOrigPositions = {};
-    document.querySelectorAll('.project').forEach(function(proj) {
-      var pidEl = proj.querySelector('.project-id-mono');
-      if (!pidEl) return;
-      var pid = pidEl.textContent.trim();
-      _projOrigPositions[pid] = { parent: proj.parentElement, nextSibling: proj.nextElementSibling };
-    });
-  }
-
-  function _findProjById(projId) {
-    var result = null;
-    document.querySelectorAll('.project-id-mono').forEach(function(mono) {
-      if (mono.textContent.trim() === projId) result = mono.closest('.project');
-    });
-    return result;
-  }
-
-  /* Применяем сохранённые перемещения (для режима Проекты) */
-  function applyProjectsModeOrder() {
-    var moves = getProjMonthMoves();
-    Object.keys(moves).forEach(function(projId) {
-      var targetMonthId = moves[projId];
-      var proj = _findProjById(projId);
-      if (!proj) return;
-      var targetMonth = document.getElementById(targetMonthId);
-      if (!targetMonth || proj.closest('section.month, .month') === targetMonth) return;
-      var targetList = targetMonth.querySelector('.project-list');
-      if (!targetList) {
-        var prog = targetMonth.querySelector('.program');
-        if (!prog) return;
-        var progBody = prog.querySelector('.program-body');
-        if (!progBody) return;
-        targetList = document.createElement('ol');
-        targetList.className = 'project-list';
-        progBody.appendChild(targetList);
-      }
-      targetList.appendChild(proj);
-    });
-  }
-
-  /* Восстанавливаем оригинальные позиции (для режима Подробно) */
-  function restoreProjOrigPositions() {
-    Object.keys(_projOrigPositions).forEach(function(pid) {
-      var orig = _projOrigPositions[pid];
-      var proj = _findProjById(pid);
-      if (!proj || !orig || !orig.parent) return;
-      var ns = orig.nextSibling;
-      if (ns && ns.parentElement === orig.parent) {
-        orig.parent.insertBefore(proj, ns);
-      } else {
-        orig.parent.appendChild(proj);
-      }
-    });
-  }
 
   var _projDragSrc = null;
 
@@ -492,23 +434,10 @@
         e.preventDefault();
         zone.classList.remove('po-drop-active');
         if (!_projDragSrc) return;
-        var targetList = sec.querySelector('.project-list');
-        if (!targetList) {
-          var prog = sec.querySelector('.program');
-          if (!prog) return;
-          var progBody = prog.querySelector('.program-body');
-          if (!progBody) return;
-          targetList = document.createElement('ol');
-          targetList.className = 'project-list';
-          progBody.appendChild(targetList);
-        }
-        targetList.appendChild(_projDragSrc);
         var pidEl = _projDragSrc.querySelector('.project-id-mono');
-        if (pidEl && sec.id) {
-          var moves = getProjMonthMoves();
-          moves[pidEl.textContent.trim()] = sec.id;
-          saveProjMonthMoves(moves);
-          /* Обновляем snapshot: новая позиция становится текущей для режима Проекты */
+        if (pidEl) {
+          setProjectMonth(pidEl.textContent.trim(), monthKeyFromDomSection(sec));
+          renderTimeline();
         }
         _projDragSrc = null;
       });
@@ -534,7 +463,7 @@
     });
   }
 
-  /* Синхронизация draggable + применение/восстановление позиций при смене режима */
+  /* Синхронизация draggable при смене режима */
   (function() {
     function _syncDraggable() {
       var isDnd = document.body.getAttribute('data-mode') === 'projects';
@@ -542,20 +471,10 @@
         proj.draggable = isDnd;
       });
     }
-    var _prevObsMode = document.body.getAttribute('data-mode');
     var _modeObs = new MutationObserver(function(muts) {
       muts.forEach(function(m) {
         if (m.attributeName !== 'data-mode' && m.attributeName !== 'data-base-mode') return;
         _syncDraggable();
-        var newMode = document.body.getAttribute('data-mode');
-        if (newMode === _prevObsMode) return;
-        if (_prevObsMode === 'projects' && newMode !== 'projects') {
-          restoreProjOrigPositions();
-        }
-        if (newMode === 'projects' && _prevObsMode !== 'projects') {
-          applyProjectsModeOrder();
-        }
-        _prevObsMode = newMode;
       });
     });
     _modeObs.observe(document.body, { attributes: true });
@@ -679,7 +598,5 @@
   window.initAddProgramBtns     = initAddProgramBtns;
   window.initAddProjectBtns     = initAddProjectBtns;
   window.initProjectsDnD        = initProjectsDnD;
-  window.recordProjOrigPositions = recordProjOrigPositions;
-  window.applyProjectsModeOrder = applyProjectsModeOrder;
   window.initDeleteButtons      = initDeleteButtons;
 })();
