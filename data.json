@@ -137,7 +137,9 @@
     "proj-comment-U-PAT-PR-3.1.1": "В этом проекте задействованы:<br>Денис Я. - для работы технически<br>Алексей К. - для связки<br>Денис А. - для поддержки актуальности",
     "proj-comment-U-SRV-PR-3.1.2": "Этот проект является задачей для проекта 3.1.1",
     "proj-comment-U-SRV-PR-3.1.4": "Ответственные - Елизавета и А.А.",
-    "proj-comment-U-SRV-PR-3.1.6": "<br>"
+    "proj-comment-U-SRV-PR-3.1.6": "<br>",
+    "np-result-U-NEW-PR-11.3.1": "sdfsdf",
+    "np-desc-U-NEW-PR-11.3.1": "dfsdfs"
   },
   "tasks": {
     "U-FIN-PR-1.2.2": [
@@ -2189,6 +2191,16 @@
         "status": "not_started",
         "updatedAt": "2026-05-28T14:42:37.965Z"
       }
+    ],
+    "U-NEW-PR-11.3.1": [
+      {
+        "taskId": "",
+        "text": "тест",
+        "assignee": "",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-06-01T11:26:50.453Z"
+      }
     ]
   },
   "projStatuses": {
@@ -2861,7 +2873,8 @@
     "U-CHG-PR-4.5.4": "2027-03",
     "U-CHG-PR-4.5.5": "2027-03",
     "T-CHG-PR-0.1.1": "2027-03",
-    "U-PAT-PR-3.3.6": "2026-06"
+    "U-PAT-PR-3.3.6": "2026-06",
+    "U-NEW-PR-11.3.1": "2027-03"
   },
-  "publishedAt": "2026-05-29T14:48:45.928Z"
+  "publishedAt": "2026-06-01T11:27:04.372Z"
 }
