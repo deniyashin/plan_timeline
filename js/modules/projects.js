@@ -346,7 +346,7 @@
       var savedPs = lsGet(LS_PSTAT);
       var row = document.createElement('div');
       row.className = 'po-proj-status-row';
-      PROJ_STATUS_DEF.forEach(function (def) {
+      (window.PLAN_CONFIG.PROJ_STATUS_DEF || []).forEach(function (def) {
         var cell = document.createElement('span'); cell.className = 'po-proj-status-cell';
         var lbl  = document.createElement('span'); lbl.className  = 'po-proj-status-label'; lbl.textContent = def.label;
         var chip = document.createElement('span'); chip.className = 'po-status-chip'; chip.dataset.field = def.field;
@@ -475,10 +475,17 @@
         proj.draggable = isDnd;
       });
     }
+    var _rtPending = false;
+    function _queueRenderTimeline() {
+      if (_rtPending || !window.renderTimeline) return;
+      _rtPending = true;
+      requestAnimationFrame(function () { _rtPending = false; window.renderTimeline(); });
+    }
     var _modeObs = new MutationObserver(function(muts) {
       muts.forEach(function(m) {
         if (m.attributeName !== 'data-mode' && m.attributeName !== 'data-base-mode') return;
         _syncDraggable();
+        _queueRenderTimeline();
       });
     });
     _modeObs.observe(document.body, { attributes: true });

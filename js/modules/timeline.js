@@ -93,6 +93,21 @@
       prog.setAttribute('data-pm-master', '');
     });
 
+    /* 2b. Brief mode: каждая программа один раз, все проекты видны */
+    if (document.body.getAttribute('data-mode') === 'brief') {
+      document.querySelectorAll('.program[data-pm-master]').forEach(function (prog) {
+        prog.style.display = '';
+        prog.querySelectorAll('li.project').forEach(function (li) { li.style.display = ''; });
+      });
+      var _store = lsGet(LS_PROJMONTHS_V1);
+      MONTHS.forEach(function (m) {
+        var sec = document.getElementById(m.domId);
+        if (sec) updateMonthStats(sec, _store);
+      });
+      document.dispatchEvent(new CustomEvent('po-timeline-rendered'));
+      return;
+    }
+
     /* 3. Build month→{progId→[li]} map — read store once for performance */
     var monthStore = lsGet(LS_PROJMONTHS_V1);
     /* Порядок программ по DOM для правильной вставки клонов */

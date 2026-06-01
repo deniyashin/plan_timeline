@@ -43,19 +43,7 @@
         var savedVal = saved[pid] && saved[pid][def.field];
         var opt0 = (savedVal && def.options.find(function (o) { return o.value === savedVal; })) || def.options[0];
         applyChipStyle(chip, opt0);
-        chip.addEventListener('click', function (e) {
-          e.stopPropagation();
-          if (document.body.getAttribute('data-mode') !== 'edit') return;
-          var cur  = def.options.findIndex(function (o) { return o.value === chip.dataset.value; });
-          var next = def.options[(cur + 1) % def.options.length];
-          applyChipStyle(chip, next);
-          var d = lsGet(LS_PSTAT);
-          if (!d[pid]) d[pid] = {};
-          d[pid][def.field] = next.value;
-          lsSet(LS_PSTAT, d);
-          var pr = proj.closest('.program');
-          if (pr && def.field === 'status') updateProgProgress(pr);
-        });
+        /* click handled by delegated listener below */
         cell.appendChild(lbl);
         cell.appendChild(chip);
         row.appendChild(cell);
@@ -74,67 +62,16 @@
         var ownerAv = document.createElement('span');
         ownerAv.className = 'po-proj-owner-av';
         var ownerNm = document.createElement('span');
+        ownerNm.className = 'po-proj-owner-nm';
         ownerNm.style.fontSize = '11px';
-
-        function refreshOwner(code) {
-          var a = code && window.ASSIGNEES && window.ASSIGNEES[code];
-          ownerAv.textContent = a ? a.initials : '—';
-          ownerNm.textContent = a ? a.last : 'не назначен';
-        }
+        /* initial display */
         var savedOwner = saved[pid] && saved[pid]['owner'];
-        refreshOwner(savedOwner || '');
+        var _a0 = savedOwner && window.ASSIGNEES && window.ASSIGNEES[savedOwner];
+        ownerAv.textContent = _a0 ? _a0.initials : '—';
+        ownerNm.textContent = _a0 ? _a0.last : 'не назначен';
         ownerBtn.appendChild(ownerAv);
         ownerBtn.appendChild(ownerNm);
-
-        ownerBtn.addEventListener('click', function (e) {
-          e.stopPropagation();
-          if (document.body.getAttribute('data-mode') !== 'edit') return;
-          var existing = document.getElementById('po-proj-owner-drop');
-          if (existing) { existing.remove(); return; }
-          var drop = document.createElement('div');
-          drop.id = 'po-proj-owner-drop';
-          drop.style.cssText = 'position:fixed;z-index:700;background:#FDFBF6;border:1px solid #DDD5C5;border-radius:8px;min-width:200px;max-height:280px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,0.14);padding:4px 0';
-          var rect = ownerBtn.getBoundingClientRect();
-          drop.style.top  = (rect.bottom + 6) + 'px';
-          drop.style.left = rect.left + 'px';
-          /* Clear option */
-          var clearOpt = document.createElement('button');
-          clearOpt.type = 'button';
-          clearOpt.style.cssText = 'display:block;width:100%;background:transparent;border:none;border-bottom:1px solid #EDE8DF;padding:6px 12px;font-family:inherit;font-size:11px;color:#8B2635;cursor:pointer;text-align:left';
-          clearOpt.textContent = '✕ убрать ответственного';
-          clearOpt.addEventListener('click', function (ev) { ev.stopPropagation(); drop.remove(); document.removeEventListener('click', closeOwner, true); refreshOwner(''); var d = lsGet(LS_PSTAT); if (!d[pid]) d[pid] = {}; d[pid]['owner'] = ''; lsSet(LS_PSTAT, d); });
-          drop.appendChild(clearOpt);
-          Object.entries(window.ASSIGNEES || {}).forEach(function (pair) {
-            var code = pair[0], a = pair[1];
-            var opt = document.createElement('button');
-            opt.type = 'button';
-            opt.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;background:transparent;border:none;padding:5px 12px;font-family:inherit;font-size:12px;color:var(--ink);cursor:pointer;text-align:left';
-            opt.onmouseenter = function () { opt.style.background = '#F0EDE6'; };
-            opt.onmouseleave = function () { opt.style.background = 'transparent'; };
-            var av2 = document.createElement('span');
-            av2.style.cssText = 'flex-shrink:0;width:18px;height:18px;border-radius:50%;background:#E8E2D8;color:#6B6560;display:inline-flex;align-items:center;justify-content:center;font-size:7.5px;font-weight:700;font-family:"Geist Mono",monospace';
-            av2.textContent = a.initials || code;
-            var nm2 = document.createElement('span');
-            nm2.textContent = (a.last || code) + (a.first ? ' ' + a.first : '');
-            opt.appendChild(av2); opt.appendChild(nm2);
-            opt.addEventListener('click', function (ev) {
-              ev.stopPropagation();
-              drop.remove(); document.removeEventListener('click', closeOwner, true);
-              refreshOwner(code);
-              var d = lsGet(LS_PSTAT);
-              if (!d[pid]) d[pid] = {};
-              d[pid]['owner'] = code;
-              lsSet(LS_PSTAT, d);
-            });
-            drop.appendChild(opt);
-          });
-          document.body.appendChild(drop);
-          function closeOwner(ev) {
-            if (!drop.contains(ev.target) && ev.target !== ownerBtn) { drop.remove(); document.removeEventListener('click', closeOwner, true); }
-          }
-          setTimeout(function () { document.addEventListener('click', closeOwner, true); }, 0);
-        });
-
+        /* click handled by delegated listener below */
         ownerCell.appendChild(ownerLbl);
         ownerCell.appendChild(ownerBtn);
         row.appendChild(ownerCell);
@@ -261,6 +198,121 @@
       el.style.display = 'none';
     });
   }
+
+  /* ================================================================
+     DELEGATED LISTENERS — работают и в мастерах, и в клонах
+  ================================================================ */
+
+  /* Status chip: цикл по опциям, сохранение, обновление всех экземпляров */
+  document.addEventListener('click', function (e) {
+    var chip = e.target.closest('.po-status-chip[data-field]');
+    if (!chip) return;
+    if (document.body.getAttribute('data-mode') !== 'edit') return;
+    e.stopPropagation();
+    var proj = chip.closest('.project');
+    if (!proj) return;
+    var pidEl = proj.querySelector('.project-id-mono');
+    if (!pidEl) return;
+    var pid   = pidEl.textContent.trim();
+    var field = chip.dataset.field;
+    var defs  = window.PLAN_CONFIG && window.PLAN_CONFIG.PROJ_STATUS_DEF;
+    var def   = defs && defs.find(function (d) { return d.field === field; });
+    if (!def) return;
+    var cur  = def.options.findIndex(function (o) { return o.value === chip.dataset.value; });
+    var next = def.options[(cur + 1) % def.options.length];
+    /* обновить ВСЕ чипы для этого pid/field (мастер + клоны) */
+    document.querySelectorAll('.project').forEach(function (projEl) {
+      var pe = projEl.querySelector('.project-id-mono');
+      if (!pe || pe.textContent.trim() !== pid) return;
+      projEl.querySelectorAll('.po-status-chip').forEach(function (c) {
+        if (c.dataset.field === field) applyChipStyle(c, next);
+      });
+    });
+    var d = lsGet(LS_PSTAT);
+    if (!d[pid]) d[pid] = {};
+    d[pid][field] = next.value;
+    lsSet(LS_PSTAT, d);
+    if (field === 'status') {
+      document.querySelectorAll('.program[data-program-id]').forEach(function (pr) {
+        if (pr.querySelector('.project-id-mono') && Array.from(pr.querySelectorAll('.project-id-mono')).some(function(m){ return m.textContent.trim() === pid; })) {
+          updateProgProgress(pr);
+        }
+      });
+    }
+  });
+
+  /* Owner button: открыть дропдаун, обновить все экземпляры при выборе */
+  document.addEventListener('click', function (e) {
+    var ownerBtn = e.target.closest('.po-proj-owner-btn');
+    if (!ownerBtn) return;
+    if (document.body.getAttribute('data-mode') !== 'edit') return;
+    e.stopPropagation();
+    var existing = document.getElementById('po-proj-owner-drop');
+    if (existing) { existing.remove(); return; }
+    var proj = ownerBtn.closest('.project');
+    if (!proj) return;
+    var pidEl = proj.querySelector('.project-id-mono');
+    if (!pidEl) return;
+    var pid = pidEl.textContent.trim();
+
+    function refreshAllOwners(code) {
+      var a = code && window.ASSIGNEES && window.ASSIGNEES[code];
+      document.querySelectorAll('.project').forEach(function (projEl) {
+        var pe = projEl.querySelector('.project-id-mono');
+        if (!pe || pe.textContent.trim() !== pid) return;
+        var av = projEl.querySelector('.po-proj-owner-av');
+        var nm = projEl.querySelector('.po-proj-owner-nm');
+        if (av) av.textContent = a ? a.initials : '—';
+        if (nm) nm.textContent = a ? a.last : 'не назначен';
+      });
+    }
+
+    var drop = document.createElement('div');
+    drop.id = 'po-proj-owner-drop';
+    drop.style.cssText = 'position:fixed;z-index:700;background:#FDFBF6;border:1px solid #DDD5C5;border-radius:8px;min-width:200px;max-height:280px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,0.14);padding:4px 0';
+    var rect = ownerBtn.getBoundingClientRect();
+    drop.style.top  = (rect.bottom + 6) + 'px';
+    drop.style.left = rect.left + 'px';
+
+    var clearOpt = document.createElement('button');
+    clearOpt.type = 'button';
+    clearOpt.style.cssText = 'display:block;width:100%;background:transparent;border:none;border-bottom:1px solid #EDE8DF;padding:6px 12px;font-family:inherit;font-size:11px;color:#8B2635;cursor:pointer;text-align:left';
+    clearOpt.textContent = '✕ убрать ответственного';
+    clearOpt.addEventListener('click', function (ev) {
+      ev.stopPropagation(); drop.remove(); document.removeEventListener('click', closeOwner, true);
+      refreshAllOwners('');
+      var d = lsGet(LS_PSTAT); if (!d[pid]) d[pid] = {}; d[pid]['owner'] = ''; lsSet(LS_PSTAT, d);
+    });
+    drop.appendChild(clearOpt);
+
+    Object.entries(window.ASSIGNEES || {}).forEach(function (pair) {
+      var code = pair[0], a = pair[1];
+      var opt = document.createElement('button');
+      opt.type = 'button';
+      opt.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;background:transparent;border:none;padding:5px 12px;font-family:inherit;font-size:12px;color:var(--ink);cursor:pointer;text-align:left';
+      opt.onmouseenter = function () { opt.style.background = '#F0EDE6'; };
+      opt.onmouseleave = function () { opt.style.background = 'transparent'; };
+      var av2 = document.createElement('span');
+      av2.style.cssText = 'flex-shrink:0;width:18px;height:18px;border-radius:50%;background:#E8E2D8;color:#6B6560;display:inline-flex;align-items:center;justify-content:center;font-size:7.5px;font-weight:700;font-family:"Geist Mono",monospace';
+      av2.textContent = a.initials || code;
+      var nm2 = document.createElement('span');
+      nm2.textContent = (a.last || code) + (a.first ? ' ' + a.first : '');
+      opt.appendChild(av2); opt.appendChild(nm2);
+      opt.addEventListener('click', function (ev) {
+        ev.stopPropagation(); drop.remove(); document.removeEventListener('click', closeOwner, true);
+        refreshAllOwners(code);
+        var d = lsGet(LS_PSTAT); if (!d[pid]) d[pid] = {}; d[pid]['owner'] = code; lsSet(LS_PSTAT, d);
+      });
+      drop.appendChild(opt);
+    });
+    document.body.appendChild(drop);
+    function closeOwner(ev) {
+      if (!drop.contains(ev.target) && ev.target !== ownerBtn) {
+        drop.remove(); document.removeEventListener('click', closeOwner, true);
+      }
+    }
+    setTimeout(function () { document.addEventListener('click', closeOwner, true); }, 0);
+  });
 
   window.injectProjStatuses    = injectProjStatuses;
   window.applyChipStyle        = applyChipStyle;  // нужен publish.js (applyData)
