@@ -137,60 +137,19 @@
   applyMineMarker();
 
   function openMinePicker(anchorBtn, onSelect) {
-    const existing = document.getElementById('mine-picker-popup');
-    if (existing) { existing.remove(); return; }
-    const popup = document.createElement('div');
-    popup.id = 'mine-picker-popup';
-    popup.style.cssText = [
-      'position:absolute','z-index:500',
-      'background:#FDFBF6','border:1px solid #DDD5C5','border-radius:8px',
-      'min-width:210px','max-height:320px','overflow-y:auto',
-      'box-shadow:0 8px 24px rgba(0,0,0,0.13)','padding:4px 0'
-    ].join(';');
-    const rect = anchorBtn.getBoundingClientRect();
-    popup.style.top  = (rect.bottom + window.scrollY + 6) + 'px';
-    popup.style.left = (rect.left  + window.scrollX) + 'px';
     const ASSIGNEES = window.ASSIGNEES;
     const UNITS = window.UNITS;
-    Object.entries(ASSIGNEES).forEach(([code, a]) => {
-      const btn2 = document.createElement('button');
-      btn2.type = 'button';
-      btn2.style.cssText = [
-        'display:flex','align-items:center','gap:8px','width:100%',
-        'background:transparent','border:none','padding:6px 12px',
-        'font-family:inherit','font-size:13px','color:var(--ink)',
-        'cursor:pointer','text-align:left'
-      ].join(';');
-      btn2.onmouseenter = () => btn2.style.background = '#F0EDE6';
-      btn2.onmouseleave = () => btn2.style.background = 'transparent';
-      const av = document.createElement('span');
-      av.className = 'person-cf-code' + (UNITS && UNITS[code] ? ' person-cf-code-unit' : '');
-      av.style.cssText = 'flex-shrink:0;width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:600';
-      av.textContent = a.initials || code;
-      const nm = document.createElement('span');
-      nm.textContent = (a.last || code) + (a.first ? ' ' + a.first : '');
-      btn2.appendChild(av); btn2.appendChild(nm);
-      btn2.addEventListener('click', ev => {
-        ev.stopPropagation();
-        popup.remove();
-        document.removeEventListener('click', outsideClose, true);
-        onSelect(code);
-      });
-      popup.appendChild(btn2);
+    const personItems = Object.entries(ASSIGNEES).map(function (pair) {
+      var code = pair[0], a = pair[1];
+      return {
+        value: code,
+        label: a.full || a.last || code,
+        avatar: { initials: a.initials || code, isUnit: UNITS && UNITS.hasOwnProperty(code) }
+      };
     });
-    document.body.appendChild(popup);
-    function outsideClose(ev) {
-      if (!popup.contains(ev.target) && ev.target !== anchorBtn) {
-        popup.remove();
-        document.removeEventListener('click', outsideClose, true);
-      }
-    }
-    setTimeout(() => {
-      document.addEventListener('click', outsideClose, true);
-      document.addEventListener('keydown', function escClose(ev) {
-        if (ev.key === 'Escape') { popup.remove(); document.removeEventListener('keydown', escClose); }
-      });
-    }, 0);
+    window.createDropdown(anchorBtn, personItems, function (code) {
+      onSelect(code);
+    }, { minWidth: '210px', position: 'absolute' });
   }
 
   document.querySelectorAll('.quick-view-btn[data-quickview]').forEach(btn => {

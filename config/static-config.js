@@ -177,6 +177,8 @@ window.PLAN_CONFIG = {
     "5": "#2E3A8A"
   },
 
+  _PEOPLE_DEFAULTS: null, // reserved for reset
+
   TASK_ST: [
     { v: 'not_started', icon: '○', title: 'Не начата'      },
     { v: 'in_progress', icon: '◑', title: 'В работе'       },
@@ -204,3 +206,19 @@ window.PLAN_CONFIG = {
   ]
 
 };
+
+// Сохраняем исходный справочник до применения overrides
+window.PLAN_CONFIG._PEOPLE_DEFAULTS = Object.assign({}, window.PLAN_CONFIG.PEOPLE);
+
+// Применяем локальные overrides справочника сотрудников (из people-editor)
+(function () {
+  try {
+    var raw = localStorage.getItem('po-people-overrides');
+    if (raw) {
+      var overrides = JSON.parse(raw);
+      if (overrides && typeof overrides === 'object' && !Array.isArray(overrides)) {
+        window.PLAN_CONFIG.PEOPLE = overrides;
+      }
+    }
+  } catch (e) {}
+}());

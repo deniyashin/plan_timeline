@@ -90,7 +90,7 @@
         monthLbl.textContent = 'Месяц проекта:';
         var sel = document.createElement('select');
         sel.className = 'project-month-select';
-        sel.style.cssText = 'font-family:inherit;font-size:11px;padding:2px 6px;border:1px solid #DDD5C5;border-radius:4px;background:#FDFBF6;color:var(--ink);cursor:pointer';
+        sel.style.cssText = 'font-family:inherit;font-size:11px;padding:2px 6px;border:1px solid '+cssVar('--line')+';border-radius:4px;background:'+cssVar('--surface')+';color:var(--ink);cursor:pointer';
         MONTHS.forEach(function (m) {
           var opt = document.createElement('option');
           opt.value = m.key;
@@ -241,14 +241,12 @@
     }
   });
 
-  /* Owner button: открыть дропдаун, обновить все экземпляры при выборе */
+  /* Owner button: открыть дропдаун через createDropdown(), обновить все экземпляры при выборе */
   document.addEventListener('click', function (e) {
     var ownerBtn = e.target.closest('.po-proj-owner-btn');
     if (!ownerBtn) return;
     if (document.body.getAttribute('data-mode') !== 'edit') return;
     e.stopPropagation();
-    var existing = document.getElementById('po-proj-owner-drop');
-    if (existing) { existing.remove(); return; }
     var proj = ownerBtn.closest('.project');
     if (!proj) return;
     var pidEl = proj.querySelector('.project-id-mono');
@@ -267,51 +265,26 @@
       });
     }
 
-    var drop = document.createElement('div');
-    drop.id = 'po-proj-owner-drop';
-    drop.style.cssText = 'position:fixed;z-index:700;background:#FDFBF6;border:1px solid #DDD5C5;border-radius:8px;min-width:200px;max-height:280px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,0.14);padding:4px 0';
-    var rect = ownerBtn.getBoundingClientRect();
-    drop.style.top  = (rect.bottom + 6) + 'px';
-    drop.style.left = rect.left + 'px';
+    var saved = lsGet(LS_PSTAT);
+    var currentOwner = (saved[pid] && saved[pid]['owner']) || '';
 
-    var clearOpt = document.createElement('button');
-    clearOpt.type = 'button';
-    clearOpt.style.cssText = 'display:block;width:100%;background:transparent;border:none;border-bottom:1px solid #EDE8DF;padding:6px 12px;font-family:inherit;font-size:11px;color:#8B2635;cursor:pointer;text-align:left';
-    clearOpt.textContent = '✕ убрать ответственного';
-    clearOpt.addEventListener('click', function (ev) {
-      ev.stopPropagation(); drop.remove(); document.removeEventListener('click', closeOwner, true);
-      refreshAllOwners('');
-      var d = lsGet(LS_PSTAT); if (!d[pid]) d[pid] = {}; d[pid]['owner'] = ''; lsSet(LS_PSTAT, d);
-    });
-    drop.appendChild(clearOpt);
-
+    var ownerItems = [{ value: '', label: 'убрать ответственного', clear: true }];
     Object.entries(window.ASSIGNEES || {}).forEach(function (pair) {
       var code = pair[0], a = pair[1];
-      var opt = document.createElement('button');
-      opt.type = 'button';
-      opt.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;background:transparent;border:none;padding:5px 12px;font-family:inherit;font-size:12px;color:var(--ink);cursor:pointer;text-align:left';
-      opt.onmouseenter = function () { opt.style.background = '#F0EDE6'; };
-      opt.onmouseleave = function () { opt.style.background = 'transparent'; };
-      var av2 = document.createElement('span');
-      av2.style.cssText = 'flex-shrink:0;width:18px;height:18px;border-radius:50%;background:#E8E2D8;color:#6B6560;display:inline-flex;align-items:center;justify-content:center;font-size:7.5px;font-weight:700;font-family:"Geist Mono",monospace';
-      av2.textContent = a.initials || code;
-      var nm2 = document.createElement('span');
-      nm2.textContent = (a.last || code) + (a.first ? ' ' + a.first : '');
-      opt.appendChild(av2); opt.appendChild(nm2);
-      opt.addEventListener('click', function (ev) {
-        ev.stopPropagation(); drop.remove(); document.removeEventListener('click', closeOwner, true);
-        refreshAllOwners(code);
-        var d = lsGet(LS_PSTAT); if (!d[pid]) d[pid] = {}; d[pid]['owner'] = code; lsSet(LS_PSTAT, d);
+      ownerItems.push({
+        value: code,
+        label: a.full || a.last || code,
+        avatar: { initials: a.initials || code, isUnit: window.UNITS && window.UNITS.hasOwnProperty(code) }
       });
-      drop.appendChild(opt);
     });
-    document.body.appendChild(drop);
-    function closeOwner(ev) {
-      if (!drop.contains(ev.target) && ev.target !== ownerBtn) {
-        drop.remove(); document.removeEventListener('click', closeOwner, true);
-      }
-    }
-    setTimeout(function () { document.addEventListener('click', closeOwner, true); }, 0);
+
+    window.createDropdown(ownerBtn, ownerItems, function (code) {
+      refreshAllOwners(code);
+      var d = lsGet(LS_PSTAT);
+      if (!d[pid]) d[pid] = {};
+      d[pid]['owner'] = code;
+      lsSet(LS_PSTAT, d);
+    }, { currentValue: currentOwner, minWidth: '220px' });
   });
 
   window.injectProjStatuses    = injectProjStatuses;

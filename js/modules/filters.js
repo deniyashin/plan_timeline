@@ -30,7 +30,7 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
     } catch (e) {
       console.warn('Could not save overrides', e);
-      showToast('Не удалось сохранить — проверьте, разрешено ли localStorage');
+      window.showToast('Не удалось сохранить — проверьте, разрешено ли localStorage', 'error');
     }
   }
 
@@ -115,7 +115,6 @@
 
   document.addEventListener('click', function(e) {
     if (e.target.closest('.assignments-editor')) return;
-    if (e.target.closest('.assignee-menu')) return;
     const progHead = e.target.closest('.program-head');
     if (progHead) {
       if (document.body.getAttribute('data-mode') === 'edit' && e.target.closest('.po-editable')) return;
@@ -138,45 +137,44 @@
     }
   });
 
-  let currentOpenMenu = null;
-  function closeMenus() {
-    if (currentOpenMenu) { currentOpenMenu.hidden = true; currentOpenMenu = null; }
-  }
-
   document.addEventListener('click', function(e) {
     const addBtn = e.target.closest('[data-action="add-assignee"]');
     if (addBtn) {
       e.stopPropagation();
       const row = addBtn.closest('.role-editor-row');
-      const menu = row.querySelector('.assignee-menu');
-      if (currentOpenMenu && currentOpenMenu !== menu) closeMenus();
-      const isOpen = !menu.hidden;
-      menu.hidden = isOpen;
-      currentOpenMenu = isOpen ? null : menu;
-      return;
-    }
-    const opt = e.target.closest('.assignee-option');
-    if (opt) {
-      e.stopPropagation();
-      const row = opt.closest('.role-editor-row');
+      const roleKey = row.getAttribute('data-role-key');
       const editor = row.closest('.assignments-editor');
       const progId = editor.getAttribute('data-program-id');
-      const roleKey = row.getAttribute('data-role-key');
-      const newCode = opt.getAttribute('data-assignee-value') || null;
       const current = effectiveAssignments(progId);
-      if (newCode === null || newCode === '') {
-        current[roleKey] = [];
-      } else if (!current[roleKey].includes(newCode)) {
-        current[roleKey] = current[roleKey].concat([newCode]);
-      }
-      overrides[progId] = current;
-      saveOverrides(overrides);
-      getProgramInstances(progId).forEach(prog => refreshProgramDisplay(prog));
-      closeMenus();
-      updateFilterCounts();
-      applyFilters();
-      const name = newCode ? (ASSIGNEES[newCode] && ASSIGNEES[newCode].full) || newCode : 'не назначен';
-      showToast(`Обновлено: ${ROLES[roleKey].label} → ${name}`);
+      const assigned = current[roleKey] || [];
+
+      const items = [{ value: '', label: 'Не назначен', clear: true }];
+      Object.entries(ASSIGNEES).forEach(function (pair) {
+        var code = pair[0], a = pair[1];
+        if (!assigned.includes(code)) {
+          items.push({
+            value: code,
+            label: a.full || a.last || code,
+            avatar: { initials: a.initials || code, isUnit: UNITS.hasOwnProperty(code) }
+          });
+        }
+      });
+
+      window.createDropdown(addBtn, items, function (val) {
+        const cur = effectiveAssignments(progId);
+        if (!val || val === '') {
+          cur[roleKey] = [];
+        } else if (!cur[roleKey].includes(val)) {
+          cur[roleKey] = cur[roleKey].concat([val]);
+        }
+        overrides[progId] = cur;
+        saveOverrides(overrides);
+        getProgramInstances(progId).forEach(prog => refreshProgramDisplay(prog));
+        updateFilterCounts();
+        applyFilters();
+        const name = val ? (ASSIGNEES[val] && ASSIGNEES[val].full) || val : 'не назначен';
+        window.showToast(`Обновлено: ${ROLES[roleKey].label} → ${name}`, 'info');
+      });
       return;
     }
     const removeBtn = e.target.closest('[data-action="remove-assignee"]');
@@ -194,21 +192,33 @@
       updateFilterCounts();
       applyFilters();
       const name = (ASSIGNEES[code] && ASSIGNEES[code].full) || code;
-      showToast(`Убрано из роли "${ROLES[roleKey].label}": ${name}`);
+      window.showToast(`Убрано из роли "${ROLES[roleKey].label}": ${name}`, 'info');
       return;
     }
-    if (currentOpenMenu && !e.target.closest('.assignee-menu')) closeMenus();
   });
 
-  const toast = document.createElement('div');
-  toast.className = 'toast';
-  document.body.appendChild(toast);
-  let toastTimer = null;
-  function showToast(msg) {
-    toast.textContent = msg;
-    toast.classList.add('show');
-    if (toastTimer) clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+  function updateDirectionCounts() {
+    var counts = {};
+    /* Считаем все мастер-проекты (игнорируем display:none, который projects-mode
+       выставляет для управления видимостью по месяцам — это не фильтрация). */
+    document.querySelectorAll('.program:not([data-pm-clone]) li.project[data-project-id]').forEach(function(proj) {
+      var prog = proj.closest('.program');
+      if (!prog) return;
+      var change = prog.getAttribute('data-change') || 'out';
+      counts[change] = (counts[change] || 0) + 1;
+    });
+    document.querySelectorAll('[data-change-filter]').forEach(function(btn) {
+      var key = btn.getAttribute('data-change-filter');
+      var n = counts[key] || 0;
+      var el = btn.querySelector('.cf-count');
+      if (!el) {
+        el = document.createElement('span');
+        el.className = 'cf-count';
+        el.setAttribute('aria-hidden', 'true');
+        btn.appendChild(el);
+      }
+      el.textContent = n > 0 ? String(n) : '';
+    });
   }
 
   function updateFilterCounts() {
@@ -240,6 +250,7 @@
     });
   }
   updateFilterCounts();
+  updateDirectionCounts();
 
   const filterBar = document.querySelector('.filter-bar');
   const filterToggle = document.getElementById('filter-toggle');
@@ -291,7 +302,9 @@
       summaryEl.classList.remove('has-active');
     }
     document.querySelectorAll('[data-change-filter]').forEach(el => {
-      el.classList.toggle('filter-on', state.change && el.getAttribute('data-change-filter') === state.change);
+      const on = !!(state.change && el.getAttribute('data-change-filter') === state.change);
+      el.classList.toggle('filter-on', on);
+      if (el.tagName === 'BUTTON') el.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
     document.querySelectorAll('[data-contour-filter]').forEach(el => {
       el.classList.toggle('filter-on', state.contour && el.getAttribute('data-contour-filter') === state.contour);
@@ -303,7 +316,9 @@
       el.classList.toggle('filter-on', state.persons.includes(el.getAttribute('data-person-filter')));
     });
     document.querySelectorAll('[data-role-filter]').forEach(el => {
-      el.classList.toggle('filter-on', el.getAttribute('data-role-filter') === state.role);
+      const on = el.getAttribute('data-role-filter') === state.role;
+      el.classList.toggle('filter-on', on);
+      if (el.tagName === 'BUTTON') el.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
     const programs = document.querySelectorAll('.program');
     programs.forEach(prog => {
@@ -365,6 +380,8 @@
         if (navLinks[i]) navLinks[i].classList.toggle('nav-dimmed', sec.style.display === 'none');
       });
     })();
+    updateDirectionCounts();
+    if (window.renderDirectionGroups) window.renderDirectionGroups();
   }
 
   document.querySelectorAll('[data-change-filter]').forEach(el => {
@@ -412,6 +429,7 @@
 
   document.addEventListener('po-timeline-rendered', function () {
     applyFilters();
+    updateDirectionCounts();
   });
 
   // Публикуем state и applyFilters глобально — нужны в plan_timeline.js (person picker)

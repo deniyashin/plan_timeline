@@ -48,9 +48,9 @@
     var RESET_KEYS = [
       'po-tasks', 'po-texts', 'po-proj-statuses',
       'po-new-projects', 'po-new-programs', 'po-prog-months',
-      'po-project-months-v1',
+      'po-project-months-v1', 'po-project-dir-order',
       'plan-timeline-assignments-v2', 'plan-timeline-statuses-v1',
-      'po-doc-edited', 'po-published-at'
+      'po-doc-edited', 'po-published-at', 'po-people-overrides'
     ];
     RESET_KEYS.forEach(function (k) { try { localStorage.removeItem(k); } catch (e) {} });
     location.reload();
@@ -60,6 +60,24 @@
      SANITIZE HTML (allow only safe formatting)
   ================================================================ */
   // sanitize — в js/utils/html.js
+
+  window.cssVar = function(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  };
+
+  window.showToast = function(msg, type) {
+    var toast = document.createElement('div');
+    toast.className = 'po-toast po-toast-' + (type || 'info');
+    toast.textContent = msg;
+    toast.setAttribute('role', 'status');
+    toast.setAttribute('aria-live', 'polite');
+    document.body.appendChild(toast);
+    requestAnimationFrame(function() { toast.classList.add('is-visible'); });
+    setTimeout(function() {
+      toast.classList.remove('is-visible');
+      setTimeout(function() { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 300);
+    }, 3500);
+  };
 
   /* ================================================================
      INIT
@@ -83,6 +101,12 @@
   initProjectsDnD();
   setTextEditable(document.body.getAttribute('data-mode') === 'edit');
   (function () { var _pa = localStorage.getItem('po-doc-edited') || localStorage.getItem('po-published-at'); if (_pa) updatePubStamp(_pa); }());
-  loadRemote();
+  var overlay = document.getElementById('po-load-overlay');
+  loadRemote().finally(function() {
+    if (overlay) {
+      overlay.classList.add('is-done');
+      setTimeout(function() { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 300);
+    }
+  });
 
 })();

@@ -1,0 +1,33 @@
+/* Loading overlay */
+#po-load-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.25s;
+}
+#po-load-overlay.is-done { opacity: 0; pointer-events: none; }
+
+.po-load-spinner {
+  width: 32px; height: 32px;
+  border: 2px solid var(--line);
+  border-top-color: var(--ink-muted);
+  border-radius: 50%;
+  animation: po-spin 0.7s linear infinite;
+}
+@keyframes po-spin { to { transform: rotate(360deg); } }
+
+/* Toast notifications */
+.po-toast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 9000;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  box-shadow: var(--shadow-md);
+  opacity: 0; transform: translateY(8px);
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+}
+.po-toast.is-visible { opacity: 1; transform: none; }
+.po-toast-error   { background: var(--status-red-bg);    color: var(--status-red-ink); }
+.po-toast-success { background: var(--status-green-bg);  color: var(--status-green-ink); }
+.po-toast-info    { background: var(--surface); color: var(--ink); border: 1px solid var(--line); }

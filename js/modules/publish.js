@@ -67,6 +67,7 @@
       .then(function (resp) {
         if (resp && resp.error) throw new Error(resp.error);
         btn.textContent = '↑ Опубликовано ✓';
+        if (window.showToast) window.showToast('Данные опубликованы', 'success');
         setTimeout(function () { btn.disabled = false; btn.textContent = '↑ Опубликовать'; }, 5000);
         var nowIso = new Date().toISOString();
         try { localStorage.setItem('po-doc-edited', nowIso); } catch (e) {}
@@ -157,10 +158,12 @@
   }
 
   function loadRemote() {
-    fetch('https://deniyashin.github.io/plan_timeline/data.json?v=' + Date.now(), { cache: 'no-cache' })
+    return fetch('https://deniyashin.github.io/plan_timeline/data.json?v=' + Date.now(), { cache: 'no-cache' })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (d) { if (d) applyData(d); })
-      .catch(function () {});
+      .catch(function (err) {
+        if (window.showToast) window.showToast('Не удалось загрузить данные' + (err && err.message ? ': ' + err.message : ''), 'error');
+      });
   }
 
   window.updatePubStamp = updatePubStamp;

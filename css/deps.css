@@ -24,9 +24,9 @@
   border-radius: 2px;
   flex-shrink: 0;
 }
-.disputed-dot-clar   { background: #8B2635; }
-.disputed-dot-rework { background: #8E5C0E; }
-.disputed-dot-owner  { background: #6B655C; }
+.disputed-dot-clar   { background: var(--status-red-ink); }
+.disputed-dot-rework { background: var(--status-amber-ink); }
+.disputed-dot-owner  { background: var(--ink-muted); }
 .disputed-num {
   font-family: "Geist Mono", monospace;
   font-weight: 600;
@@ -154,9 +154,9 @@ body.has-dispute-filter .program:not(.dispute-match) { display: none; }
   border-radius: 3px;
   color: var(--ink-muted);
 }
-.deps-map-ref-confirmed { border-color: #B8C6BB; background: #DEE7DF; color: #2F5233; }
-.deps-map-ref-likely    { border-color: #ECD8A8; background: #F5E8D0; color: #8E5C0E; }
-.deps-map-ref-hypothesis{ border-color: #E8C2C8; background: #F3E4E6; color: #8B2635; }
+.deps-map-ref-confirmed { border-color: #B8C6BB; background: var(--status-green-bg); color: var(--status-green-ink); }
+.deps-map-ref-likely    { border-color: #ECD8A8; background: var(--status-amber-bg); color: var(--status-amber-ink); }
+.deps-map-ref-hypothesis{ border-color: #E8C2C8; background: var(--status-red-bg);   color: var(--status-red-ink); }
 .deps-map-empty { color: var(--ink-soft); font-style: italic; font-size: 12px; }
 
 @media (max-width: 800px) {
@@ -233,9 +233,9 @@ body[data-mode="working"] .field-brief.is-empty {
   transition: opacity 0.12s;
 }
 .project-dep-item:hover { opacity: 0.72; }
-.project-dep-item-confirmed { border-color: #B8C6BB; background: #DEE7DF; color: #2F5233; }
-.project-dep-item-likely    { border-color: #ECD8A8; background: #F5E8D0; color: #8E5C0E; }
-.project-dep-item-hypothesis{ border-color: #E8C2C8; background: #F3E4E6; color: #8B2635; }
+.project-dep-item-confirmed { border-color: #B8C6BB; background: var(--status-green-bg); color: var(--status-green-ink); }
+.project-dep-item-likely    { border-color: #ECD8A8; background: var(--status-amber-bg); color: var(--status-amber-ink); }
+.project-dep-item-hypothesis{ border-color: #E8C2C8; background: var(--status-red-bg);   color: var(--status-red-ink); }
 
 /* In brief mode — hide project-level deps */
 body[data-mode="brief"] .project-deps-block { display: none; }
@@ -373,9 +373,9 @@ body[data-mode="brief"] .project-deps-block { display: none; }
 .deps-map-graph .graph-node-label { font-family: "Geist Mono", monospace; font-size: 10px; fill: var(--ink); }
 .deps-map-graph .graph-node-rect { stroke-width: 1; }
 .deps-map-graph .graph-edge { fill: none; stroke-width: 1.2; opacity: 0.5; }
-.deps-map-graph .graph-edge-confirmed { stroke: #2F5233; }
-.deps-map-graph .graph-edge-likely    { stroke: #8E5C0E; stroke-dasharray: 3 3; }
-.deps-map-graph .graph-edge-hypothesis{ stroke: #8B2635; stroke-dasharray: 1 3; }
+.deps-map-graph .graph-edge-confirmed { stroke: var(--status-green-ink); }
+.deps-map-graph .graph-edge-likely    { stroke: var(--status-amber-ink); stroke-dasharray: 3 3; }
+.deps-map-graph .graph-edge-hypothesis{ stroke: var(--status-red-ink);   stroke-dasharray: 1 3; }
 .deps-map-graph .graph-edge.highlighted { opacity: 1; stroke-width: 2.5; }
 .deps-map-graph .graph-node.dimmed { opacity: 0.18; }
 .deps-map-graph .graph-legend {

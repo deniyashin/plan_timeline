@@ -176,7 +176,7 @@
             li.style.display = (_projMonth(li.dataset.projectId) === m.key) ? '' : 'none';
           });
           /* Hide month-select row in clones (edit actions belong to the master) */
-          clone.querySelectorAll('.po-proj-month-row').forEach(function (r) { r.style.display = 'none'; });
+          clone.querySelectorAll('.po-proj-month-row, .po-proj-order-row').forEach(function (r) { r.style.display = 'none'; });
           var addBtn = progList.querySelector('.po-add-prog-btn');
           if (addBtn) progList.insertBefore(clone, addBtn);
           else progList.appendChild(clone);
@@ -206,10 +206,235 @@
     /* 7. Re-apply active filter state to newly created clones */
     document.dispatchEvent(new CustomEvent('po-timeline-rendered'));
   }
-  window.migrateProjectMonths  = migrateProjectMonths;
-  window.assignProjectIds      = assignProjectIds;
-  window.getProjectMonth       = getProjectMonth;
-  window.setProjectMonth       = setProjectMonth;
-  window.updateMonthStats      = updateMonthStats;
-  window.renderTimeline        = renderTimeline;
+  /* ================================================================
+     PROJECT DIR-ORDER  — хранит порядок проектов внутри направления
+  ================================================================ */
+  var LS_DIR_ORDER = 'po-project-dir-order';
+
+  function getDirOrder(projectId) {
+    var store = lsGet(LS_DIR_ORDER);
+    var v = store[projectId];
+    return (v !== undefined && v !== null && v !== '') ? parseInt(v, 10) : 99999;
+  }
+
+  function setDirOrder(projectId, val) {
+    var store = lsGet(LS_DIR_ORDER);
+    var n = parseInt(val, 10);
+    if (isNaN(n) || n < 1) { delete store[projectId]; }
+    else { store[projectId] = n; }
+    try { localStorage.setItem(LS_DIR_ORDER, JSON.stringify(store)); } catch (e) {}
+  }
+
+  /* ================================================================
+     RENDER DIRECTION GROUPS  (группировка по направлениям I-1…I-5)
+     Вызывается из applyFilters после каждой перерисовки/фильтрации.
+  ================================================================ */
+  function renderDirectionGroups() {
+    /* 1. Восстановить оригинальные индексы; убрать dir-grp */
+    document.querySelectorAll('.project-index[data-orig-idx]').forEach(function(el) {
+      el.textContent = el.getAttribute('data-orig-idx');
+      el.removeAttribute('data-orig-idx');
+    });
+    document.querySelectorAll('li.project[data-dir-grp]').forEach(function(p) { p.removeAttribute('data-dir-grp'); });
+    /* 2. Убрать старые разделители; сбросить order у программ и проектов */
+    document.querySelectorAll('.direction-separator').forEach(function(el) { el.remove(); });
+    document.querySelectorAll('.program').forEach(function(p) { p.style.removeProperty('order'); });
+    document.querySelectorAll('li.project').forEach(function(p) { p.style.removeProperty('order'); });
+
+    var mode = document.body.getAttribute('data-mode');
+    if (mode !== 'projects') return;
+
+    var DIRECTION_ORDER = ['U-ALL-I-1', 'U-ALL-I-2', 'U-ALL-I-3', 'U-ALL-I-4', 'U-ALL-I-5', 'out'];
+    var CHANGE_COLORS   = (window.PLAN_CONFIG && window.PLAN_CONFIG.CHANGE_COLORS) || {};
+    var CHANGE_NUM      = {'U-ALL-I-1':'1','U-ALL-I-2':'2','U-ALL-I-3':'3','U-ALL-I-4':'4','U-ALL-I-5':'5','out':'0'};
+    var DIR_LABELS      = {'U-ALL-I-1':'I-1','U-ALL-I-2':'I-2','U-ALL-I-3':'I-3','U-ALL-I-4':'I-4','U-ALL-I-5':'I-5','out':'—'};
+    var orderStore = lsGet(LS_DIR_ORDER);
+
+    function _ord(pid) {
+      var v = orderStore[pid];
+      return (v !== undefined && v !== null && v !== '') ? parseInt(v, 10) : 99999;
+    }
+
+    document.querySelectorAll('section.month').forEach(function(sec) {
+      var progList = sec.querySelector('.program-list');
+      if (!progList) return;
+
+      DIRECTION_ORDER.forEach(function(dir, i) {
+        /* Видимые программы этого направления в данной секции */
+        var progsForDir = Array.from(
+          progList.querySelectorAll('.program[data-change="' + dir + '"]')
+        ).filter(function(p) { return p.style.display !== 'none'; });
+
+        if (progsForDir.length === 0) return;
+
+        /* Сортируем программы по минимальному dir-order их видимых проектов */
+        progsForDir.sort(function(a, b) {
+          function minOrd(prog) {
+            var projs = Array.from(prog.querySelectorAll('li.project')).filter(function(pr) {
+              return pr.style.display !== 'none';
+            });
+            if (!projs.length) return 99999;
+            return Math.min.apply(null, projs.map(function(pr) { return _ord(pr.dataset.projectId || ''); }));
+          }
+          return minOrd(a) - minOrd(b);
+        });
+
+        /* CSS order: блок направления i занимает диапазон i*1000 … i*1000+999 */
+        var base = i * 1000;
+        progsForDir.forEach(function(p, pi) { p.style.order = String(base + 1 + pi); });
+
+        /* Для каждой программы: сортируем и нумеруем видимые проекты */
+        var seq = 1;
+        progsForDir.forEach(function(prog) {
+          var visProjs = Array.from(prog.querySelectorAll('li.project')).filter(function(pr) {
+            return pr.style.display !== 'none';
+          });
+          /* Сортируем проекты внутри программы по dir-order */
+          visProjs.sort(function(a, b) {
+            return _ord(a.dataset.projectId || '') - _ord(b.dataset.projectId || '');
+          });
+          /* Выставляем CSS order на li.project (flex-children в project-list) */
+          visProjs.forEach(function(pr) {
+            var o = _ord(pr.dataset.projectId || '');
+            pr.style.order = String(o >= 99999 ? 99999 : o);
+          });
+          /* Сквозная нумерация + отметка направления для DnD */
+          visProjs.forEach(function(pr) {
+            pr.setAttribute('data-dir-grp', dir);
+            var idxEl = pr.querySelector('.project-index');
+            if (!idxEl) { seq++; return; }
+            if (!idxEl.hasAttribute('data-orig-idx')) {
+              idxEl.setAttribute('data-orig-idx', idxEl.textContent);
+            }
+            idxEl.textContent = String(seq++);
+          });
+        });
+
+        /* Счётчик проектов для разделителя */
+        var projCount = progsForDir.reduce(function(n, prog) {
+          return n + Array.from(prog.querySelectorAll('li.project')).filter(function(pr) {
+            return pr.style.display !== 'none';
+          }).length;
+        }, 0);
+
+        /* Строим разделитель-заголовок направления */
+        var color = CHANGE_COLORS[CHANGE_NUM[dir]] || '#5A554C';
+        var label = DIR_LABELS[dir];
+        var sep = document.createElement('li');
+        sep.className = 'direction-separator';
+        sep.setAttribute('data-direction', dir);
+        sep.style.order = String(base);
+        sep.innerHTML =
+          '<span class="dir-dot" style="background:' + color + '"></span>' +
+          '<span class="dir-label">' + escHtml(label) + '</span>' +
+          '<span class="dir-count">' + projCount + '</span>';
+        progList.appendChild(sep);
+      });
+    });
+  }
+
+  window.migrateProjectMonths    = migrateProjectMonths;
+  window.assignProjectIds        = assignProjectIds;
+  window.getProjectMonth         = getProjectMonth;
+  window.setProjectMonth         = setProjectMonth;
+  window.getDirOrder             = getDirOrder;
+  window.setDirOrder             = setDirOrder;
+  window.updateMonthStats        = updateMonthStats;
+  window.renderTimeline          = renderTimeline;
+  window.renderDirectionGroups   = renderDirectionGroups;
+
+  /* ================================================================
+     DIRECTION DnD — перетаскивание проектов внутри направления
+  ================================================================ */
+  (function () {
+    var _dragProj   = null;
+    var _dragDir    = null;
+    var _dragSec    = null;
+    var _dropTarget = null;
+    var _dropBefore = true;
+
+    function clearDrop() {
+      if (_dropTarget) {
+        _dropTarget.classList.remove('po-dir-drop-before', 'po-dir-drop-after');
+        _dropTarget = null;
+      }
+    }
+
+    /* Собирает видимые проекты направления в секции в текущем визуальном порядке */
+    function getProjsInOrder(dirKey, secEl) {
+      var progList = secEl.querySelector('.program-list');
+      if (!progList) return [];
+      var progs = Array.from(progList.querySelectorAll('.program[data-change="' + dirKey + '"]'))
+        .filter(function(p) { return p.style.display !== 'none'; })
+        .sort(function(a, b) { return (parseInt(a.style.order || '0', 10)) - (parseInt(b.style.order || '0', 10)); });
+      var result = [];
+      progs.forEach(function(prog) {
+        Array.from(prog.querySelectorAll('li.project'))
+          .filter(function(pr) { return pr.style.display !== 'none'; })
+          .sort(function(a, b) { return (parseInt(a.style.order || '0', 10)) - (parseInt(b.style.order || '0', 10)); })
+          .forEach(function(pr) { result.push(pr); });
+      });
+      return result;
+    }
+
+    if (!document._dirDndDelegated) {
+      document._dirDndDelegated = true;
+
+      document.addEventListener('dragstart', function(e) {
+        if (document.body.getAttribute('data-mode') !== 'projects') return;
+        var proj = e.target.closest('li.project[data-project-id][data-dir-grp]');
+        if (!proj) return;
+        _dragProj = proj;
+        _dragDir  = proj.getAttribute('data-dir-grp');
+        _dragSec  = proj.closest('section.month');
+        setTimeout(function() { if (_dragProj) _dragProj.classList.add('po-dir-dragging'); }, 0);
+      });
+
+      document.addEventListener('dragover', function(e) {
+        if (!_dragProj) return;
+        var proj = e.target.closest('li.project[data-dir-grp]');
+        if (!proj || proj === _dragProj) { clearDrop(); return; }
+        if (proj.getAttribute('data-dir-grp') !== _dragDir) return;
+        if (proj.closest('section.month') !== _dragSec) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        var rect = proj.getBoundingClientRect();
+        _dropBefore = e.clientY < rect.top + rect.height / 2;
+        if (_dropTarget !== proj) { clearDrop(); _dropTarget = proj; }
+        proj.classList.toggle('po-dir-drop-before', _dropBefore);
+        proj.classList.toggle('po-dir-drop-after', !_dropBefore);
+      });
+
+      document.addEventListener('drop', function(e) {
+        var tgt = _dropTarget;
+        clearDrop();
+        if (!_dragProj || !tgt) return;
+        if (tgt.getAttribute('data-dir-grp') !== _dragDir) return;
+        e.preventDefault();
+
+        var all = getProjsInOrder(_dragDir, _dragSec);
+        var di = all.indexOf(_dragProj);
+        if (di !== -1) all.splice(di, 1);
+        var ti = all.indexOf(tgt);
+        if (ti === -1) return;
+        all.splice(_dropBefore ? ti : ti + 1, 0, _dragProj);
+
+        all.forEach(function(pr, idx) {
+          var pid = pr.dataset.projectId || '';
+          if (pid) setDirOrder(pid, idx + 1);
+        });
+
+        if (_dragProj) _dragProj.classList.remove('po-dir-dragging');
+        _dragProj = null; _dragDir = null; _dragSec = null;
+
+        renderDirectionGroups();
+      });
+
+      document.addEventListener('dragend', function() {
+        clearDrop();
+        if (_dragProj) { _dragProj.classList.remove('po-dir-dragging'); _dragProj = null; }
+        _dragDir = null; _dragSec = null;
+      });
+    }
+  }());
 })();

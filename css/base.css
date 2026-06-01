@@ -1,18 +1,71 @@
 ﻿  * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --bg: #F8F5EF;
-    --bg-alt: #F2EDE3;
-    --surface: #FDFBF6;
-    --ink: #1F1D1A;
-    --ink-muted: #6B655C;
-    --ink-soft: #8F897E;
-    --line: #DDD5C5;
-    --line-soft: #E8E1D2;
-    --accent: #1F1D1A;
-    --ch-out: #5A554C;
-    --radius: 6px;
-    --shadow-sm: 0 1px 0 rgba(31,29,26,.04);
-    --shadow-md: 0 2px 8px rgba(31,29,26,.06), 0 0 0 1px rgba(31,29,26,.03);
+    --bg: #F5F7FA;
+    --bg-alt: #F8FAFC;
+    --surface: #FFFFFF;
+    --ink: #172B4D;
+    --ink-muted: #6B778C;
+    --ink-soft: #8C98A8;
+    --line: #DFE3EA;
+    --line-soft: #EDF0F5;
+    --accent: #2FC6F6;
+    --ch-out: #64748B;
+    --radius: 10px;
+    --shadow-sm: 0 1px 2px rgba(23,43,77,.08);
+    --shadow-md: 0 4px 14px rgba(23,43,77,.08);
+
+    /* ── Status semantic (3-level + neutral) ─────────────────────── */
+    --status-green-bg:   #DEE7DF;  --status-green-ink:   #2F5233;
+    --status-amber-bg:   #F5E8D0;  --status-amber-ink:   #8E5C0E;
+    --status-red-bg:     #F3E4E6;  --status-red-ink:     #8B2635;
+    --status-neutral-bg: #E8E1D2;  --status-neutral-ink: #6B655C;
+
+    /* ── Design phase (distinct teal — project lifecycle only) ────── */
+    --status-design-bg:  #DEEAEC;  --status-design-ink:  #1E6E7A;
+
+    /* ── Task statuses ────────────────────────────────────────────── */
+    --task-progress-bg: #DBEAFE;  --task-progress-ink: #1D4ED8;
+    --task-review-bg:   #FEF3C7;  --task-review-ink:   #92400E;
+    --task-blocked-bg:  #FEE2E2;  --task-blocked-ink:  #991B1B;
+    --task-done-bg:     #D1FAE5;  --task-done-ink:     #065F46;
+    --task-cancelled-bg:#F3F4F6;  --task-cancelled-ink:#9CA3AF;
+    --task-draft-bg:    #EEF2FF;  --task-draft-ink:    #4338CA;
+
+    /* ── Avatars ──────────────────────────────────────────────────── */
+    --avatar-unit-bg:   #D4EDE2;  --avatar-unit-ink:   #1B6B4A;
+    --avatar-person-bg: #ECEAE7;  --avatar-person-ink: #6B6560;
+
+    /* ── Interactive states ───────────────────────────────────────── */
+    --hover:  #F0F4FA;
+    --active: #E4ECF7;
+    --danger: #8B2635;
+
+    /* ── Focus ring (used as box-shadow value) ────────────────────── */
+    --focus-ring: 0 0 0 2px #2FC6F6;
+
+    /* ── Special ──────────────────────────────────────────────────── */
+    --highlight-bg: #FFF3B0;
+    --shadow-lg: 0 8px 24px rgba(23,43,77,.12);
+
+    /* ── Typography scale ─────────────────────────────────────────── */
+    --text-xs:   11px;
+    --text-sm:   13px;
+    --text-base: 14px;
+    --text-lg:   16px;
+    --text-xl:   20px;
+
+    /* ── Spacing grid (4/8/16/24/32/48) ──────────────────────────── */
+    --space-1:  4px;
+    --space-2:  8px;
+    --space-3: 16px;
+    --space-4: 24px;
+    --space-5: 32px;
+    --space-6: 48px;
+
+    /* ── Radius scale ─────────────────────────────────────────────── */
+    --radius-sm:  4px;   /* chips, tags, small badges */
+    --radius-md:  8px;   /* cards, dropdowns */
+    --radius-lg: 12px;   /* modals, large panels */
   }
 
   body {
@@ -35,7 +88,7 @@
     border-bottom: 1px solid var(--line);
     position: sticky; top: 0; z-index: 50;
     backdrop-filter: blur(12px);
-    background: rgba(248, 245, 239, 0.92);
+    background: rgba(245, 247, 250, 0.92);
   }
   .doc-top-inner {
     max-width: 1280px;
@@ -75,7 +128,7 @@
   }
   .ghost-btn {
     font-family: inherit;
-    font-size: 11.5px;
+    font-size: var(--text-sm);
     background: transparent;
     border: 1px solid var(--line);
     color: var(--ink-muted);
