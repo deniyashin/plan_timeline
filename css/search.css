@@ -19,7 +19,7 @@
 }
 .approval-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #2F5233 0%, #2F5233 var(--approved-pct, 0%), #8E5C0E var(--approved-pct, 0%), #8E5C0E var(--in-review-end, 0%), transparent var(--in-review-end, 0%));
+  background: linear-gradient(90deg, var(--status-green-ink) 0%, var(--status-green-ink) var(--approved-pct, 0%), var(--status-amber-ink) var(--approved-pct, 0%), var(--status-amber-ink) var(--in-review-end, 0%), transparent var(--in-review-end, 0%));
   transition: width 0.4s;
 }
 .approval-counts {
@@ -70,7 +70,8 @@
   outline: none;
   transition: border-color 0.12s;
 }
-.filter-search:focus { border-color: var(--ink); }
+.filter-search:focus { border-color: var(--ink); box-shadow: var(--focus-ring); }
+.filter-search:focus-visible { box-shadow: var(--focus-ring); }
 .filter-search::placeholder { color: var(--ink-soft); font-style: italic; }
 
 /* Search highlight: graying out non-matching */

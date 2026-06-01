@@ -178,6 +178,26 @@
     background: transparent;
     border: 1px dashed var(--line);
   }
+  /* Direction project count badge */
+  .cf-count {
+    font-family: "Geist Mono", monospace;
+    font-size: 9.5px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    background: var(--bg-alt);
+    border: 1px solid var(--line-soft);
+    padding: 1px 4px;
+    border-radius: 3px;
+    min-width: 16px;
+    text-align: center;
+    line-height: 1.4;
+    transition: color 0.12s;
+  }
+  .filter-chip.filter-on .cf-count {
+    background: rgba(255,255,255,0.18);
+    border-color: rgba(255,255,255,0.25);
+    color: var(--bg);
+  }
 
   /* People filter chips (pill-shaped, with round initials badge) */
   .person-filter {
@@ -226,7 +246,7 @@
   .person-picker-wrap.open .person-picker-caret { transform: rotate(180deg); }
   .person-picker-popup {
     position: absolute; top: calc(100% + 6px); left: 0; z-index: 300;
-    background: #FDFBF6; border: 1px solid #DDD5C5; border-radius: 8px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
     min-width: 210px; max-height: 320px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.13);
     display: flex; flex-direction: column;
@@ -234,10 +254,10 @@
   .person-picker-popup[hidden] { display: none; }
   .person-picker-clear {
     background: transparent; border: none; border-bottom: 1px solid #EDE8DF;
-    padding: 8px 12px; text-align: left; font-size: 11.5px; color: #8B2635;
+    padding: 8px 12px; text-align: left; font-size: 11.5px; color: var(--danger);
     font-family: inherit; cursor: pointer; flex-shrink: 0;
   }
-  .person-picker-clear:hover { background: #FEE2E2; }
+  .person-picker-clear:hover { background: var(--task-blocked-bg); }
   .person-picker-list { overflow-y: auto; flex: 1; padding: 4px 0; }
   .person-picker-item {
     display: flex; align-items: center; gap: 8px; width: 100%;
@@ -245,8 +265,8 @@
     font-family: inherit; font-size: 13px; color: var(--ink); cursor: pointer;
     text-align: left; white-space: nowrap;
   }
-  .person-picker-item:hover { background: #F0EDE6; }
-  .person-picker-item.filter-on { background: #E8E2D8; font-weight: 600; }
+  .person-picker-item:hover { background: var(--hover); }
+  .person-picker-item.filter-on { background: var(--active); font-weight: 600; }
   .person-picker-name { flex: 1; }
   .person-picker-item .person-cf-code { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; font-family: "Geist Mono", monospace; background: var(--ink); color: var(--bg); }
   .person-picker-item .person-cf-code-unit { background: var(--bg-alt); color: var(--ink); border: 1px solid var(--line); }

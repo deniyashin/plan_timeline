@@ -16,7 +16,7 @@
     { cmd: 'insertUnorderedList',  label: '≡', title: 'Маркированный список' },
     { cmd: 'insertOrderedList',    label: '☰', title: 'Нумерованный список' },
     null,
-    { cmd: 'hilite',               label: '■', title: 'Выделение', color: '#FFF3B0' },
+    { cmd: 'hilite',               label: '■', title: 'Выделение', color: '' },
     { cmd: 'removeFormat',         label: '×', title: 'Сбросить форматирование' }
   ];
 
@@ -37,7 +37,7 @@
       btn.title = c.title;
       btn.innerHTML = c.label;
       btn.dataset.cmd = c.cmd;
-      if (c.color) btn.dataset.color = c.color;
+      if (c.cmd === 'hilite') btn.dataset.color = cssVar('--highlight-bg');
       if (c.style) btn.style.cssText = c.style;
       rtBar.appendChild(btn);
     });

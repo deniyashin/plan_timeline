@@ -87,11 +87,11 @@
       var a = code && window.ASSIGNEES && window.ASSIGNEES[code];
       if (a) {
         av.textContent = a.initials;
-        av.style.background = window.UNITS && window.UNITS[code] ? '#D4EDE2' : '#E8E2D8';
-        av.style.color      = window.UNITS && window.UNITS[code] ? '#1B6B4A' : '#6B6560';
+        av.style.background = window.UNITS && window.UNITS[code] ? cssVar('--avatar-unit-bg') : cssVar('--active');
+        av.style.color      = window.UNITS && window.UNITS[code] ? cssVar('--avatar-unit-ink') : cssVar('--avatar-person-ink');
         nm.textContent = a.last; nm.className = 'po-task-asgn-nm';
       } else {
-        av.textContent = '+'; av.style.background = '#ECEAE7'; av.style.color = '#B0A898';
+        av.textContent = '+'; av.style.background = cssVar('--avatar-person-bg'); av.style.color = cssVar('--avatar-person-ink');
         nm.textContent = 'Исполнитель'; nm.className = 'po-task-asgn-nm ph';
       }
     }
@@ -106,16 +106,16 @@
       drop.className = 'po-task-asgn-drop';
       var rect = btn.getBoundingClientRect();
       drop.style.cssText = 'position:fixed;top:'+(rect.bottom+4)+'px;left:'+rect.left+'px;z-index:700;'+
-        'background:#FDFBF6;border:1px solid #DDD5C5;border-radius:8px;'+
+        'background:'+cssVar('--surface')+';border:1px solid '+cssVar('--line')+';border-radius:8px;'+
         'min-width:195px;max-height:260px;overflow-y:auto;'+
         'box-shadow:0 6px 20px rgba(0,0,0,0.13);padding:4px 0;';
 
       /* clear option */
       var clr = document.createElement('button'); clr.type = 'button';
       clr.style.cssText = 'display:flex;align-items:center;gap:7px;width:100%;background:transparent;border:none;'+
-        'border-bottom:1px solid #EDE8DF;padding:6px 10px 8px;font-family:inherit;font-size:12px;color:#8B2635;cursor:pointer;';
-      clr.innerHTML = '<span style="width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:#ECEAE7;color:#B0A898;font-size:9px;">—</span> Не назначен';
-      clr.onmouseenter = function () { clr.style.background = '#FEF0F0'; };
+        'border-bottom:1px solid '+cssVar('--line-soft')+';padding:6px 10px 8px;font-family:inherit;font-size:12px;color:'+cssVar('--danger')+';cursor:pointer;';
+      clr.innerHTML = '<span style="width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:'+cssVar('--avatar-person-bg')+';color:'+cssVar('--avatar-person-ink')+';font-size:9px;">—</span> Не назначен';
+      clr.onmouseenter = function () { clr.style.background = cssVar('--task-blocked-bg'); };
       clr.onmouseleave = function () { clr.style.background = 'transparent'; };
       clr.addEventListener('click', function (ev) {
         ev.stopPropagation(); drop.remove();
@@ -132,14 +132,14 @@
         var isSel = code === (t.assignee || '');
         var isUnit = window.UNITS && window.UNITS[code];
         opt.style.cssText = 'display:flex;align-items:center;gap:7px;width:100%;border:none;'+
-          'padding:5px 10px;font-family:inherit;font-size:12px;color:#1F1D1A;cursor:pointer;text-align:left;'+
-          'background:'+(isSel ? '#E8E2D8' : 'transparent')+';'+(isSel ? 'font-weight:600;' : '');
-        opt.onmouseenter = function () { opt.style.background = '#F0EDE6'; };
-        opt.onmouseleave = function () { opt.style.background = isSel ? '#E8E2D8' : 'transparent'; };
+          'padding:5px 10px;font-family:inherit;font-size:12px;color:'+cssVar('--ink')+';cursor:pointer;text-align:left;'+
+          'background:'+(isSel ? cssVar('--active') : 'transparent')+';'+(isSel ? 'font-weight:600;' : '');
+        opt.onmouseenter = function () { opt.style.background = cssVar('--hover'); };
+        opt.onmouseleave = function () { opt.style.background = isSel ? cssVar('--active') : 'transparent'; };
         var optAv = document.createElement('span');
         optAv.style.cssText = 'width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;'+
           'justify-content:center;font-size:7px;font-weight:700;flex-shrink:0;'+
-          'background:'+(isUnit ? '#D4EDE2' : '#E8E2D8')+';color:'+(isUnit ? '#1B6B4A' : '#6B6560')+';';
+          'background:'+(isUnit ? cssVar('--avatar-unit-bg') : cssVar('--active'))+';color:'+(isUnit ? cssVar('--avatar-unit-ink') : cssVar('--avatar-person-ink'))+';';
         optAv.textContent = a.initials;
         var optNm = document.createElement('span');
         optNm.textContent = a.last;
@@ -192,9 +192,8 @@
 
       var cal = document.createElement('div');
       cal.className = 'po-task-cal';
-      var rect = btn.getBoundingClientRect();
-      cal.style.cssText = 'position:fixed;top:'+(rect.bottom+4)+'px;left:'+rect.left+'px;z-index:700;'+
-        'background:#FDFBF6;border:1px solid #DDD5C5;border-radius:10px;'+
+      cal.style.cssText = 'position:fixed;z-index:700;'+
+        'background:'+cssVar('--surface')+';border:1px solid '+cssVar('--line')+';border-radius:10px;'+
         'box-shadow:0 8px 24px rgba(0,0,0,0.14);padding:12px;min-width:224px;user-select:none;';
 
       function drawCal() {
@@ -204,8 +203,8 @@
         head.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;';
         function navBtn(ch) {
           var b = document.createElement('button'); b.type = 'button'; b.textContent = ch;
-          b.style.cssText = 'background:transparent;border:none;cursor:pointer;font-size:17px;padding:1px 7px;color:#6B6560;border-radius:4px;line-height:1;';
-          b.onmouseenter = function () { b.style.background = '#F0EDE6'; };
+          b.style.cssText = 'background:transparent;border:none;cursor:pointer;font-size:17px;padding:1px 7px;color:'+cssVar('--avatar-person-ink')+';border-radius:4px;line-height:1;';
+          b.onmouseenter = function () { b.style.background = cssVar('--hover'); };
           b.onmouseleave = function () { b.style.background = 'transparent'; };
           return b;
         }
@@ -213,7 +212,7 @@
         prev.addEventListener('click', function (ev) { ev.stopPropagation(); vM--; if (vM<0){vM=11;vY--;} drawCal(); });
         next.addEventListener('click', function (ev) { ev.stopPropagation(); vM++; if (vM>11){vM=0;vY++;} drawCal(); });
         var lbl = document.createElement('span');
-        lbl.style.cssText = 'font-size:12px;font-weight:600;color:#1F1D1A;';
+        lbl.style.cssText = 'font-size:12px;font-weight:600;color:'+cssVar('--ink')+';';
         lbl.textContent = MONTHS_FULL[vM] + ' ' + vY;
         head.appendChild(prev); head.appendChild(lbl); head.appendChild(next);
         cal.appendChild(head);
@@ -223,7 +222,7 @@
         grid.style.cssText = 'display:grid;grid-template-columns:repeat(7,1fr);gap:1px;';
         ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].forEach(function (d) {
           var h = document.createElement('div');
-          h.style.cssText = 'font-size:9px;font-weight:600;color:#8F897E;text-align:center;padding-bottom:4px;';
+          h.style.cssText = 'font-size:9px;font-weight:600;color:'+cssVar('--ink-soft')+';text-align:center;padding-bottom:4px;';
           h.textContent = d; grid.appendChild(h);
         });
 
@@ -241,11 +240,11 @@
             var cell = document.createElement('button'); cell.type = 'button'; cell.textContent = day;
             cell.style.cssText = 'border:none;border-radius:50%;width:28px;height:28px;font-family:inherit;'+
               'font-size:11px;text-align:center;cursor:pointer;display:flex;align-items:center;justify-content:center;'+
-              'background:'+(isSel?'#1F1D1A':'transparent')+';'+
-              'color:'+(isSel?'#FDFBF6':isToday?'#8B2635':'#1F1D1A')+';'+
+              'background:'+(isSel?cssVar('--ink'):'transparent')+';'+
+              'color:'+(isSel?cssVar('--surface'):isToday?cssVar('--danger'):cssVar('--ink'))+';'+
               'font-weight:'+(isToday||isSel?'700':'400')+';';
             if (!isSel) {
-              cell.onmouseenter = function(){cell.style.background='#F0EDE6';};
+              cell.onmouseenter = function(){cell.style.background=cssVar('--hover');};
               cell.onmouseleave = function(){cell.style.background='transparent';};
             }
             cell.addEventListener('click', function (ev) {
@@ -263,7 +262,7 @@
         /* clear */
         var clr = document.createElement('button'); clr.type = 'button'; clr.textContent = 'Очистить дату';
         clr.style.cssText = 'display:block;width:100%;margin-top:8px;background:transparent;border:none;'+
-          'border-top:1px solid #EDE8DF;padding:6px 0 0;font-family:inherit;font-size:11px;color:#8B2635;cursor:pointer;text-align:center;';
+          'border-top:1px solid '+cssVar('--line-soft')+';padding:6px 0 0;font-family:inherit;font-size:11px;color:'+cssVar('--danger')+';cursor:pointer;text-align:center;';
         clr.onmouseenter = function(){clr.style.opacity='0.7';};
         clr.onmouseleave = function(){clr.style.opacity='1';};
         clr.addEventListener('click', function (ev) {
@@ -278,6 +277,7 @@
 
       drawCal();
       document.body.appendChild(cal);
+      window.positionDropdownBelow(cal, btn);
       function closeC(ev) {
         if (!cal.contains(ev.target) && ev.target !== btn) { cal.remove(); document.removeEventListener('click', closeC, true); }
       }
@@ -353,39 +353,17 @@
       cb.textContent = st.title; cb.title = 'Изменить статус';
       cb.addEventListener('click', function (e) {
         e.stopPropagation();
-        var existingDrop = document.querySelector('.po-task-st-drop');
-        if (existingDrop) {
-          var isOurs = existingDrop._ownerCb === cb;
-          existingDrop.remove();
-          if (isOurs) return;
-        }
-        var drop = document.createElement('ul');
-        drop.className = 'po-task-st-drop';
-        drop._ownerCb = cb;
-        TASK_ST.forEach(function (s) {
-          var opt = document.createElement('li');
-          opt.className = 'po-task-st-opt' + (s.v === (t.status || 'not_started') ? ' current' : '');
-          opt.dataset.st = s.v;
-          opt.textContent = s.title;
-          opt.addEventListener('click', function (ev) {
-            ev.stopPropagation();
-            var a = getTasks(pid);
-            if (a[i]) { a[i].status = s.v; a[i].updatedAt = new Date().toISOString(); }
-            setTasks(pid, a);
-            renderTasks(pid, body, proj);
-            var pr = proj.closest('.program');
-            if (pr) updateProgProgress(pr);
-          });
-          drop.appendChild(opt);
+        var statusItems = TASK_ST.map(function (s) {
+          return { value: s.v, label: s.title };
         });
-        var rect = cb.getBoundingClientRect();
-        drop.style.top = (rect.bottom + 4) + 'px';
-        drop.style.left = rect.left + 'px';
-        document.body.appendChild(drop);
-        function closeDrop(ev) {
-          if (!drop.contains(ev.target) && ev.target !== cb) { drop.remove(); document.removeEventListener('click', closeDrop, true); }
-        }
-        setTimeout(function () { document.addEventListener('click', closeDrop, true); }, 0);
+        window.createDropdown(cb, statusItems, function (val) {
+          var a = getTasks(pid);
+          if (a[i]) { a[i].status = val; a[i].updatedAt = new Date().toISOString(); }
+          setTasks(pid, a);
+          renderTasks(pid, body, proj);
+          var pr = proj.closest('.program');
+          if (pr) updateProgProgress(pr);
+        }, { currentValue: t.status || 'not_started' });
       });
 
       var bd = document.createElement('div');

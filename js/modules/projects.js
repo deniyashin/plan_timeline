@@ -29,7 +29,7 @@
     li.setAttribute('data-assignees-anchor', '');
     li.setAttribute('data-assignees-owner', '');
     li.setAttribute('data-assignees-methodologist', '');
-    var color = d.color || '#5A554C';
+    var color = d.color || cssVar('--ch-out');
     li.innerHTML =
       '<button class="program-head" type="button" aria-expanded="false">' +
         '<span class="program-accent" style="background:' + color + '"></span>' +
@@ -147,7 +147,7 @@
     if (!id)   { idEl.focus();   return; }
     /* check uniqueness */
     if (document.querySelector('.program[data-program-id="' + id + '"]')) {
-      idEl.style.borderColor = '#8B2635';
+      idEl.style.borderColor = cssVar('--danger');
       idEl.title = 'ID уже существует'; idEl.focus(); return;
     }
     idEl.style.borderColor = '';
@@ -155,7 +155,7 @@
     var sec = _pmTargetSec;
     _closePmModal();
 
-    var d = { id: id, name: name, contour: contour, source: 'U', color: '#5A554C' };
+    var d = { id: id, name: name, contour: contour, source: 'U', color: cssVar('--ch-out') };
     var li = buildProgramLi(d);
     var progList = sec.querySelector('.program-list');
     if (progList) progList.appendChild(li);
@@ -213,7 +213,7 @@
     li.setAttribute('data-source', d.source || 'U');
     li.setAttribute('data-contour', d.contour || '');
     li.setAttribute('data-change', '');
-    var color = d.accentColor || '#8B2635';
+    var color = d.accentColor || cssVar('--danger');
     li.innerHTML =
       '<button class="project-head" type="button" aria-expanded="false">' +
         '<span class="project-accent" style="background:' + color + '"></span>' +
@@ -244,7 +244,7 @@
       var projList = prog.querySelector('.project-list');
       if (!projList) return;
       var accentEl = prog.querySelector('.program-accent');
-      var accentColor = accentEl ? accentEl.style.background : '#8B2635';
+      var accentColor = accentEl ? accentEl.style.background : cssVar('--danger');
       var baseIdx = projList.querySelectorAll('.project').length;
       (np[progId] || []).forEach(function (d, i) {
         d.idx = baseIdx + i + 1;
@@ -321,7 +321,7 @@
     var progId = prog.getAttribute('data-program-id') || '';
     var source = (progId || 'U').charAt(0);
     var accentEl = prog.querySelector('.program-accent');
-    var accentColor = accentEl ? accentEl.style.background : '#8B2635';
+    var accentColor = accentEl ? accentEl.style.background : cssVar('--danger');
     var projList = prog.querySelector('.project-list');
     var idx = projList ? projList.querySelectorAll('.project').length + 1 : 1;
 

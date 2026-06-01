@@ -259,7 +259,7 @@
       svgParts.push('<text x="' + x + '" y="32" text-anchor="middle" font-family="Geist Mono, monospace" font-size="11" font-weight="600" fill="' + CHANGE_COLORS[g] + '">' + headers[i] + '</text>');
       if (i > 0) {
         const dx = padLeft + i * colWidth;
-        svgParts.push('<line x1="' + dx + '" y1="20" x2="' + dx + '" y2="' + (height-10) + '" stroke="#E8E1D2" stroke-width="1" stroke-dasharray="2 3"/>');
+        svgParts.push('<line x1="' + dx + '" y1="20" x2="' + dx + '" y2="' + (height-10) + '" stroke="' + cssVar('--line-soft') + '" stroke-width="1" stroke-dasharray="2 3"/>');
       }
     });
     Object.keys(DEPS).forEach(targetPid => {
@@ -289,8 +289,8 @@
     });
     svgParts.push('</svg>');
     const legendHtml = '<div class="graph-legend">' +
-      '<span class="graph-legend-item"><span class="graph-legend-line" style="background:#2F5233"></span>подтверждено</span>' +
-      '<span class="graph-legend-item"><span class="graph-legend-line" style="background:repeating-linear-gradient(90deg,#8E5C0E,#8E5C0E 3px,transparent 3px,transparent 6px)"></span>вероятно</span>' +
+      '<span class="graph-legend-item"><span class="graph-legend-line" style="background:' + cssVar('--status-green-ink') + '"></span>подтверждено</span>' +
+      '<span class="graph-legend-item"><span class="graph-legend-line" style="background:repeating-linear-gradient(90deg,' + cssVar('--status-amber-ink') + ',' + cssVar('--status-amber-ink') + ' 3px,transparent 3px,transparent 6px)"></span>вероятно</span>' +
       '<span class="graph-legend-item" style="opacity:0.7">Колонки = изменения. Стрелка идёт от того, что должно быть готово, к тому, что от него зависит.</span>' +
     '</div>';
     graph.innerHTML = legendHtml + svgParts.join('');
