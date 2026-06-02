@@ -29,7 +29,7 @@
     li.setAttribute('data-assignees-anchor', '');
     li.setAttribute('data-assignees-owner', '');
     li.setAttribute('data-assignees-methodologist', '');
-    var color = d.color || cssVar('--ch-out');
+    var color = d.color || cssVar('--ink-muted');
     li.innerHTML =
       '<button class="program-head" type="button" aria-expanded="false">' +
         '<span class="program-accent" style="background:' + color + '"></span>' +
@@ -155,7 +155,7 @@
     var sec = _pmTargetSec;
     _closePmModal();
 
-    var d = { id: id, name: name, contour: contour, source: 'U', color: cssVar('--ch-out') };
+    var d = { id: id, name: name, contour: contour, source: 'U', color: cssVar('--ink-muted') };
     var li = buildProgramLi(d);
     var progList = sec.querySelector('.program-list');
     if (progList) progList.appendChild(li);

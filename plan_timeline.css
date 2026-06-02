@@ -928,6 +928,11 @@
   }
   .filter-reset:hover { color: var(--ink); }
 
+  #qv-reset     { display: none; }
+  #filter-reset { display: none; }
+  body[data-quickview] #qv-reset   { display: inline-block; }
+  body.has-filter      #filter-reset { display: inline-block; }
+
   /* ===== Timeline ===== */
   .timeline {
     max-width: 1280px;

@@ -245,7 +245,7 @@
         const a = ASSIGNEES[v];
         const r = roleCounts[v] || { anchor: 0, owner: 0, methodologist: 0 };
         const total = r.anchor + r.owner + r.methodologist;
-        if (a) btn.setAttribute('title', `${a.full} · ${a.role} · Якорь: ${r.anchor} · Владелец: ${r.owner} · Методолог: ${r.methodologist} · Итого: ${total}`);
+        if (a) btn.setAttribute('title', `${a.full} · ${a.role} · Инициатор: ${r.anchor} · Владелец: ${r.owner} · Методолог: ${r.methodologist} · Итого: ${total}`);
       }
     });
   }

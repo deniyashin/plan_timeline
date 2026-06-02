@@ -158,11 +158,19 @@
   }
 
   function loadRemote() {
-    return fetch('https://deniyashin.github.io/plan_timeline/data.json?v=' + Date.now(), { cache: 'no-cache' })
+    return fetch('https://deniyashin.github.io/plan_timeline/data.json')
       .then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (d) { if (d) applyData(d); })
+      .then(function (d) {
+        if (d) {
+          applyData(d);
+          var errEl = document.getElementById('po-load-error');
+          if (errEl) { errEl.hidden = true; }
+        }
+      })
       .catch(function (err) {
         if (window.showToast) window.showToast('Не удалось загрузить данные' + (err && err.message ? ': ' + err.message : ''), 'error');
+        var errEl = document.getElementById('po-load-error');
+        if (errEl) { errEl.hidden = false; }
       });
   }
 

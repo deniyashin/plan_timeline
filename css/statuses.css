@@ -23,19 +23,19 @@
 }
 .program-flag {
   font-family: "Geist Mono", monospace;
-  font-size: 9.5px;
+  font-size: var(--text-xs);
   font-weight: 600;
   letter-spacing: 0.04em;
   padding: 2px 7px;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   white-space: nowrap;
   text-transform: uppercase;
   border: 1px solid transparent;
 }
 .flag-needs-clar     { background: var(--status-red-bg);   color: var(--status-red-ink);   border-color: var(--status-red-bg); }
 .flag-needs-rework   { background: var(--status-amber-bg); color: var(--status-amber-ink); border-color: var(--status-amber-bg); }
-.flag-no-owner       { background: var(--bg-alt); color: var(--ink-muted); }
-.flag-needs-decomp   { background: #E8EAF6; color: #3F51B5; border-color: #C5CAE9; }
+.flag-no-owner       { background: var(--bg); color: var(--ink-muted); }
+.flag-needs-decomp   { background: var(--task-draft-bg); color: var(--task-draft-ink); border-color: var(--line); }
 
 /* Make the flag block hidden in brief mode (avoid header noise) — show in working/detailed/edit */
 body[data-mode="brief"] .program-flags { display: none; }
@@ -72,8 +72,8 @@ body[data-mode="brief"] .program-flags { display: none; }
   padding: 3px 8px;
   min-width: 110px;
   text-align: center;
-  background: var(--bg-alt);
-  border-radius: 3px;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
   color: var(--ink);
   white-space: nowrap;
   cursor: pointer;
