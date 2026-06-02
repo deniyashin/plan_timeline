@@ -36,7 +36,7 @@
   }
   .po-pub-stamp-label {
     display: block;
-    font-size: 9px;
+    font-size: var(--text-xs);
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--ink-soft);
@@ -70,7 +70,7 @@
     color: var(--ink-muted);
   }
   .hero-lede {
-    font-size: 17px;
+    font-size: var(--text-base);
     line-height: 1.55;
     color: var(--ink-muted);
     max-width: 680px;
@@ -85,7 +85,7 @@
   }
   .section-kicker {
     font-family: "Geist Mono", monospace;
-    font-size: 10px;
+    font-size: var(--text-xs);
     letter-spacing: 0.22em;
     color: var(--ink-soft);
     text-transform: uppercase;
@@ -93,7 +93,7 @@
   }
   .legend-title {
     font-family: "Fraunces", serif;
-    font-size: 19px;
+    font-size: var(--text-xl);
     font-weight: 500;
     margin-bottom: 18px;
     letter-spacing: -0.01em;
@@ -110,7 +110,7 @@
     align-items: center;
     gap: 10px;
     padding: 8px 12px;
-    border-radius: var(--radius);
+    border-radius: var(--radius-md);
     cursor: pointer;
     transition: background 0.15s;
     border: 1px solid transparent;
@@ -122,7 +122,7 @@
   }
   .legend-swatch {
     width: 14px; height: 14px;
-    border-radius: 3px;
+    border-radius: var(--radius-sm);
     flex-shrink: 0;
   }
   .legend-code {

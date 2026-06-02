@@ -6,7 +6,7 @@
   border-radius: 6px;
   overflow: hidden;
   margin: 0;
-  background: var(--bg-alt);
+  background: var(--bg);
 }
 .mode-btn {
   font-family: "Geist Mono", monospace;
@@ -60,7 +60,7 @@
 .hero-status-value .pill {
   display: inline-block;
   padding: 2px 9px;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   background: #B8750A;
   color: #FDFBF6;
   font-size: 11px;
@@ -94,7 +94,7 @@
   border: 1px solid var(--line);
   color: var(--ink-muted);
   padding: 4px 9px;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all 0.12s;
 }
@@ -104,6 +104,10 @@
   color: var(--bg);
   border-color: var(--ink);
 }
+
+/* Show qv-reset only when a quick-view is active */
+#qv-reset { display: none; }
+body[data-quickview] #qv-reset { display: inline-block; }
 
 /* New card fields */
 .card-summary-grid {
@@ -142,7 +146,7 @@
 .status-pill {
   display: inline-block;
   padding: 2px 8px;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   font-size: 11px;
   font-weight: 600;
   font-family: "Geist Mono", monospace;
@@ -285,7 +289,7 @@ body[data-mode="projects"] .direction-separator {
 .direction-separator .dir-dot {
   width: 8px;
   height: 8px;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   flex-shrink: 0;
 }
 .direction-separator .dir-label {
@@ -403,7 +407,7 @@ body[data-mode="edit"][data-base-mode="projects"] .changes-panel { display: none
   flex-shrink: 0;
   line-height: 1;
   transition: color 0.12s;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   margin-left: 4px;
 }
 body[data-mode="edit"] .po-delete-btn { display: inline-flex; align-items: center; }
@@ -416,13 +420,13 @@ body[data-mode="edit"] .po-delete-btn:hover { color: var(--danger) !important; b
   display: inline-block;
   margin-top: 12px;
   padding: 4px 10px;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   font-family: "Geist Mono", monospace;
   font-size: 10.5px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   font-weight: 600;
-  background: var(--bg-alt);
+  background: var(--bg);
   color: var(--ink-muted);
   border: 1px solid var(--line);
 }
@@ -569,12 +573,12 @@ body[data-mode="edit"] .status-chip::after {
   align-items: center;
   gap: 8px;
   padding: 7px 10px;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-size: 13px;
   transition: background 0.1s;
 }
-.status-option:hover { background: var(--bg-alt); }
+.status-option:hover { background: var(--bg); }
 .status-option .status-dot {
   width: 8px; height: 8px;
   border-radius: 50%;

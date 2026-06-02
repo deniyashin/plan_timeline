@@ -31,3 +31,46 @@
 .po-toast-error   { background: var(--status-red-bg);    color: var(--status-red-ink); }
 .po-toast-success { background: var(--status-green-bg);  color: var(--status-green-ink); }
 .po-toast-info    { background: var(--surface); color: var(--ink); border: 1px solid var(--line); }
+
+/* ── Disabled state ────────────────────────────────────────────────── */
+[disabled],
+.is-disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+button[disabled],
+.po-btn[disabled],
+.ghost-btn[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ── Keyboard focus (using --focus-ring token from base.css:44) ─────── */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* Для элементов с уже заданным box-shadow — добавить к нему */
+.ghost-btn:focus-visible,
+.po-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring), var(--shadow-sm);
+}
+
+/* ── Page-level load error ─────────────────────────────────────────── */
+.po-load-error {
+  position: fixed; bottom: var(--space-4); left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: var(--space-2);
+  background: var(--status-red-bg); color: var(--status-red-ink);
+  border: 1px solid var(--status-red-ink);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  z-index: 8000;
+  box-shadow: var(--shadow-md);
+}
+.po-load-error[hidden] { display: none; }
+.po-load-error-icon { font-weight: 700; }

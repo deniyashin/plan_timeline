@@ -6,7 +6,7 @@
     gap: 6px;
     padding: 1px 8px 1px 1px;
     border-radius: 100px;
-    background: var(--bg-alt);
+    background: var(--bg);
     border: 1px solid var(--line-soft);
     font-size: 11.5px;
     line-height: 1.3;
@@ -49,7 +49,7 @@
     font-weight: 400;
   }
   .assignee-chip-unit .assignee-init {
-    background: var(--bg-alt);
+    background: var(--bg);
     color: var(--ink);
     border: 1px solid var(--line);
   }
@@ -82,7 +82,7 @@
     align-items: center;
     justify-content: center;
     width: 16px; height: 16px;
-    border-radius: 3px;
+    border-radius: var(--radius-sm);
     background: var(--ink);
     color: var(--bg);
     font-family: "Geist Mono", monospace;
@@ -99,7 +99,7 @@
     padding: 14px 16px;
     background: var(--surface);
     border: 1px solid var(--line-soft);
-    border-radius: var(--radius);
+    border-radius: var(--radius-md);
   }
   .field-label-main {
     font-size: 10.5px;
@@ -174,7 +174,7 @@
     cursor: pointer;
     padding: 0 5px;
     line-height: 1;
-    border-radius: 3px;
+    border-radius: var(--radius-sm);
     transition: all 0.1s;
   }
   .assignee-remove:hover {
@@ -188,7 +188,7 @@
     background: transparent;
     border: 1px dashed var(--line);
     padding: 3px 9px;
-    border-radius: 3px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
     transition: all 0.12s;
   }
@@ -202,7 +202,7 @@
     left: 0; top: calc(100% + 4px);
     background: var(--surface);
     border: 1px solid var(--line);
-    border-radius: var(--radius);
+    border-radius: var(--radius-md);
     box-shadow: 0 8px 24px rgba(31,29,26,0.12);
     z-index: 60;
     padding: 4px;
@@ -221,7 +221,7 @@
     cursor: pointer;
     transition: background 0.1s;
   }
-  .assignee-option:hover { background: var(--bg-alt); }
+  .assignee-option:hover { background: var(--bg); }
   .assignee-option-sep {
     border-top: 1px solid var(--line-soft);
     margin: 4px 10px;
@@ -246,7 +246,7 @@
     border: 1px dashed var(--line);
   }
   .assignee-option-unit .assignee-option-init {
-    background: var(--bg-alt);
+    background: var(--bg);
     color: var(--ink);
     border: 1px solid var(--line);
   }

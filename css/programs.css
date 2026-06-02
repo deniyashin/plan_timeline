@@ -1,11 +1,11 @@
-﻿  /* ===== Programs ===== */
+  /* ===== Programs ===== */
   .program-list, .project-list, .task-list { list-style: none; }
   .program-list { display: flex; flex-direction: column; gap: 10px; }
 
   .program {
     background: var(--surface);
     border: 1px solid var(--line-soft);
-    border-radius: var(--radius);
+    border-radius: var(--radius-md);
     transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
     overflow: hidden;
   }
@@ -39,12 +39,12 @@
   .program-kind,
   .project-kind {
     font-family: "Geist Mono", monospace;
-    font-size: 9.5px;
+    font-size: var(--text-xs);
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--ink-soft);
     padding: 3px 6px;
-    border-radius: 3px;
+    border-radius: var(--radius-sm);
     flex-shrink: 0;
     font-weight: 500;
   }
@@ -57,29 +57,29 @@
     background: transparent;
     border: 1px solid var(--line);
     color: var(--ink-soft);
-    font-size: 9px;
+    font-size: var(--text-xs);
   }
   .contour-chip {
     font-family: "Geist Mono", monospace;
-    font-size: 10px;
+    font-size: var(--text-xs);
     font-weight: 600;
     letter-spacing: 0.08em;
     color: var(--ink-muted);
-    background: var(--bg-alt);
+    background: var(--bg);
     padding: 3px 6px;
-    border-radius: 3px;
+    border-radius: var(--radius-sm);
     flex-shrink: 0;
     min-width: 36px;
     text-align: center;
   }
   .contour-chip-lg {
-    font-size: 11px;
+    font-size: var(--text-xs);
     padding: 4px 7px;
     min-width: 40px;
   }
   .src-tag {
     font-family: "Geist Mono", monospace;
-    font-size: 9px;
+    font-size: var(--text-xs);
     font-weight: 600;
     color: var(--ink-soft);
     border: 1px solid var(--line);
@@ -87,7 +87,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 3px;
+    border-radius: var(--radius-sm);
     flex-shrink: 0;
   }
   .program-name {
@@ -102,19 +102,19 @@
   }
   .program-id-mono {
     font-family: "Geist Mono", monospace;
-    font-size: 11px;
+    font-size: var(--text-xs);
     color: var(--ink-soft);
     letter-spacing: 0.04em;
     flex-shrink: 0;
   }
   .project-count {
     font-family: "Geist Mono", monospace;
-    font-size: 11px;
+    font-size: var(--text-xs);
     font-weight: 600;
     color: var(--ink);
-    background: var(--bg-alt);
+    background: var(--bg);
     padding: 2px 8px;
-    border-radius: 3px;
+    border-radius: var(--radius-sm);
     flex-shrink: 0;
     min-width: 26px;
     text-align: center;
@@ -152,7 +152,7 @@
   /* ===== Fields (shared) ===== */
   .field-label {
     font-family: "Geist Mono", monospace;
-    font-size: 10px;
+    font-size: var(--text-xs);
     letter-spacing: 0.16em;
     color: var(--ink-soft);
     text-transform: uppercase;
@@ -160,7 +160,7 @@
     margin-bottom: 4px;
   }
   .field-value {
-    font-size: 14px;
+    font-size: var(--text-base);
     color: var(--ink);
     line-height: 1.55;
   }
@@ -172,7 +172,7 @@
   }
   .field-source .field-value {
     color: var(--ink-muted);
-    font-size: 13px;
+    font-size: var(--text-sm);
     font-style: italic;
     line-height: 1.5;
   }
@@ -187,7 +187,7 @@
   }
   .projects-header-label {
     font-family: "Geist Mono", monospace;
-    font-size: 10px;
+    font-size: var(--text-xs);
     letter-spacing: 0.2em;
     color: var(--ink-soft);
     text-transform: uppercase;
@@ -195,12 +195,12 @@
   }
   .projects-header-count {
     font-family: "Geist Mono", monospace;
-    font-size: 11px;
+    font-size: var(--text-xs);
     font-weight: 600;
     color: var(--ink);
-    background: var(--bg-alt);
+    background: var(--bg);
     padding: 2px 7px;
-    border-radius: 3px;
+    border-radius: var(--radius-sm);
   }
   .project-list {
     list-style: none;
@@ -212,7 +212,7 @@
     counter-reset: project-idx;
   }
   .project {
-    background: var(--bg-alt);
+    background: var(--bg);
     border: 1px solid transparent;
     border-radius: var(--radius-sm);
     transition: background 0.12s, border-color 0.12s;
@@ -242,12 +242,12 @@
     flex-shrink: 0;
     width: 3px;
     height: 22px;
-    border-radius: 2px;
+    border-radius: var(--radius-sm);
     margin-right: 2px;
   }
   .project-index {
     font-family: "Geist Mono", monospace;
-    font-size: 10.5px;
+    font-size: var(--text-xs);
     font-weight: 500;
     color: var(--ink-soft);
     min-width: 20px;
@@ -264,14 +264,14 @@
   }
   .project-id-mono {
     font-family: "Geist Mono", monospace;
-    font-size: 10px;
+    font-size: var(--text-xs);
     color: var(--ink-soft);
     letter-spacing: 0.04em;
     flex-shrink: 0;
   }
   .task-badge {
     font-family: "Geist Mono", monospace;
-    font-size: 10px;
+    font-size: var(--text-xs);
     font-weight: 600;
     color: var(--ink);
     background: var(--surface);
@@ -294,7 +294,7 @@
   .tasks-wrap {
     background: var(--surface);
     border: 1px solid var(--line-soft);
-    border-radius: var(--radius);
+    border-radius: var(--radius-md);
     padding: 14px 16px;
   }
   .tasks-empty {
@@ -303,14 +303,14 @@
   }
   .tasks-heading {
     font-family: "Geist Mono", monospace;
-    font-size: 10px;
+    font-size: var(--text-xs);
     letter-spacing: 0.16em;
     color: var(--ink-soft);
     text-transform: uppercase;
     margin-bottom: 10px;
   }
   .tasks-empty-note {
-    font-size: 13px;
+    font-size: var(--text-sm);
     color: var(--ink-soft);
     font-style: italic;
   }
@@ -323,7 +323,7 @@
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    font-size: 13px;
+    font-size: var(--text-sm);
     line-height: 1.5;
     padding-left: 14px;
     position: relative;
@@ -337,7 +337,7 @@
   }
   .task-id {
     font-family: "Geist Mono", monospace;
-    font-size: 10px;
+    font-size: var(--text-xs);
     color: var(--ink-soft);
     letter-spacing: 0.03em;
     flex-shrink: 0;
@@ -388,4 +388,3 @@
     .chev { display: none; }
     * { box-shadow: none !important; }
   }
-

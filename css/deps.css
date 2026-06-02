@@ -11,17 +11,17 @@
   align-items: center;
   gap: 8px;
   padding: 3px 6px;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: background 0.1s;
   border: 1px solid transparent;
 }
-.disputed-item:hover { background: var(--bg-alt); border-color: var(--line-soft); }
+.disputed-item:hover { background: var(--bg); border-color: var(--line-soft); }
 .disputed-item.active { background: var(--ink); color: var(--bg); }
 .disputed-item.active .disputed-num { color: var(--bg); }
 .disputed-dot {
   width: 9px; height: 9px;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   flex-shrink: 0;
 }
 .disputed-dot-clar   { background: var(--status-red-ink); }
@@ -95,7 +95,7 @@ body.has-dispute-filter .program:not(.dispute-match) { display: none; }
   font-size: 13px;
   color: var(--ink-muted);
   border-bottom: 1px dashed var(--line-soft);
-  background: var(--bg-alt);
+  background: var(--bg);
 }
 .deps-map-body {
   flex: 1;
@@ -119,9 +119,9 @@ body.has-dispute-filter .program:not(.dispute-match) { display: none; }
 .deps-map-pid {
   font-family: "Geist Mono", monospace;
   font-size: 11px;
-  background: var(--bg-alt);
+  background: var(--bg);
   padding: 3px 8px;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   font-weight: 600;
   display: inline-block;
   width: fit-content;
@@ -151,7 +151,7 @@ body.has-dispute-filter .program:not(.dispute-match) { display: none; }
   background: var(--surface);
   border: 1px solid var(--line-soft);
   padding: 2px 7px;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   color: var(--ink-muted);
 }
 .deps-map-ref-confirmed { border-color: #B8C6BB; background: var(--status-green-bg); color: var(--status-green-ink); }
@@ -224,7 +224,7 @@ body[data-mode="working"] .field-brief.is-empty {
   align-items: center;
   gap: 5px;
   padding: 3px 8px;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   background: var(--surface);
   border: 1px solid var(--line-soft);
   font-family: "Geist Mono", monospace;
@@ -410,7 +410,7 @@ body[data-mode="brief"] .project-deps-block { display: none; }
 
 /* ---- Task badge: empty state cleaner ---- */
 .task-badge-empty {
-  background: var(--bg-alt) !important;
+  background: var(--bg) !important;
   color: var(--ink-soft) !important;
   font-style: normal;
   font-size: 10px;

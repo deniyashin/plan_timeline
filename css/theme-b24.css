@@ -5,20 +5,17 @@
 /* ── 1. Color tokens ── */
 :root {
   --bg:            #f5f7fa;
-  --bg-alt:        #f8fafc;
   --surface:       #ffffff;
   --ink:           #172b4d;
   --ink-muted:     #6b778c;
   --ink-soft:      #8c98a8;
   --line:          #dfe3ea;
   --line-soft:     #edf0f5;
-  --accent:        #2fc6f6;
   --b24-blue:      #2fc6f6;
   --b24-blue-dark: #0b8fc9;
   --b24-green:     #9dcf00;
   --b24-orange:    #ffb946;
   --b24-red:       #ff5752;
-  --radius:        10px;
   --shadow-sm:     0 1px 2px rgba(23,43,77,.08);
   --shadow-md:     0 4px 14px rgba(23,43,77,.08);
 }
@@ -130,7 +127,7 @@ body {
   margin-top: 16px;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 10px;
-  background: var(--bg-alt);
+  background: var(--bg);
   border: 1px solid var(--line);
   border-radius: 12px;
   padding: 12px;
@@ -220,7 +217,7 @@ body {
   transition: background 0.12s, color 0.12s, border-color 0.12s;
   flex-shrink: 0;
 }
-.nav-search-toggle:hover { background: var(--bg-alt); color: var(--ink); border-color: var(--b24-blue); }
+.nav-search-toggle:hover { background: var(--bg); color: var(--ink); border-color: var(--b24-blue); }
 .nav-search-wrap {
   display: none;
   align-items: center;
@@ -241,7 +238,7 @@ body.nav-search-open #btn-deps-map { display: none !important; }
   line-height: 1;
   flex-shrink: 0;
 }
-.nav-search-close:hover { color: var(--ink); background: var(--bg-alt); }
+.nav-search-close:hover { color: var(--ink); background: var(--bg); }
 /* ── Search in nav bar ── */
 .nav-search {
   flex: none !important;
@@ -422,14 +419,14 @@ body[data-mode="edit"] .po-proj-comment {
 /* ── 18. Search highlight ── */
 mark.search-hl {
   background: #fff09e;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   padding: 0 1px;
   color: inherit;
 }
 mark.search-hl.search-hl-active {
   background: #ffb946;
   outline: 2px solid #ffb946;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
 }
 .search-nav-btn {
   flex-shrink: 0;
@@ -443,7 +440,7 @@ mark.search-hl.search-hl-active {
   font-family: inherit;
   line-height: 1;
 }
-.search-nav-btn:hover { background: var(--bg-alt); color: var(--ink); }
+.search-nav-btn:hover { background: var(--bg); color: var(--ink); }
 .search-nav-count {
   font-size: 11px;
   color: var(--ink-muted);

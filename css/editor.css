@@ -94,7 +94,7 @@ body[data-mode="edit"] { padding-bottom: 56px; }
 
 /* === Editable text fields === */
 body[data-mode="edit"] .po-editable {
-  outline: 1px dashed var(--line); border-radius: 3px;
+  outline: 1px dashed var(--line); border-radius: var(--radius-sm);
   padding: 2px 5px; cursor: text; transition: outline 0.1s;
 }
 body[data-mode="edit"] .po-editable:hover { outline-color: var(--ink-soft); }
@@ -285,7 +285,7 @@ body[data-mode="edit"] .po-task-del:hover { color: var(--danger) !important; }
 .po-task-add {
   display: none; margin-top: 6px; font-family: inherit; font-size: 11px; color: var(--ink-muted);
   background: transparent; border: 1px dashed var(--line); padding: 4px 10px;
-  border-radius: 3px; cursor: pointer; width: 100%; text-align: left; transition: all 0.12s;
+  border-radius: var(--radius-sm); cursor: pointer; width: 100%; text-align: left; transition: all 0.12s;
 }
 .po-task-add:hover { border-color: var(--ink); color: var(--ink); border-style: solid; }
 body[data-mode="edit"] .po-task-add { display: block; }
@@ -326,7 +326,7 @@ body[data-mode="edit"] .po-task-add { display: block; }
 .pe-modal-hint { font-size: 12px; color: var(--ink-soft); }
 .pe-close-btn {
   background: transparent; border: none; cursor: pointer;
-  font-size: 18px; color: var(--ink-soft); padding: 2px 6px; border-radius: 3px;
+  font-size: 18px; color: var(--ink-soft); padding: 2px 6px; border-radius: var(--radius-sm);
   line-height: 1; transition: color 0.1s;
 }
 .pe-close-btn:hover { color: var(--ink); }
@@ -345,7 +345,7 @@ body[data-mode="edit"] .po-task-add { display: block; }
 .pe-table tr:hover td { background: rgba(31,29,26,0.02); }
 .pe-input {
   width: 100%; padding: 5px 8px; border: 1px solid var(--line-soft);
-  border-radius: 3px; font-family: inherit; font-size: 12.5px;
+  border-radius: var(--radius-sm); font-family: inherit; font-size: 12.5px;
   background: var(--bg); color: var(--ink); box-sizing: border-box;
   outline: none; transition: border-color 0.1s;
 }
@@ -356,7 +356,7 @@ body[data-mode="edit"] .po-task-add { display: block; }
 .pe-del-btn {
   background: transparent; border: none; cursor: pointer;
   color: var(--ink-soft); font-size: 13px; padding: 4px 6px;
-  border-radius: 3px; transition: color 0.1s, background 0.1s;
+  border-radius: var(--radius-sm); transition: color 0.1s, background 0.1s;
 }
 .pe-del-btn:hover { color: var(--danger, #8B2635); background: rgba(139,38,53,0.06); }
 .pe-add-btn {
@@ -386,10 +386,10 @@ body[data-mode="edit"] .po-task-add { display: block; }
 .pe-override-note {
   font-size: 11px; color: var(--ink-soft); font-style: italic;
 }
-.po-prog-bar { flex: 1; height: 3px; background: var(--status-neutral-bg); border-radius: 2px; overflow: hidden; }
-.po-prog-fill { height: 100%; border-radius: 2px; background: var(--status-green-ink); transition: width 0.4s; }
+.po-prog-bar { flex: 1; height: 3px; background: var(--status-neutral-bg); border-radius: var(--radius-sm); overflow: hidden; }
+.po-prog-fill { height: 100%; border-radius: var(--radius-sm); background: var(--status-green-ink); transition: width 0.4s; }
 .po-prog-lbl { font-family: "Geist Mono", monospace; font-size: 9.5px; color: var(--ink-soft); white-space: nowrap; flex-shrink: 0; }
 .po-proj-prog { display: inline-flex; align-items: center; gap: 5px; margin-left: 6px; flex-shrink: 0; }
-.po-proj-prog-bar { width: 36px; height: 3px; background: var(--status-neutral-bg); border-radius: 2px; overflow: hidden; }
-.po-proj-prog-fill { height: 100%; background: var(--status-green-ink); border-radius: 2px; transition: width 0.4s; }
+.po-proj-prog-bar { width: 36px; height: 3px; background: var(--status-neutral-bg); border-radius: var(--radius-sm); overflow: hidden; }
+.po-proj-prog-fill { height: 100%; background: var(--status-green-ink); border-radius: var(--radius-sm); transition: width 0.4s; }
 .po-proj-prog-lbl { font-family: "Geist Mono", monospace; font-size: 9px; color: var(--ink-soft); }
