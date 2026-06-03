@@ -1762,6 +1762,17 @@ body.po-dnd-active .po-proj-drop-zone { display: block !important; }
   background: rgba(31,29,26,0.04);
 }
 
+/* Edit+projects DnD: prevent text-selection that blocks drag, show grab cursor */
+body[data-mode="edit"][data-base-mode="projects"] .project[draggable="true"] {
+  cursor: grab;
+}
+body[data-mode="edit"][data-base-mode="projects"] .project[draggable="true"] * {
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: inherit;
+}
+body.po-dnd-active .project[draggable="true"] { cursor: grabbing; }
+
 /* Edit mode shows everything including admin */
 body[data-mode="edit"] {
   /* default — all visible */
@@ -3367,6 +3378,7 @@ body:not([data-mode="edit"]) .po-task-cb { pointer-events: none; cursor: default
 }
 .po-add-proj-btn:hover { background: #F5F1EA; border-color: #8F897E; color: #1F1D1A; }
 body[data-mode="edit"] .po-add-proj-btn { display: block; }
+body[data-mode="edit"][data-base-mode="projects"] .po-add-proj-btn { display: none; }
 /* Add-program button (edit mode only, below each month's program list) */
 .po-add-prog-btn {
   display: none; width: 100%; margin-top: 10px;

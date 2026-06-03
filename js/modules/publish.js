@@ -29,10 +29,19 @@
   function collectState() {
     var progStatuses = {};
     try { progStatuses = JSON.parse(localStorage.getItem('plan-timeline-statuses-v1') || '{}'); } catch (e) {}
+    var peopleOverrides = null;
+    try {
+      var raw = localStorage.getItem('po-people-overrides');
+      peopleOverrides = raw ? JSON.parse(raw) : null;
+    } catch (e) {}
     return {
       texts: lsGet(LS_TEXTS), tasks: lsGet(LS_TASKS),
       projStatuses: lsGet(LS_PSTAT), progStatuses: progStatuses,
       projectMonths: lsGet('po-project-months-v1'),
+      people: peopleOverrides || window.PLAN_CONFIG.PEOPLE,
+      newProjects:  lsGet('po-new-projects'),
+      newPrograms:  lsGet('po-new-programs'),
+      deletedItems: lsGet('po-deleted'),
       publishedAt: new Date().toISOString()
     };
   }
@@ -86,6 +95,16 @@
   ================================================================ */
   function applyData(data) {
     if (!data) return;
+    if (data.people && typeof data.people === 'object' && !Array.isArray(data.people)) {
+      window.PLAN_CONFIG.PEOPLE = data.people;
+      try { localStorage.setItem('po-people-overrides', JSON.stringify(data.people)); } catch (e) {}
+      if (typeof window.refreshPeopleViews === 'function') window.refreshPeopleViews();
+    }
+    if (data.newProjects && typeof data.newProjects === 'object') {
+      try { localStorage.setItem('po-new-projects', JSON.stringify(data.newProjects)); } catch (e) {}
+      if (typeof window.restoreNewProjects === 'function') window.restoreNewProjects();
+      if (typeof window.injectProjStatuses === 'function') window.injectProjStatuses();
+    }
     if (data.texts && Object.keys(data.texts).length) {
       try { localStorage.setItem(LS_TEXTS, JSON.stringify(data.texts)); } catch (e) {}
       (window.textEls || []).forEach(function (el) {
@@ -155,6 +174,7 @@
       migrateProjectMonths();
     }
     renderTimeline();
+    if (typeof window.cleanStaleDrafts === 'function') window.cleanStaleDrafts();
   }
 
   function loadRemote() {

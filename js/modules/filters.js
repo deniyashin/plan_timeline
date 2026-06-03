@@ -425,6 +425,7 @@
   document.getElementById('filter-reset').addEventListener('click', () => {
     state.change = null; state.contour = null; state.source = null; state.persons = []; state.role = 'any';
     applyFilters();
+    if (typeof window.resetPersonPickerUI === 'function') window.resetPersonPickerUI();
   });
 
   document.addEventListener('po-timeline-rendered', function () {
@@ -433,6 +434,8 @@
   });
 
   // Публикуем state и applyFilters глобально — нужны в plan_timeline.js (person picker)
-  window.filterState   = state;
-  window.applyFilters  = applyFilters;
+  window.filterState          = state;
+  window.applyFilters         = applyFilters;
+  window.refreshProgramDisplay = refreshProgramDisplay;
+  window.updateFilterCounts   = updateFilterCounts;
 })();

@@ -36,7 +36,7 @@
     p = p || {};
     var tr = document.createElement('tr');
     tr.innerHTML =
-      '<td><input class="pe-input pe-code" value="' + escHtml(code || '') + '" placeholder="Код" maxlength="8" title="Уникальный код (латиница/цифры)"></td>' +
+      '<td><input class="pe-input pe-code" value="' + escHtml(code || '') + '" placeholder="Код" maxlength="8"' + (code ? ' readonly style="background:#f0f0f0;cursor:not-allowed" title="Код сотрудника нельзя изменять"' : ' title="Уникальный код (латиница/цифры)"') + '></td>' +
       '<td><input class="pe-input pe-initials" value="' + escHtml(p.initials || '') + '" placeholder="АА" maxlength="6" title="Инициалы для аватара"></td>' +
       '<td><input class="pe-input pe-last" value="' + escHtml(p.last || '') + '" placeholder="Фамилия" maxlength="40"></td>' +
       '<td><input class="pe-input pe-full" value="' + escHtml(p.full || '') + '" placeholder="Имя Фамилия" maxlength="80" style="width:180px"></td>' +
