@@ -247,11 +247,31 @@
       var accentColor = accentEl ? accentEl.style.background : cssVar('--danger');
       var baseIdx = projList.querySelectorAll('.project').length;
       (np[progId] || []).forEach(function (d, i) {
+        var exists = Array.from(document.querySelectorAll('.project-id-mono')).some(function (el) {
+          return el.textContent.trim() === d.id;
+        });
+        if (exists) return;
         d.idx = baseIdx + i + 1;
         d.accentColor = accentColor;
         projList.appendChild(buildProjectLi(d));
       });
     });
+  }
+
+  function cleanStaleDrafts() {
+    var np = getNewProjects();
+    var changed = false;
+    Object.keys(np).forEach(function (progId) {
+      np[progId] = (np[progId] || []).filter(function (proj) {
+        var inDOM = Array.from(document.querySelectorAll('.project-id-mono')).some(function (el) {
+          return el.textContent.trim() === proj.id;
+        });
+        if (inDOM) changed = true;
+        return !inDOM;
+      });
+      if (np[progId].length === 0) delete np[progId];
+    });
+    if (changed) saveNewProjects(np);
   }
 
   var _npModal = null, _npTargetProg = null;
@@ -314,6 +334,15 @@
     var contour = (ctEl.value  || '').trim().toUpperCase();
     if (!name) { nameEl.focus(); return; }
     if (!id)   { idEl.focus();   return; }
+    var idTaken = Array.from(document.querySelectorAll('.project-id-mono')).some(function (el) {
+      return el.textContent.trim() === id;
+    });
+    if (idTaken) {
+      idEl.style.borderColor = cssVar('--danger');
+      idEl.title = 'Проект с таким ID уже существует';
+      idEl.focus();
+      return;
+    }
 
     var prog = _npTargetProg;
     _closeNpModal();
@@ -605,6 +634,7 @@
   }
 
   window.applyDeleted           = applyDeleted;
+  window.cleanStaleDrafts       = cleanStaleDrafts;
   window.restoreNewPrograms     = restoreNewPrograms;
   window.restoreNewProjects     = restoreNewProjects;
   window.restoreProgramMonths   = restoreProgramMonths;

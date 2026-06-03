@@ -133,7 +133,29 @@
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') closePicker();
     });
+
+    window.resetPersonPickerUI = function () { updateTrigger(); };
   })();
+
+  window.refreshPeopleViews = function () {
+    var newPeople = window.PLAN_CONFIG.PEOPLE;
+    // Мутируем window.ASSIGNEES на месте — закрытия filters.js видят тот же объект
+    var assignees = window.ASSIGNEES;
+    if (assignees) {
+      Object.keys(assignees).forEach(function (k) { delete assignees[k]; });
+      Object.assign(assignees, newPeople, window.PLAN_CONFIG.UNITS || {});
+    }
+    // Перерисовать назначения в шапках всех программ
+    if (typeof window.refreshProgramDisplay === 'function') {
+      document.querySelectorAll('.program[data-program-id]').forEach(function (prog) {
+        window.refreshProgramDisplay(prog);
+      });
+    }
+    // Обновить счётчики в попапе фильтра по человеку
+    if (typeof window.updateFilterCounts === 'function') window.updateFilterCounts();
+    // Сбросить визуал кнопки person picker
+    if (typeof window.resetPersonPickerUI === 'function') window.resetPersonPickerUI();
+  };
 })();
 
 // Close person picker + status menus on filter collapse, mode switch, quick view
