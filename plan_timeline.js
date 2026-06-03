@@ -101,11 +101,16 @@
   initProjectsDnD();
   setTextEditable(document.body.getAttribute('data-mode') === 'edit');
   (function () { var _pa = localStorage.getItem('po-doc-edited') || localStorage.getItem('po-published-at'); if (_pa) updatePubStamp(_pa); }());
+  var CLEANUP_VERSION = 'v1-2026-06-03';
   var overlay = document.getElementById('po-load-overlay');
   loadRemote().finally(function() {
     if (overlay) {
       overlay.classList.add('is-done');
       setTimeout(function() { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 300);
+    }
+    if (localStorage.getItem('po-cleanup-done') !== CLEANUP_VERSION) {
+      cleanStaleDrafts();
+      localStorage.setItem('po-cleanup-done', CLEANUP_VERSION);
     }
   });
 

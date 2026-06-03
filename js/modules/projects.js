@@ -478,7 +478,9 @@
     if (!document._projDragDelegated) {
       document._projDragDelegated = true;
       document.addEventListener('dragstart', function(e) {
-        if (document.body.getAttribute('data-mode') !== 'projects') return;
+        var _m = document.body.getAttribute('data-mode');
+        var _bm = document.body.getAttribute('data-base-mode');
+        if (_m !== 'edit' || _bm !== 'projects') return;
         var proj = e.target.closest('.project[draggable="true"]');
         if (!proj) return;
         _projDragSrc = proj;
@@ -486,7 +488,33 @@
         document.body.classList.add('po-dnd-active');
         setTimeout(function() { proj.classList.add('po-proj-dragging'); }, 0);
       });
+
+      /* Автоскролл при перетаскивании: колесо мыши или движение к краям экрана */
+      var _autoScrollRAF = null;
+      var _dragClientY = 0;
+      var SCROLL_ZONE = 120;
+      var SCROLL_SPEED = 14;
+      document.addEventListener('dragover', function(e) {
+        if (!_projDragSrc) return;
+        _dragClientY = e.clientY;
+        if (!_autoScrollRAF) _autoScrollRAF = requestAnimationFrame(_doAutoScroll);
+      });
+      function _doAutoScroll() {
+        _autoScrollRAF = null;
+        if (!_projDragSrc) return;
+        var vh = window.innerHeight;
+        var dy = 0;
+        if (_dragClientY < SCROLL_ZONE) {
+          dy = -SCROLL_SPEED * (1 - _dragClientY / SCROLL_ZONE);
+        } else if (_dragClientY > vh - SCROLL_ZONE) {
+          dy = SCROLL_SPEED * (1 - (vh - _dragClientY) / SCROLL_ZONE);
+        }
+        if (dy !== 0) window.scrollBy(0, dy);
+        if (_projDragSrc) _autoScrollRAF = requestAnimationFrame(_doAutoScroll);
+      }
+
       document.addEventListener('dragend', function(e) {
+        if (_autoScrollRAF) { cancelAnimationFrame(_autoScrollRAF); _autoScrollRAF = null; }
         var proj = e.target.closest('.project');
         if (proj) proj.classList.remove('po-proj-dragging');
         document.body.classList.remove('po-dnd-active');
@@ -498,10 +526,31 @@
 
   /* Синхронизация draggable при смене режима и после перерисовки тайм-лайна */
   (function() {
+    function _isDndMode() {
+      var mode = document.body.getAttribute('data-mode');
+      var base = document.body.getAttribute('data-base-mode');
+      return mode === 'edit' && base === 'projects';
+    }
     function _syncDraggable() {
-      var isDnd = document.body.getAttribute('data-mode') === 'projects';
+      var isDnd = _isDndMode();
+      var mode = document.body.getAttribute('data-mode');
+      var shouldDrag = isDnd || mode === 'projects';
       document.querySelectorAll('.project').forEach(function(proj) {
-        proj.draggable = isDnd;
+        proj.draggable = shouldDrag;
+      });
+      // In edit+projects mode disable contenteditable so the browser doesn't intercept
+      // drag initiation as a text-selection gesture. Restoration is done by setTextEditable
+      // (tasks.js) when the user leaves this mode.
+      if (isDnd) {
+        document.querySelectorAll('.project [contenteditable]').forEach(function(el) {
+          el.contentEditable = 'false';
+        });
+      }
+    }
+    function _syncAddProjBtns() {
+      var hide = _isDndMode(); // edit+projects: hide add-project buttons
+      document.querySelectorAll('.po-add-proj-btn').forEach(function(btn) {
+        btn.style.display = hide ? 'none' : '';
       });
     }
     var _rtPending = false;
@@ -514,12 +563,16 @@
       muts.forEach(function(m) {
         if (m.attributeName !== 'data-mode' && m.attributeName !== 'data-base-mode') return;
         _syncDraggable();
+        _syncAddProjBtns();
         _queueRenderTimeline();
       });
     });
     _modeObs.observe(document.body, { attributes: true });
-    // renderTimeline создаёт новые клоны — нужно заново проставить draggable
-    document.addEventListener('po-timeline-rendered', _syncDraggable);
+    // renderTimeline создаёт новые клоны — нужно заново проставить draggable и скрыть кнопки
+    document.addEventListener('po-timeline-rendered', function() {
+      _syncDraggable();
+      _syncAddProjBtns();
+    });
   }());
 
   /* ================================================================

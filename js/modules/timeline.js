@@ -242,7 +242,8 @@
     document.querySelectorAll('li.project').forEach(function(p) { p.style.removeProperty('order'); });
 
     var mode = document.body.getAttribute('data-mode');
-    if (mode !== 'projects') return;
+    var baseMode = document.body.getAttribute('data-base-mode');
+    if (mode !== 'projects' && !(mode === 'edit' && baseMode === 'projects')) return;
 
     var DIRECTION_ORDER = ['U-ALL-I-1', 'U-ALL-I-2', 'U-ALL-I-3', 'U-ALL-I-4', 'U-ALL-I-5', 'out'];
     var CHANGE_COLORS   = (window.PLAN_CONFIG && window.PLAN_CONFIG.CHANGE_COLORS) || {};
@@ -381,7 +382,9 @@
       document._dirDndDelegated = true;
 
       document.addEventListener('dragstart', function(e) {
-        if (document.body.getAttribute('data-mode') !== 'projects') return;
+        var _dm = document.body.getAttribute('data-mode');
+        var _dbm = document.body.getAttribute('data-base-mode');
+        if (_dm !== 'projects' && !(_dm === 'edit' && _dbm === 'projects')) return;
         var proj = e.target.closest('li.project[data-project-id][data-dir-grp]');
         if (!proj) return;
         _dragProj = proj;

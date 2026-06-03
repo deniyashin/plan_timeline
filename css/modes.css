@@ -280,7 +280,8 @@ body[data-mode="edit"][data-base-mode="projects"] .project-head {
   display: none;
   list-style: none;
 }
-body[data-mode="projects"] .direction-separator {
+body[data-mode="projects"] .direction-separator,
+body[data-mode="edit"][data-base-mode="projects"] .direction-separator {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -325,14 +326,17 @@ body[data-mode="projects"] .project.po-proj-dragging {
 }
 
 /* Direction DnD — перетаскивание внутри группы направления */
-body[data-mode="projects"] li.project.po-dir-dragging {
+body[data-mode="projects"] li.project.po-dir-dragging,
+body[data-mode="edit"][data-base-mode="projects"] li.project.po-dir-dragging {
   opacity: 0.35;
   cursor: grabbing;
 }
-body[data-mode="projects"] li.project.po-dir-drop-before {
+body[data-mode="projects"] li.project.po-dir-drop-before,
+body[data-mode="edit"][data-base-mode="projects"] li.project.po-dir-drop-before {
   box-shadow: 0 -2px 0 var(--ink);
 }
-body[data-mode="projects"] li.project.po-dir-drop-after {
+body[data-mode="projects"] li.project.po-dir-drop-after,
+body[data-mode="edit"][data-base-mode="projects"] li.project.po-dir-drop-after {
   box-shadow: 0 2px 0 var(--ink);
 }
 .po-proj-drop-zone {
