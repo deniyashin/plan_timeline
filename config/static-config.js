@@ -39,7 +39,8 @@ window.PLAN_CONFIG = {
     "DB": { "initials": "ДБ", "last": "Бикбаева",    "full": "Динара Бикбаева",                 "role": "Руководитель" },
     "BO": { "initials": "БО", "last": "Белый",       "full": "Белый Олег Александрович",        "role": "Методолог" },
     "YD": { "initials": "ЯД", "last": "Яшин",        "full": "Яшин Денис",                      "role": "Руководитель" },
-    "CK": { "initials": "ЧК", "last": "Чащин",       "full": "Чащин Кирилл",                    "role": "Руководитель / контур медицинского качества, стандартов, документации, рекламаций и лабораторного контроля" }
+    "CK": { "initials": "ЧК", "last": "Чащин",       "full": "Чащин Кирилл",                    "role": "Руководитель / контур медицинского качества, стандартов, документации, рекламаций и лабораторного контроля" },
+    "IZ": { "initials": "ИБ", "last": "Буйкова",     "full": "Ирина Буйкова",                   "role": "Руководитель" }
   },
 
   UNITS: {
@@ -74,9 +75,8 @@ window.PLAN_CONFIG = {
     "T-CCT-P-3.4.10":  { "anchor": ["DR"],       "owner": ["DB"],          "methodologist": ["KE"] },
     "U-PAT-P-3.5":     { "anchor": ["OS"],       "owner": ["DB", "DR"],    "methodologist": ["AK"] },
     "U-MKT-P-3.6":     { "anchor": ["DR"],       "owner": ["NA"],          "methodologist": ["unit_po"] },
-    "U-HRM-P-4.1":     { "anchor": ["VV"],       "owner": ["OA"],          "methodologist": ["KE", "OS", "AA"] },
-    "U-HRM-P-4.2":     { "anchor": ["OS"],       "owner": ["OA"],          "methodologist": ["KE"] },
-    "U-HRM-P-4.3":     { "anchor": ["AA"],       "owner": ["GB"],          "methodologist": ["VV"] },
+    "U-CCT-P-3.7":     { "anchor": ["OS", "VV"], "owner": ["DR"],          "methodologist": ["DR"] },
+    "U-HRM-P-4.1":     { "anchor": ["VV", "OS", "AA"], "owner": ["OA", "GB"], "methodologist": ["KE", "OS", "AA", "VV"] },
     "U-HRM-P-4.4":     { "anchor": ["VV", "AA"], "owner": ["KM", "GB"],    "methodologist": ["KE", "OA"] },
     "U-CHG-P-4.5":     { "anchor": ["OS"],       "owner": ["AK"],          "methodologist": ["KE"] },
     "U-HRM-P-4.6":     { "anchor": ["AA", "VV"], "owner": ["GB"],          "methodologist": ["OA", "OS"] },
@@ -91,7 +91,8 @@ window.PLAN_CONFIG = {
     "U-CHT-P-5.7":     { "anchor": ["OA"],       "owner": ["GB"],          "methodologist": ["KE"] },
     "U-SPC-P-5.8":     { "anchor": ["AA"],       "owner": ["HA"],          "methodologist": ["CK"] },
     "T-MKT-P-5.9":     { "anchor": ["OS", "AA"], "owner": ["NA", "HA"],    "methodologist": ["DR"] },
-    "T-MED-P-5.10":    { "anchor": ["AA"],       "owner": ["CK"],          "methodologist": ["KE"] }
+    "T-MED-P-5.10":    { "anchor": ["AA"],       "owner": ["CK"],          "methodologist": ["KE"] },
+    "U-UKM-P-0.3":     { "anchor": ["OA"],       "owner": ["OS"],          "methodologist": ["AA"] }
   },
 
   DEPS: {
@@ -116,12 +117,9 @@ window.PLAN_CONFIG = {
                        ["U-PAT-P-3.3",  "нужна до внедрения",               "likely"]],
     "U-MKT-P-3.6":    [["U-PAT-P-3.1",  "нужна до внедрения",               "confirmed"],
                        ["U-CCT-P-3.4",  "влияет на качество реализации",    "likely"]],
-    "U-HRM-P-4.1":    [["U-ALL-P-2.4",  "база для запуска",                 "confirmed"]],
-    "U-HRM-P-4.2":    [["U-HRM-P-4.1",  "база для запуска",                 "confirmed"]],
-    "U-HRM-P-4.3":    [["U-HRM-P-4.2",  "нужна до внедрения",               "confirmed"],
+    "U-HRM-P-4.1":    [["U-ALL-P-2.4",  "база для запуска",                 "confirmed"],
                        ["U-FIN-P-1.3",  "влияет на качество реализации",    "likely"]],
-    "U-HRM-P-4.4":    [["U-HRM-P-4.1",  "нужна до внедрения",               "confirmed"],
-                       ["U-HRM-P-4.2",  "нужна до внедрения",               "confirmed"]],
+    "U-HRM-P-4.4":    [["U-HRM-P-4.1",  "нужна до внедрения",               "confirmed"]],
     "U-CHG-P-4.5":    [["U-CHG-P-0.1",  "база для запуска",                 "confirmed"],
                        ["U-DAT-P-2.1",  "нужна до внедрения",               "confirmed"],
                        ["U-DAT-P-2.3",  "влияет на качество реализации",    "confirmed"]],
@@ -144,7 +142,7 @@ window.PLAN_CONFIG = {
     "T-MKT-P-5.9":    [["U-MKT-P-5.1",  "общая методологическая опора",     "likely"]],
     "T-MED-P-5.10":   [["U-ALL-P-2.4",  "база для запуска",                 "confirmed"],
                        ["U-DAT-P-2.1",  "нужна до внедрения",               "likely"],
-                       ["U-HRM-P-4.2",  "влияет на качество реализации",    "likely"],
+                       ["U-HRM-P-4.1",  "влияет на качество реализации",    "likely"],
                        ["U-HRM-P-4.4",  "нужна до внедрения",               "likely"],
                        ["U-LAB-P-5.3",  "синхронный запуск желателен",      "likely"],
                        ["U-SPC-P-5.8",  "синхронный запуск желателен",      "likely"],
@@ -153,14 +151,14 @@ window.PLAN_CONFIG = {
   },
 
   PROG_TO_CHANGE: {
-    "U-CHG-P-0.1": "0", "U-HRM-P-0.2": "0",
+    "U-CHG-P-0.1": "0", "U-HRM-P-0.2": "0", "U-UKM-P-0.3": "0",
     "U-CLN-P-1.1": "1", "U-UKM-P-1.2": "1", "U-FIN-P-1.3": "1",
     "U-SKL-P-1.4": "1", "U-LAB-P-1.5": "1", "U-LEG-P-1.6": "1",
     "U-DAT-P-2.1": "2", "U-DAT-P-2.2": "2", "U-DAT-P-2.3": "2",
     "U-ALL-P-2.4": "2", "U-CHG-P-2.5": "2",
     "U-PAT-P-3.1": "3", "U-SLS-P-3.2": "3", "U-PAT-P-3.3": "3",
-    "U-CCT-P-3.4": "3", "T-CCT-P-3.4.10": "3", "U-PAT-P-3.5": "3", "U-MKT-P-3.6": "3",
-    "U-HRM-P-4.1": "4", "U-HRM-P-4.2": "4", "U-HRM-P-4.3": "4",
+    "U-CCT-P-3.4": "3", "T-CCT-P-3.4.10": "3", "U-PAT-P-3.5": "3", "U-MKT-P-3.6": "3", "U-CCT-P-3.7": "3",
+    "U-HRM-P-4.1": "4",
     "U-HRM-P-4.4": "4", "U-CHG-P-4.5": "4", "U-HRM-P-4.6": "4",
     "U-HRM-P-4.7": "4", "T-HRM-P-4.8": "4",
     "U-MKT-P-5.1": "5", "U-INF-P-5.2": "5", "U-LAB-P-5.3": "5",
