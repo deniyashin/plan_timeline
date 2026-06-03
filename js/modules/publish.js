@@ -103,6 +103,7 @@
     if (data.newProjects && typeof data.newProjects === 'object') {
       try { localStorage.setItem('po-new-projects', JSON.stringify(data.newProjects)); } catch (e) {}
       if (typeof window.restoreNewProjects === 'function') window.restoreNewProjects();
+      if (typeof window.injectProjStatuses === 'function') window.injectProjStatuses();
     }
     if (data.texts && Object.keys(data.texts).length) {
       try { localStorage.setItem(LS_TEXTS, JSON.stringify(data.texts)); } catch (e) {}
