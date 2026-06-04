@@ -1420,6 +1420,14 @@
         "dueDate": "2026-05-31",
         "status": "not_started",
         "updatedAt": "2026-05-25T07:49:37.183Z"
+      },
+      {
+        "taskId": "",
+        "text": "Внедрение фонда премии руководителям",
+        "assignee": "",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-06-04T17:04:22.096Z"
       }
     ],
     "U-CLN-PR-1.1.5": [
@@ -2544,6 +2552,24 @@
         "status": "not_started",
         "updatedAt": "2026-06-04T11:03:41.525Z"
       }
+    ],
+    "U-CLN-PR-1.1.3": [
+      {
+        "taskId": "",
+        "text": "Постановка на пост Ген. директора",
+        "assignee": "",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-06-04T17:04:48.124Z"
+      },
+      {
+        "taskId": "",
+        "text": "Передача ответственности за финансовый результат",
+        "assignee": "",
+        "dueDate": "",
+        "status": "not_started",
+        "updatedAt": "2026-06-04T17:04:56.880Z"
+      }
     ]
   },
   "projStatuses": {
@@ -3208,7 +3234,9 @@
     "T-CHG-PR-0.1.1": "2027-03",
     "U-PAT-PR-3.3.6": "2026-06",
     "U-NEW-PR-11.3.1": "2027-03",
-    "U-SRV-PR-3.1.10": "2026-08"
+    "U-SRV-PR-3.1.10": "2026-08",
+    "T-HRM-PR-4.8.4": "2026-05",
+    "T-HRM-PR-4.8.5": "2026-05"
   },
   "people": {
     "AA": {
@@ -3332,7 +3360,22 @@
       "role": "Руководитель"
     }
   },
-  "newProjects": {},
+  "newProjects": {
+    "T-HRM-P-4.8": [
+      {
+        "id": "T-HRM-PR-4.8.4",
+        "name": "HR Visor",
+        "contour": "HRM",
+        "source": "T"
+      },
+      {
+        "id": "T-HRM-PR-4.8.5",
+        "name": "ХР",
+        "contour": "HRM",
+        "source": "T"
+      }
+    ]
+  },
   "newPrograms": {
     "month-2": [
       {
@@ -3355,6 +3398,13 @@
         "contour": "UKM",
         "source": "U",
         "change": "out"
+      },
+      {
+        "id": "U-NEW-P-2.13",
+        "name": "Система планирования всех показателей",
+        "contour": "NEW",
+        "source": "U",
+        "change": "out"
       }
     ]
   },
@@ -3364,5 +3414,5 @@
       "U-PAT-PR-3.1.10"
     ]
   },
-  "publishedAt": "2026-06-04T15:46:49.989Z"
+  "publishedAt": "2026-06-04T17:05:23.214Z"
 }
