@@ -64,6 +64,7 @@
         '<span class="chev chev-lg" aria-hidden="true"></span>' +
       '</button>' +
       '<div class="program-body" hidden>' +
+        '<div class="program-meta">' +
         '<div class="card-summary-grid field-brief">' +
           '<div class="card-summary-cell"><span class="card-summary-label">Статус внедрения</span>' +
             '<span class="card-summary-value"><span class="status-editor" data-field="status">' +
@@ -103,6 +104,7 @@
         '<div class="assignments-editor" data-program-id="' + d.id + '">' +
           '<div class="field-label field-label-main">Ответственные по программе</div>' +
           '<div class="role-editor-list">' + roleRowsHtml + '</div>' +
+        '</div>' +
         '</div>' +
         '<ol class="project-list"></ol>' +
       '</div>';
