@@ -77,6 +77,8 @@
         if (resp && resp.error) throw new Error(resp.error);
         btn.textContent = '↑ Опубликовано ✓';
         if (window.showToast) window.showToast('Данные опубликованы', 'success');
+        /* локальные изменения справочника теперь в data.json — снимаем защитный флаг */
+        try { localStorage.removeItem('po-people-local-edit'); } catch(e2) {}
         setTimeout(function () { btn.disabled = false; btn.textContent = '↑ Опубликовать'; }, 5000);
         var nowIso = new Date().toISOString();
         try { localStorage.setItem('po-doc-edited', nowIso); } catch (e) {}
@@ -96,8 +98,14 @@
   function applyData(data) {
     if (!data) return;
     if (data.people && typeof data.people === 'object' && !Array.isArray(data.people)) {
-      window.PLAN_CONFIG.PEOPLE = data.people;
-      try { localStorage.setItem('po-people-overrides', JSON.stringify(data.people)); } catch (e) {}
+      var _hasLocalPeopleEdit = false;
+      try { _hasLocalPeopleEdit = !!localStorage.getItem('po-people-local-edit'); } catch(e2) {}
+      if (!_hasLocalPeopleEdit) {
+        /* нет локальных несохранённых изменений — применяем данные с сервера */
+        window.PLAN_CONFIG.PEOPLE = data.people;
+        try { localStorage.setItem('po-people-overrides', JSON.stringify(data.people)); } catch (e) {}
+      }
+      /* в любом случае обновляем ASSIGNEES и UI */
       if (typeof window.refreshPeopleViews === 'function') window.refreshPeopleViews();
     }
     if (data.newProjects && typeof data.newProjects === 'object') {

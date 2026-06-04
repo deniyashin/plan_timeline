@@ -68,6 +68,14 @@
   if (initialMode === 'edit') initialMode = _prevBaseMode || 'detailed';
   setMode(initialMode);
 
+  /* восстановить edit mode после сохранения справочника сотрудников (people-editor.js) */
+  var _arl = null;
+  try { _arl = localStorage.getItem('po-people-after-reload-mode'); } catch(e) {}
+  if (_arl === 'edit') {
+    try { localStorage.removeItem('po-people-after-reload-mode'); } catch(e) {}
+    setMode('edit');
+  }
+
   // Changes section toggle
   (function () {
     var toggleBtn = document.getElementById('changes-toggle-btn');

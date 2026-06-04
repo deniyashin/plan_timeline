@@ -30,6 +30,25 @@
     li.setAttribute('data-assignees-owner', '');
     li.setAttribute('data-assignees-methodologist', '');
     var color = d.color || cssVar('--ink-muted');
+    var ROLES = (window.PLAN_CONFIG && window.PLAN_CONFIG.ROLES) || {};
+    var roleRowsHtml = ['anchor', 'owner', 'methodologist'].map(function(rk) {
+      var info = ROLES[rk] || { short: rk, label: rk, hint: '' };
+      return '<div class="role-editor-row" data-role-key="' + rk + '">' +
+        '<div class="role-editor-head">' +
+          '<span class="role-mark">' + escHtml(info.short) + '</span>' +
+          '<span class="role-label">' + escHtml(info.label) + '</span>' +
+          '<span class="role-hint">' + escHtml(info.hint) + '</span>' +
+        '</div>' +
+        '<div class="role-editor-body">' +
+          '<div class="role-assignees-current">' +
+            '<span class="assignee-chip assignee-chip-empty"><span class="assignee-init">—</span><span class="assignee-last">не назначен</span></span>' +
+          '</div>' +
+          '<div class="role-editor-actions">' +
+            '<button type="button" class="ghost-btn-mini" data-action="add-assignee" data-role-key="' + rk + '">+ Добавить</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
     li.innerHTML =
       '<button class="program-head" type="button" aria-expanded="false">' +
         '<span class="program-accent" style="background:' + color + '"></span>' +
@@ -43,9 +62,45 @@
         '<span class="chev chev-lg" aria-hidden="true"></span>' +
       '</button>' +
       '<div class="program-body" hidden>' +
+        '<div class="card-summary-grid field-brief">' +
+          '<div class="card-summary-cell"><span class="card-summary-label">Статус внедрения</span>' +
+            '<span class="card-summary-value"><span class="status-editor" data-field="status">' +
+              '<button type="button" class="status-chip status-not-started" data-action="open-status-menu" data-current="status-not-started">не стартовало</button>' +
+              '<div class="status-menu" hidden>' +
+                '<div class="status-option" data-value="not-started" data-label="не стартовало" data-css="status-not-started"><span class="status-dot" style="background:#6B655C"></span><span>не стартовало</span></div>' +
+                '<div class="status-option" data-value="design" data-label="в проектировании" data-css="status-design"><span class="status-dot" style="background:#1E6E7A"></span><span>в проектировании</span></div>' +
+                '<div class="status-option" data-value="approval" data-label="на согласовании" data-css="status-approval"><span class="status-dot" style="background:#8E5C0E"></span><span>на согласовании</span></div>' +
+                '<div class="status-option" data-value="rollout" data-label="во внедрении" data-css="status-rollout"><span class="status-dot" style="background:#2F5233"></span><span>во внедрении</span></div>' +
+                '<div class="status-option" data-value="norm" data-label="закрепляется в норму" data-css="status-norm"><span class="status-dot" style="background:#1F1D1A"></span><span>закрепляется в норму</span></div>' +
+              '</div>' +
+            '</span></span></div>' +
+          '<div class="card-summary-cell"><span class="card-summary-label">Степень определённости</span>' +
+            '<span class="card-summary-value"><span class="status-editor" data-field="certainty">' +
+              '<button type="button" class="status-chip certainty-confirmed" data-action="open-status-menu" data-current="certainty-confirmed">подтверждено</button>' +
+              '<div class="status-menu" hidden>' +
+                '<div class="status-option" data-value="confirmed" data-label="подтверждено" data-css="certainty-confirmed"><span class="status-dot" style="background:#2F5233"></span><span>подтверждено</span></div>' +
+                '<div class="status-option" data-value="partial" data-label="частично подтверждено" data-css="certainty-partial"><span class="status-dot" style="background:#8E5C0E"></span><span>частично подтверждено</span></div>' +
+                '<div class="status-option" data-value="needs-clar" data-label="требует уточнения" data-css="certainty-needs-clar"><span class="status-dot" style="background:#8B2635"></span><span>требует уточнения</span></div>' +
+              '</div>' +
+            '</span></span></div>' +
+          '<div class="card-summary-cell"><span class="card-summary-label">Статус согласования</span>' +
+            '<span class="card-summary-value"><span class="status-editor" data-field="approval">' +
+              '<button type="button" class="status-chip approval-not-approved" data-action="open-status-menu" data-current="approval-not-approved">не согласовано</button>' +
+              '<div class="status-menu" hidden>' +
+                '<div class="status-option" data-value="not-approved" data-label="не согласовано" data-css="approval-not-approved"><span class="status-dot" style="background:#6B655C"></span><span>не согласовано</span></div>' +
+                '<div class="status-option" data-value="in-review" data-label="на согласовании" data-css="approval-in-review"><span class="status-dot" style="background:#8E5C0E"></span><span>на согласовании</span></div>' +
+                '<div class="status-option" data-value="approved" data-label="согласовано" data-css="approval-approved"><span class="status-dot" style="background:#2F5233"></span><span>согласовано</span></div>' +
+                '<div class="status-option" data-value="needs-rework" data-label="требует пересборки" data-css="approval-needs-rework"><span class="status-dot" style="background:#8B2635"></span><span>требует пересборки</span></div>' +
+              '</div>' +
+            '</span></span></div>' +
+        '</div>' +
         '<div class="field" style="margin-bottom:12px">' +
           '<span class="field-label">Описание</span>' +
           '<p class="field-value" data-ek="np-progdesc-' + d.id + '"></p>' +
+        '</div>' +
+        '<div class="assignments-editor" data-program-id="' + d.id + '">' +
+          '<div class="field-label field-label-main">Ответственные по программе</div>' +
+          '<div class="role-editor-list">' + roleRowsHtml + '</div>' +
         '</div>' +
         '<ol class="project-list"></ol>' +
       '</div>';
@@ -65,7 +120,10 @@
         var sec = document.getElementById(monthId) || document.getElementById(origMonthId);
         if (!sec) return;
         var progList = sec.querySelector('.program-list');
-        if (progList) progList.appendChild(buildProgramLi(d));
+        if (!progList) return;
+        var restoredLi = buildProgramLi(d);
+        progList.appendChild(restoredLi);
+        if (typeof window.refreshProgramDisplay === 'function') window.refreshProgramDisplay(restoredLi);
       });
     });
   }
@@ -159,6 +217,9 @@
     var li = buildProgramLi(d);
     var progList = sec.querySelector('.program-list');
     if (progList) progList.appendChild(li);
+
+    /* инициализировать слоты ролей в шапке */
+    if (typeof window.refreshProgramDisplay === 'function') window.refreshProgramDisplay(li);
 
     /* persist */
     var np = getNewProgs();
@@ -369,28 +430,19 @@
     np[progId].push({ id: id, name: name, contour: contour, source: source });
     saveNewProjects(np);
 
-    /* inject status chips */
     var pbody = li.querySelector('.project-body');
-    if (pbody && !pbody.querySelector('.po-proj-status-row')) {
-      var savedPs = lsGet(LS_PSTAT);
-      var row = document.createElement('div');
-      row.className = 'po-proj-status-row';
-      (window.PLAN_CONFIG.PROJ_STATUS_DEF || []).forEach(function (def) {
-        var cell = document.createElement('span'); cell.className = 'po-proj-status-cell';
-        var lbl  = document.createElement('span'); lbl.className  = 'po-proj-status-label'; lbl.textContent = def.label;
-        var chip = document.createElement('span'); chip.className = 'po-status-chip'; chip.dataset.field = def.field;
-        var sv = savedPs[id] && savedPs[id][def.field];
-        var opt = def.options.find(function (o) { return o.value === sv; }) || def.options[0];
-        applyChipStyle(chip, opt);
-        cell.appendChild(lbl); cell.appendChild(chip);
-        row.appendChild(cell);
-      });
-      pbody.insertBefore(row, pbody.firstChild);
-    }
 
-    /* register text fields */
+    /* inject status row + owner + month picker via proj-status.js */
+    injectProjStatuses();
+
+    /* register text fields (skip already-registered elements from injectProjStatuses) */
     var savedTexts = lsGet(LS_TEXTS);
     if (pbody) pbody.querySelectorAll('[data-ek]').forEach(function (el) {
+      if (el.classList.contains('po-editable')) {
+        /* already registered by injectProjStatuses — ensure editable in edit mode */
+        if (document.body.getAttribute('data-mode') === 'edit') el.contentEditable = 'true';
+        return;
+      }
       var k = el.dataset.ek;
       if (k && savedTexts[k] !== undefined) el.innerHTML = sanitize(savedTexts[k]);
       el.classList.add('po-editable');
