@@ -24,12 +24,14 @@
     li.setAttribute('data-program-id', d.id);
     li.setAttribute('data-source', d.source || 'U');
     li.setAttribute('data-contour', d.contour || '');
-    li.setAttribute('data-change', '');
+    li.setAttribute('data-change', d.change || '');
     li.setAttribute('data-assignees-all', '');
     li.setAttribute('data-assignees-anchor', '');
     li.setAttribute('data-assignees-owner', '');
     li.setAttribute('data-assignees-methodologist', '');
-    var color = d.color || cssVar('--ink-muted');
+    var _changeNum = d.change === 'out' ? '0' : ((d.change || '').match(/I-(\d+)$/) || [])[1] || '0';
+    var _colors = (window.PLAN_CONFIG && window.PLAN_CONFIG.CHANGE_COLORS) || {};
+    var color = (d.change && _colors[_changeNum]) ? _colors[_changeNum] : (d.color || cssVar('--ink-muted'));
     var ROLES = (window.PLAN_CONFIG && window.PLAN_CONFIG.ROLES) || {};
     var roleRowsHtml = ['anchor', 'owner', 'methodologist'].map(function(rk) {
       var info = ROLES[rk] || { short: rk, label: rk, hint: '' };
@@ -147,11 +149,27 @@
 
   function _ensurePmModal() {
     if (_pmModal) return;
+    /* build direction options from legend items in DOM */
+    var dirHtml = '';
+    document.querySelectorAll('.legend-item[data-change-filter]').forEach(function(item) {
+      var val  = item.getAttribute('data-change-filter');
+      var code = item.querySelector('.legend-code');
+      var name = item.querySelector('.legend-name');
+      var swatch = item.querySelector('.legend-swatch');
+      var color = swatch ? swatch.style.background : '';
+      var label = (code ? code.textContent : val) + (name ? ' — ' + name.textContent : '');
+      dirHtml += '<option value="' + escHtml(val) + '" data-color="' + escHtml(color) + '">' + escHtml(label) + '</option>';
+    });
+    if (!dirHtml) dirHtml = '<option value="">—</option>';
     _pmModal = document.createElement('div');
-    _pmModal.className = 'po-newproj-modal'; /* reuse same overlay style */
+    _pmModal.className = 'po-newproj-modal';
     _pmModal.innerHTML =
       '<div class="po-newproj-box">' +
         '<div class="po-newproj-title">Новая программа</div>' +
+        '<div class="po-newproj-field"><label>Направление изменения</label>' +
+          '<select id="pm-change" style="font-family:inherit;font-size:13px;padding:5px 8px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink);cursor:pointer;width:100%">' +
+          dirHtml +
+          '</select></div>' +
         '<div class="po-newproj-field"><label>Название программы</label>' +
           '<input type="text" id="pm-name" placeholder="Название программы" autocomplete="off"></div>' +
         '<div class="po-newproj-field"><label>ID программы</label>' +
@@ -182,6 +200,8 @@
     var existCount = progList ? progList.querySelectorAll('.program').length : 0;
     /* guess month index from section id */
     var monthIdx = (sec.id || '').replace('month-', '');
+    var changeEl = _pmModal.querySelector('#pm-change');
+    if (changeEl) changeEl.selectedIndex = 0;
     _pmModal.querySelector('#pm-name').value = '';
     _pmModal.querySelector('#pm-id').value = 'U-NEW-P-' + (monthIdx || '0') + '.' + (existCount + 1);
     _pmModal.querySelector('#pm-contour').value = '';
@@ -198,9 +218,11 @@
     var nameEl    = _pmModal.querySelector('#pm-name');
     var idEl      = _pmModal.querySelector('#pm-id');
     var ctEl      = _pmModal.querySelector('#pm-contour');
+    var chEl      = _pmModal.querySelector('#pm-change');
     var name    = (nameEl.value || '').trim();
     var id      = (idEl.value  || '').trim();
     var contour = (ctEl.value  || '').trim().toUpperCase();
+    var changeVal = chEl ? chEl.value : '';
     if (!name) { nameEl.focus(); return; }
     if (!id)   { idEl.focus();   return; }
     /* check uniqueness */
@@ -213,10 +235,15 @@
     var sec = _pmTargetSec;
     _closePmModal();
 
-    var d = { id: id, name: name, contour: contour, source: 'U', color: cssVar('--ink-muted') };
+    var d = { id: id, name: name, contour: contour, source: 'U', change: changeVal };
     var li = buildProgramLi(d);
+    li.setAttribute('data-pm-master', ''); /* участвует в renderTimeline как мастер */
+
     var progList = sec.querySelector('.program-list');
-    if (progList) progList.appendChild(li);
+    /* вставить перед кнопкой "+ Добавить программу", а не в самый конец */
+    var addProgBtn = progList ? progList.querySelector('.po-add-prog-btn') : null;
+    if (addProgBtn) progList.insertBefore(li, addProgBtn);
+    else if (progList) progList.appendChild(li);
 
     /* инициализировать слоты ролей в шапке */
     if (typeof window.refreshProgramDisplay === 'function') window.refreshProgramDisplay(li);
@@ -224,7 +251,7 @@
     /* persist */
     var np = getNewProgs();
     if (!np[sec.id]) np[sec.id] = [];
-    np[sec.id].push(d);
+    np[sec.id].push({ id: id, name: name, contour: contour, source: 'U', change: changeVal });
     saveNewProgs(np);
 
     /* inject add-project button */
