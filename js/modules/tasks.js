@@ -460,7 +460,7 @@
     document.querySelectorAll('.po-proj-month-row').forEach(function (row) {
       /* Never show in clones */
       if (row.closest('.program[data-pm-clone]')) { row.style.display = 'none'; return; }
-      row.style.display = on ? '' : 'none';
+      row.style.display = on ? 'flex' : 'none';
     });
   }
 

@@ -50,7 +50,8 @@
       'po-new-projects', 'po-new-programs', 'po-prog-months',
       'po-project-months-v1', 'po-project-dir-order',
       'plan-timeline-assignments-v2', 'plan-timeline-statuses-v1',
-      'po-doc-edited', 'po-published-at', 'po-people-overrides'
+      'po-doc-edited', 'po-published-at', 'po-people-overrides',
+      'po-people-local-edit', 'po-people-after-reload-mode'
     ];
     RESET_KEYS.forEach(function (k) { try { localStorage.removeItem(k); } catch (e) {} });
     location.reload();

@@ -93,6 +93,10 @@
       }
       try {
         localStorage.setItem(LS_KEY, JSON.stringify(collected.people));
+        /* флаг: не перезатирать локальные изменения при loadRemote */
+        try { localStorage.setItem('po-people-local-edit', '1'); } catch(e2) {}
+        /* флаг: вернуть режим редактирования после перезагрузки */
+        try { localStorage.setItem('po-people-after-reload-mode', 'edit'); } catch(e2) {}
         window.showToast && window.showToast('Справочник сохранён — перезагружаю страницу…', 'info');
         setTimeout(function () { location.reload(); }, 900);
       } catch (e) {
