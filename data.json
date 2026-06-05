@@ -3360,59 +3360,8 @@
       "role": "Руководитель"
     }
   },
-  "newProjects": {
-    "T-HRM-P-4.8": [
-      {
-        "id": "T-HRM-PR-4.8.4",
-        "name": "HR Visor",
-        "contour": "HRM",
-        "source": "T"
-      },
-      {
-        "id": "T-HRM-PR-4.8.5",
-        "name": "ХР",
-        "contour": "HRM",
-        "source": "T"
-      }
-    ]
-  },
-  "newPrograms": {
-    "month-2": [
-      {
-        "id": "U-UKM-P-2.7",
-        "name": "Система планирования всех показателей",
-        "contour": "UKM",
-        "source": "U",
-        "color": "#64748B"
-      },
-      {
-        "id": "U-UKM-P-0.4",
-        "name": "Система планирования всех показателей",
-        "contour": "UKM",
-        "source": "U",
-        "change": "out"
-      },
-      {
-        "id": "U-UKM-P-0.5",
-        "name": "Система планирования всех показателей",
-        "contour": "UKM",
-        "source": "U",
-        "change": "out"
-      },
-      {
-        "id": "U-NEW-P-2.13",
-        "name": "Система планирования всех показателей",
-        "contour": "NEW",
-        "source": "U",
-        "change": "out"
-      }
-    ]
-  },
-  "deletedItems": {
-    "programs": [],
-    "projects": [
-      "U-PAT-PR-3.1.10"
-    ]
-  },
-  "publishedAt": "2026-06-04T17:05:23.214Z"
+  "newProjects": {},
+  "newPrograms": {},
+  "deletedItems": {},
+  "publishedAt": "2026-06-05T11:47:52.154Z"
 }
