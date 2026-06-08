@@ -2946,140 +2946,15 @@
     }
   },
   "progStatuses": {
-    "U-DAT-P-2.2:status": {
+    "U-NEW-P-2.10:status": {
       "value": "design",
       "label": "в проектировании",
       "css": "status-design"
     },
-    "U-DAT-P-2.2:approval": {
-      "value": "approved",
-      "label": "согласовано",
-      "css": "approval-approved"
-    },
-    "U-DAT-P-2.2:certainty": {
-      "value": "confirmed",
-      "label": "подтверждено",
-      "css": "certainty-confirmed"
-    },
-    "U-PAT-P-3.3:status": {
-      "value": "design",
-      "label": "в проектировании",
-      "css": "status-design"
-    },
-    "U-PAT-P-3.3:approval": {
-      "value": "approved",
-      "label": "согласовано",
-      "css": "approval-approved"
-    },
-    "U-PAT-P-3.3:certainty": {
-      "value": "confirmed",
-      "label": "подтверждено",
-      "css": "certainty-confirmed"
-    },
-    "U-ALL-P-2.4:status": {
-      "value": "design",
-      "label": "в проектировании",
-      "css": "status-design"
-    },
-    "U-CCT-P-3.4:status": {
-      "value": "design",
-      "label": "в проектировании",
-      "css": "status-design"
-    },
-    "U-CCT-P-3.4:approval": {
-      "value": "approved",
-      "label": "согласовано",
-      "css": "approval-approved"
-    },
-    "U-CCT-P-3.4:certainty": {
-      "value": "confirmed",
-      "label": "подтверждено",
-      "css": "certainty-confirmed"
-    },
-    "U-PAT-P-3.5:status": {
-      "value": "design",
-      "label": "в проектировании",
-      "css": "status-design"
-    },
-    "U-PAT-P-3.5:approval": {
-      "value": "approved",
-      "label": "согласовано",
-      "css": "approval-approved"
-    },
-    "U-PAT-P-3.5:certainty": {
-      "value": "confirmed",
-      "label": "подтверждено",
-      "css": "certainty-confirmed"
-    },
-    "U-UKM-P-1.2:status": {
-      "value": "design",
-      "label": "в проектировании",
-      "css": "status-design"
-    },
-    "U-UKM-P-1.2:approval": {
+    "U-NEW-P-2.10:approval": {
       "value": "in-review",
       "label": "на согласовании",
       "css": "approval-in-review"
-    },
-    "U-CLN-P-1.1:status": {
-      "value": "design",
-      "label": "в проектировании",
-      "css": "status-design"
-    },
-    "U-CLN-P-1.1:approval": {
-      "value": "in-review",
-      "label": "на согласовании",
-      "css": "approval-in-review"
-    },
-    "U-LEG-P-1.6:status": {
-      "value": "design",
-      "label": "в проектировании",
-      "css": "status-design"
-    },
-    "U-LEG-P-1.6:approval": {
-      "value": "in-review",
-      "label": "на согласовании",
-      "css": "approval-in-review"
-    },
-    "U-HRM-P-4.1:status": {
-      "value": "design",
-      "label": "в проектировании",
-      "css": "status-design"
-    },
-    "U-HRM-P-4.1:approval": {
-      "value": "approved",
-      "label": "согласовано",
-      "css": "approval-approved"
-    },
-    "U-PAT-P-3.1:approval": {
-      "value": "approved",
-      "label": "согласовано",
-      "css": "approval-approved"
-    },
-    "U-PAT-P-3.1:status": {
-      "value": "design",
-      "label": "в проектировании",
-      "css": "status-design"
-    },
-    "U-PAT-P-3.1:certainty": {
-      "value": "confirmed",
-      "label": "подтверждено",
-      "css": "certainty-confirmed"
-    },
-    "U-SLS-P-3.2:status": {
-      "value": "design",
-      "label": "в проектировании",
-      "css": "status-design"
-    },
-    "U-SLS-P-3.2:approval": {
-      "value": "approved",
-      "label": "согласовано",
-      "css": "approval-approved"
-    },
-    "U-SLS-P-3.2:certainty": {
-      "value": "confirmed",
-      "label": "подтверждено",
-      "css": "certainty-confirmed"
     }
   },
   "projectMonths": {
@@ -3428,60 +3303,11 @@
   "newPrograms": {
     "month-2": [
       {
-        "id": "U-UKM-P-2.7",
-        "name": "Система планирования всех показателей",
-        "contour": "UKM",
-        "source": "U",
-        "color": "#64748B"
-      },
-      {
-        "id": "U-UKM-P-0.4",
-        "name": "Система планирования всех показателей",
-        "contour": "UKM",
-        "source": "U",
-        "change": "out"
-      },
-      {
-        "id": "U-UKM-P-0.5",
-        "name": "Система планирования всех показателей",
-        "contour": "UKM",
-        "source": "U",
-        "change": "out"
-      },
-      {
-        "id": "U-NEW-P-2.13",
-        "name": "Система планирования всех показателей",
-        "contour": "NEW",
-        "source": "U",
-        "change": "out"
-      },
-      {
-        "id": "U-CCT-P-3.8",
-        "name": "Первичный КЦ",
-        "contour": "CCT",
-        "source": "U",
-        "change": "U-ALL-I-1"
-      },
-      {
-        "id": "U-CCT-P-3.9",
-        "name": "Первичный КЦ",
-        "contour": "CCT",
-        "source": "U",
-        "change": "U-ALL-I-3"
-      },
-      {
-        "id": "U-ALL-P-0.5",
-        "name": "Система планирования всех показателей",
+        "id": "U-NEW-P-2.10",
+        "name": "ТЕСТ",
         "contour": "ALL",
         "source": "U",
-        "change": "out"
-      },
-      {
-        "id": "U-CCT-P-3.10",
-        "name": "Первичный КЦ",
-        "contour": "CCT",
-        "source": "U",
-        "change": "U-ALL-I-3"
+        "change": "U-ALL-I-1"
       }
     ]
   },
@@ -3493,5 +3319,5 @@
       "U-PAT-PR-3.1.10"
     ]
   },
-  "publishedAt": "2026-06-08T10:29:55.384Z"
+  "publishedAt": "2026-06-08T10:33:05.475Z"
 }
