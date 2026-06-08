@@ -1,20 +1,39 @@
-name: Deploy to GitHub Pages
+name: Deploy to po.dfprod.ru
 
 on:
   push:
     branches: [main]
-  workflow_dispatch:
-
-permissions:
-  contents: write
+    paths-ignore:
+      - 'plans/**'
+      - '*.md'
+      - 'deploy.ps1'
+      - 'server.js'
+      - '.env'
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          branch: gh-pages
-          folder: .
-          clean: true
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy files
+        run: |
+          rsync -avz --delete \
+            --exclude='.git/' \
+            --exclude='plans/' \
+            --exclude='*.md' \
+            --exclude='deploy.ps1' \
+            --exclude='.github/' \
+            --exclude='.claude/' \
+            --exclude='data.json' \
+            --exclude='server.js' \
+            --exclude='.env' \
+            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
+            ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}/

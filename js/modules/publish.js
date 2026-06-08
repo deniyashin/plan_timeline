@@ -7,7 +7,8 @@
   var LS_TEXTS  = 'po-texts';
   var LS_TASKS  = 'po-tasks';
   var LS_PSTAT  = 'po-proj-statuses';
-  var WEBHOOK   = 'https://noslosnodeyim.beget.app/webhook/plan_timeline';
+  var WEBHOOK   = '/api/save';
+  var LS_SECRET = 'po-save-secret';
   /* ================================================================
      PUBLISH
   ================================================================ */
@@ -21,7 +22,8 @@
   document.getElementById('po-pub-ok').addEventListener('click', doPublish);
   pubInp.addEventListener('keydown', function (e) { if (e.key === 'Enter') doPublish(); });
   document.getElementById('po-btn-pub').addEventListener('click', function () {
-    pubInp.value = ''; pubErr.textContent = '';
+    try { pubInp.value = localStorage.getItem(LS_SECRET) || ''; } catch(e) { pubInp.value = ''; }
+    pubErr.textContent = '';
     openModal('po-pub-modal');
     setTimeout(function () { pubInp.focus(); }, 30);
   });
@@ -60,14 +62,16 @@
   }
 
   function doPublish() {
-    var pwd = pubInp.value;
-    if (!pwd) { pubErr.textContent = 'Введите пароль'; return; }
+    var pwd = pubInp.value.trim();
+    if (!pwd) { pubErr.textContent = 'Введите секрет'; return; }
+    try { localStorage.setItem(LS_SECRET, pwd); } catch(e) {}
     closeModal('po-pub-modal');
     var btn = document.getElementById('po-btn-pub');
     btn.disabled = true; btn.textContent = 'Публикация...';
     fetch(WEBHOOK, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: pwd, data: collectState() })
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + pwd },
+      body: JSON.stringify(collectState())
     })
       .then(function (r) {
         if (!r.ok) return r.text().then(function (t) { throw new Error(t || 'HTTP ' + r.status); });
@@ -186,7 +190,7 @@
   }
 
   function loadRemote() {
-    return fetch('https://deniyashin.github.io/plan_timeline/data.json')
+    return fetch('/data.json')
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (d) {
         if (d) {
