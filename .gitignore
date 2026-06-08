@@ -12,6 +12,9 @@ plan_timeline_n8n.json
 # Claude Code (локальные настройки IDE)
 .claude/
 
+# Серверные файлы — деплоятся вручную, не через git
+.env
+
 # Системное
 .DS_Store
 Thumbs.db
