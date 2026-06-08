@@ -3454,14 +3454,37 @@
         "contour": "NEW",
         "source": "U",
         "change": "out"
+      },
+      {
+        "id": "U-CCT-P-3.8",
+        "name": "Первичный КЦ",
+        "contour": "CCT",
+        "source": "U",
+        "change": "U-ALL-I-1"
+      },
+      {
+        "id": "U-CCT-P-3.9",
+        "name": "Первичный КЦ",
+        "contour": "CCT",
+        "source": "U",
+        "change": "U-ALL-I-3"
+      },
+      {
+        "id": "U-ALL-P-0.5",
+        "name": "Система планирования всех показателей",
+        "contour": "ALL",
+        "source": "U",
+        "change": "out"
       }
     ]
   },
   "deletedItems": {
-    "programs": [],
+    "programs": [
+      "U-CCT-P-3.8"
+    ],
     "projects": [
       "U-PAT-PR-3.1.10"
     ]
   },
-  "publishedAt": "2026-06-05T13:41:09.759Z"
+  "publishedAt": "2026-06-08T10:28:59.703Z"
 }
