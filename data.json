@@ -3475,6 +3475,13 @@
         "contour": "ALL",
         "source": "U",
         "change": "out"
+      },
+      {
+        "id": "U-CCT-P-3.10",
+        "name": "Первичный КЦ",
+        "contour": "CCT",
+        "source": "U",
+        "change": "U-ALL-I-3"
       }
     ]
   },
@@ -3486,5 +3493,5 @@
       "U-PAT-PR-3.1.10"
     ]
   },
-  "publishedAt": "2026-06-08T10:28:59.703Z"
+  "publishedAt": "2026-06-08T10:29:55.384Z"
 }
