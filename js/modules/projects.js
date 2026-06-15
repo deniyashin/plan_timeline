@@ -51,60 +51,85 @@
         '</div>' +
       '</div>';
     }).join('');
+    var pid = d.id;
     li.innerHTML =
       '<button class="program-head" type="button" aria-expanded="false">' +
         '<span class="program-accent" style="background:' + color + '"></span>' +
         '<span class="program-kind">Программа</span>' +
         (d.contour ? '<span class="contour-chip contour-chip-lg">' + d.contour + '</span>' : '') +
-        '<span class="program-name" data-ek="np-progname-' + d.id + '">' + d.name + '</span>' +
+        '<span class="program-name" data-ek="np-progname-' + pid + '">' + d.name + '</span>' +
         '<span class="program-roles-slot" data-roles-slot></span>' +
         '<span class="program-flags" data-flags-slot></span>' +
-        '<span class="program-id-mono">' + d.id + '</span>' +
+        '<span class="program-id-mono">' + pid + '</span>' +
         '<span class="project-count" title="Проектов в программе">0</span>' +
         '<span class="chev chev-lg" aria-hidden="true"></span>' +
       '</button>' +
       '<div class="program-body" hidden>' +
         '<div class="program-meta">' +
-        '<div class="card-summary-grid field-brief">' +
-          '<div class="card-summary-cell"><span class="card-summary-label">Статус внедрения</span>' +
-            '<span class="card-summary-value"><span class="status-editor" data-field="status">' +
-              '<button type="button" class="status-chip status-not-started" data-action="open-status-menu" data-current="status-not-started">не стартовало</button>' +
-              '<div class="status-menu" hidden>' +
-                '<div class="status-option" data-value="not-started" data-label="не стартовало" data-css="status-not-started"><span class="status-dot" style="background:#6B655C"></span><span>не стартовало</span></div>' +
-                '<div class="status-option" data-value="design" data-label="в проектировании" data-css="status-design"><span class="status-dot" style="background:#1E6E7A"></span><span>в проектировании</span></div>' +
-                '<div class="status-option" data-value="approval" data-label="на согласовании" data-css="status-approval"><span class="status-dot" style="background:#8E5C0E"></span><span>на согласовании</span></div>' +
-                '<div class="status-option" data-value="rollout" data-label="во внедрении" data-css="status-rollout"><span class="status-dot" style="background:#2F5233"></span><span>во внедрении</span></div>' +
-                '<div class="status-option" data-value="norm" data-label="закрепляется в норму" data-css="status-norm"><span class="status-dot" style="background:#1F1D1A"></span><span>закрепляется в норму</span></div>' +
-              '</div>' +
-            '</span></span></div>' +
-          '<div class="card-summary-cell"><span class="card-summary-label">Степень определённости</span>' +
-            '<span class="card-summary-value"><span class="status-editor" data-field="certainty">' +
-              '<button type="button" class="status-chip certainty-confirmed" data-action="open-status-menu" data-current="certainty-confirmed">подтверждено</button>' +
-              '<div class="status-menu" hidden>' +
-                '<div class="status-option" data-value="confirmed" data-label="подтверждено" data-css="certainty-confirmed"><span class="status-dot" style="background:#2F5233"></span><span>подтверждено</span></div>' +
-                '<div class="status-option" data-value="partial" data-label="частично подтверждено" data-css="certainty-partial"><span class="status-dot" style="background:#8E5C0E"></span><span>частично подтверждено</span></div>' +
-                '<div class="status-option" data-value="needs-clar" data-label="требует уточнения" data-css="certainty-needs-clar"><span class="status-dot" style="background:#8B2635"></span><span>требует уточнения</span></div>' +
-              '</div>' +
-            '</span></span></div>' +
-          '<div class="card-summary-cell"><span class="card-summary-label">Статус согласования</span>' +
-            '<span class="card-summary-value"><span class="status-editor" data-field="approval">' +
-              '<button type="button" class="status-chip approval-not-approved" data-action="open-status-menu" data-current="approval-not-approved">не согласовано</button>' +
-              '<div class="status-menu" hidden>' +
-                '<div class="status-option" data-value="not-approved" data-label="не согласовано" data-css="approval-not-approved"><span class="status-dot" style="background:#6B655C"></span><span>не согласовано</span></div>' +
-                '<div class="status-option" data-value="in-review" data-label="на согласовании" data-css="approval-in-review"><span class="status-dot" style="background:#8E5C0E"></span><span>на согласовании</span></div>' +
-                '<div class="status-option" data-value="approved" data-label="согласовано" data-css="approval-approved"><span class="status-dot" style="background:#2F5233"></span><span>согласовано</span></div>' +
-                '<div class="status-option" data-value="needs-rework" data-label="требует пересборки" data-css="approval-needs-rework"><span class="status-dot" style="background:#8B2635"></span><span>требует пересборки</span></div>' +
-              '</div>' +
-            '</span></span></div>' +
+          '<div class="field field-brief">' +
+            '<span class="field-label">Что это</span>' +
+            '<p class="card-summary-value" data-ek="np-prog-whatis-' + pid + '"></p>' +
+          '</div>' +
+          '<div class="field field-brief">' +
+            '<span class="field-label">Что изменится на практике</span>' +
+            '<p class="card-summary-value" data-ek="np-prog-whatchanges-' + pid + '"></p>' +
+          '</div>' +
+          '<div class="card-summary-grid field-brief">' +
+            '<div class="card-summary-cell"><span class="card-summary-label">Статус внедрения</span>' +
+              '<span class="card-summary-value"><span class="status-editor" data-field="status">' +
+                '<button type="button" class="status-chip status-not-started" data-action="open-status-menu" data-current="status-not-started">не стартовало</button>' +
+                '<div class="status-menu" hidden>' +
+                  '<div class="status-option" data-value="not-started" data-label="не стартовало" data-css="status-not-started"><span class="status-dot" style="background:#6B655C"></span><span>не стартовало</span></div>' +
+                  '<div class="status-option" data-value="design" data-label="в проектировании" data-css="status-design"><span class="status-dot" style="background:#1E6E7A"></span><span>в проектировании</span></div>' +
+                  '<div class="status-option" data-value="approval" data-label="на согласовании" data-css="status-approval"><span class="status-dot" style="background:#8E5C0E"></span><span>на согласовании</span></div>' +
+                  '<div class="status-option" data-value="rollout" data-label="во внедрении" data-css="status-rollout"><span class="status-dot" style="background:#2F5233"></span><span>во внедрении</span></div>' +
+                  '<div class="status-option" data-value="norm" data-label="закрепляется в норму" data-css="status-norm"><span class="status-dot" style="background:#1F1D1A"></span><span>закрепляется в норму</span></div>' +
+                '</div>' +
+              '</span></span></div>' +
+            '<div class="card-summary-cell"><span class="card-summary-label">Степень определённости</span>' +
+              '<span class="card-summary-value"><span class="status-editor" data-field="certainty">' +
+                '<button type="button" class="status-chip certainty-confirmed" data-action="open-status-menu" data-current="certainty-confirmed">подтверждено</button>' +
+                '<div class="status-menu" hidden>' +
+                  '<div class="status-option" data-value="confirmed" data-label="подтверждено" data-css="certainty-confirmed"><span class="status-dot" style="background:#2F5233"></span><span>подтверждено</span></div>' +
+                  '<div class="status-option" data-value="partial" data-label="частично подтверждено" data-css="certainty-partial"><span class="status-dot" style="background:#8E5C0E"></span><span>частично подтверждено</span></div>' +
+                  '<div class="status-option" data-value="needs-clar" data-label="требует уточнения" data-css="certainty-needs-clar"><span class="status-dot" style="background:#8B2635"></span><span>требует уточнения</span></div>' +
+                '</div>' +
+              '</span></span></div>' +
+            '<div class="card-summary-cell"><span class="card-summary-label">Статус согласования</span>' +
+              '<span class="card-summary-value"><span class="status-editor" data-field="approval">' +
+                '<button type="button" class="status-chip approval-not-approved" data-action="open-status-menu" data-current="approval-not-approved">не согласовано</button>' +
+                '<div class="status-menu" hidden>' +
+                  '<div class="status-option" data-value="not-approved" data-label="не согласовано" data-css="approval-not-approved"><span class="status-dot" style="background:#6B655C"></span><span>не согласовано</span></div>' +
+                  '<div class="status-option" data-value="in-review" data-label="на согласовании" data-css="approval-in-review"><span class="status-dot" style="background:#8E5C0E"></span><span>на согласовании</span></div>' +
+                  '<div class="status-option" data-value="approved" data-label="согласовано" data-css="approval-approved"><span class="status-dot" style="background:#2F5233"></span><span>согласовано</span></div>' +
+                  '<div class="status-option" data-value="needs-rework" data-label="требует пересборки" data-css="approval-needs-rework"><span class="status-dot" style="background:#8B2635"></span><span>требует пересборки</span></div>' +
+                '</div>' +
+              '</span></span></div>' +
+            '<div class="card-summary-cell">' +
+              '<span class="card-summary-label">Следующий шаг</span>' +
+              '<span class="card-summary-value" data-ek="np-prog-nextstep-' + pid + '"></span>' +
+            '</div>' +
+            '<div class="card-summary-cell">' +
+              '<span class="card-summary-label">Как будем измерять</span>' +
+              '<span class="card-summary-value placeholder" data-ek="np-prog-measure-' + pid + '"></span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="field field-detailed">' +
+            '<span class="field-label">Цель</span>' +
+            '<p class="field-value" data-ek="np-prog-goal-' + pid + '"></p>' +
+          '</div>' +
+          '<div class="field field-detailed">' +
+            '<span class="field-label">Описание</span>' +
+            '<p class="field-value" data-ek="np-progdesc-' + pid + '"></p>' +
+          '</div>' +
+          '<div class="field field-detailed">' +
+            '<span class="field-label">Подробно</span>' +
+            '<p class="field-value" data-ek="np-prog-detail-' + pid + '"></p>' +
+          '</div>' +
         '</div>' +
-        '<div class="field" style="margin-bottom:12px">' +
-          '<span class="field-label">Описание</span>' +
-          '<p class="field-value" data-ek="np-progdesc-' + d.id + '"></p>' +
-        '</div>' +
-        '<div class="assignments-editor" data-program-id="' + d.id + '">' +
+        '<div class="assignments-editor" data-program-id="' + pid + '">' +
           '<div class="field-label field-label-main">Ответственные по программе</div>' +
           '<div class="role-editor-list">' + roleRowsHtml + '</div>' +
-        '</div>' +
         '</div>' +
         '<ol class="project-list"></ol>' +
       '</div>';
@@ -304,7 +329,7 @@
     li.className = 'project po-created-proj';
     li.setAttribute('data-source', d.source || 'U');
     li.setAttribute('data-contour', d.contour || '');
-    li.setAttribute('data-change', '');
+    li.setAttribute('data-change', d.change || '');
     var color = d.accentColor || cssVar('--danger');
     li.innerHTML =
       '<button class="project-head" type="button" aria-expanded="false">' +
@@ -314,7 +339,7 @@
         (d.contour ? '<span class="contour-chip">' + d.contour + '</span>' : '') +
         '<span class="project-name">' + d.name + '</span>' +
         '<span class="project-id-mono">' + d.id + '</span>' +
-        '<span class="task-badge task-badge-empty">—</span>' +
+        '<span class="task-badge task-badge-empty" title="Задачи ещё не декомпозированы">—</span>' +
         '<span class="chev" aria-hidden="true"></span>' +
       '</button>' +
       '<div class="project-body" hidden>' +
@@ -440,13 +465,14 @@
     _closeNpModal();
 
     var progId = prog.getAttribute('data-program-id') || '';
+    var changeVal = prog.getAttribute('data-change') || '';
     var source = (progId || 'U').charAt(0);
     var accentEl = prog.querySelector('.program-accent');
     var accentColor = accentEl ? accentEl.style.background : cssVar('--danger');
     var projList = prog.querySelector('.project-list');
     var idx = projList ? projList.querySelectorAll('.project').length + 1 : 1;
 
-    var d = { id: id, name: name, contour: contour, source: source, accentColor: accentColor, idx: idx };
+    var d = { id: id, name: name, contour: contour, source: source, change: changeVal, accentColor: accentColor, idx: idx };
     var li = buildProjectLi(d);
     if (projList) projList.appendChild(li);
 
@@ -458,7 +484,7 @@
     /* persist */
     var np = getNewProjects();
     if (!np[progId]) np[progId] = [];
-    np[progId].push({ id: id, name: name, contour: contour, source: source });
+    np[progId].push({ id: id, name: name, contour: contour, source: source, change: changeVal });
     saveNewProjects(np);
 
     var pbody = li.querySelector('.project-body');

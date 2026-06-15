@@ -40,6 +40,7 @@
       texts: lsGet(LS_TEXTS), tasks: lsGet(LS_TASKS),
       projStatuses: lsGet(LS_PSTAT), progStatuses: progStatuses,
       projectMonths: lsGet('po-project-months-v1'),
+      assignments:  lsGet('plan-timeline-assignments-v2'),
       people: peopleOverrides || window.PLAN_CONFIG.PEOPLE,
       newProjects:  lsGet('po-new-projects'),
       newPrograms:  lsGet('po-new-programs'),
@@ -122,6 +123,10 @@
       }
       /* в любом случае обновляем ASSIGNEES и UI */
       if (typeof window.refreshPeopleViews === 'function') window.refreshPeopleViews();
+    }
+    if (data.assignments && Object.keys(data.assignments).length) {
+      try { localStorage.setItem('plan-timeline-assignments-v2', JSON.stringify(data.assignments)); } catch (e) {}
+      if (typeof window.applyRemoteAssignments === 'function') window.applyRemoteAssignments(data.assignments);
     }
     if (data.newPrograms && typeof data.newPrograms === 'object' && Object.keys(data.newPrograms).length) {
       try { localStorage.setItem('po-new-programs', JSON.stringify(data.newPrograms)); } catch (e) {}

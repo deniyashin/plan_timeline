@@ -435,9 +435,19 @@
     updateDirectionCounts();
   });
 
+  function applyRemoteAssignments(newOverrides) {
+    if (!newOverrides || typeof newOverrides !== 'object') return;
+    overrides = newOverrides;
+    saveOverrides(overrides);
+    document.querySelectorAll('.program[data-program-id]').forEach(prog => refreshProgramDisplay(prog));
+    updateFilterCounts();
+    applyFilters();
+  }
+
   // Публикуем state и applyFilters глобально — нужны в plan_timeline.js (person picker)
-  window.filterState          = state;
-  window.applyFilters         = applyFilters;
-  window.refreshProgramDisplay = refreshProgramDisplay;
-  window.updateFilterCounts   = updateFilterCounts;
+  window.filterState             = state;
+  window.applyFilters            = applyFilters;
+  window.refreshProgramDisplay   = refreshProgramDisplay;
+  window.updateFilterCounts      = updateFilterCounts;
+  window.applyRemoteAssignments  = applyRemoteAssignments;
 })();
