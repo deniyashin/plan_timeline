@@ -8,25 +8,62 @@
   var LS_TASKS  = 'po-tasks';
   var LS_PSTAT  = 'po-proj-statuses';
   var WEBHOOK   = '/api/save';
-  var LS_SECRET = 'po-save-secret';
   /* ================================================================
      PUBLISH
   ================================================================ */
   var pubInp = document.getElementById('po-pub-inp');
   var pubErr = document.getElementById('po-pub-err');
 
-  document.getElementById('po-pub-cancel').addEventListener('click', function () { closeModal('po-pub-modal'); });
-  document.getElementById('po-pub-modal').addEventListener('click', function (e) {
-    if (e.target === this) closeModal('po-pub-modal');
-  });
-  document.getElementById('po-pub-ok').addEventListener('click', doPublish);
-  pubInp.addEventListener('keydown', function (e) { if (e.key === 'Enter') doPublish(); });
-  document.getElementById('po-btn-pub').addEventListener('click', function () {
-    try { pubInp.value = localStorage.getItem(LS_SECRET) || ''; } catch(e) { pubInp.value = ''; }
+  var LS_EDIT_TOKEN_KEY = 'po-edit-token'; // sessionStorage
+
+  function doEditAuth(onSuccess) {
+    try { pubInp.value = sessionStorage.getItem(LS_EDIT_TOKEN_KEY) || ''; } catch(e) { pubInp.value = ''; }
     pubErr.textContent = '';
     openModal('po-pub-modal');
-    setTimeout(function () { pubInp.focus(); }, 30);
-  });
+    setTimeout(function() { pubInp.focus(); }, 30);
+
+    function handleOk() {
+      var token = pubInp.value.trim();
+      if (!token) { pubErr.textContent = 'Введите пароль'; return; }
+      pubErr.textContent = '';
+      document.getElementById('po-pub-ok').disabled = true;
+      fetch('/api/check-auth', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token }
+      })
+        .then(function(r) {
+          document.getElementById('po-pub-ok').disabled = false;
+          if (!r.ok) { pubErr.textContent = 'Неверный пароль'; pubInp.focus(); return; }
+          try { sessionStorage.setItem(LS_EDIT_TOKEN_KEY, token); } catch(e) {}
+          closeModal('po-pub-modal');
+          cleanup();
+          onSuccess();
+        })
+        .catch(function() {
+          document.getElementById('po-pub-ok').disabled = false;
+          pubErr.textContent = 'Ошибка сети, попробуйте ещё раз';
+        });
+    }
+
+    function handleCancel() { closeModal('po-pub-modal'); cleanup(); }
+
+    function cleanup() {
+      document.getElementById('po-pub-ok').removeEventListener('click', handleOk);
+      document.getElementById('po-pub-cancel').removeEventListener('click', handleCancel);
+      pubInp.removeEventListener('keydown', handleKeydown);
+      document.getElementById('po-pub-modal').removeEventListener('click', handleOverlay);
+    }
+
+    function handleKeydown(e) { if (e.key === 'Enter') handleOk(); }
+    function handleOverlay(e) { if (e.target === document.getElementById('po-pub-modal')) handleCancel(); }
+
+    document.getElementById('po-pub-ok').addEventListener('click', handleOk);
+    document.getElementById('po-pub-cancel').addEventListener('click', handleCancel);
+    pubInp.addEventListener('keydown', handleKeydown);
+    document.getElementById('po-pub-modal').addEventListener('click', handleOverlay);
+  }
+
+  window.doEditAuth = doEditAuth;
 
   function collectState() {
     var progStatuses = {};
@@ -75,7 +112,6 @@
   function doPublish() {
     var pwd = pubInp.value.trim();
     if (!pwd) { pubErr.textContent = 'Введите секрет'; return; }
-    try { localStorage.setItem(LS_SECRET, pwd); } catch(e) {}
     closeModal('po-pub-modal');
     flushEditableFields();
     var btn = document.getElementById('po-btn-pub');

@@ -54,6 +54,14 @@
       var currentMode = body.getAttribute('data-mode');
       if (clickedMode === 'edit' && currentMode === 'edit') {
         setMode(_prevBaseMode || 'detailed');
+      } else if (clickedMode === 'edit') {
+        var hasToken = false;
+        try { hasToken = !!sessionStorage.getItem('po-edit-token'); } catch(e) {}
+        if (hasToken) {
+          setMode('edit');
+        } else {
+          window.doEditAuth(function() { setMode('edit'); });
+        }
       } else {
         setMode(clickedMode);
       }
