@@ -368,6 +368,11 @@ body[data-mode="edit"] .mode-btn[data-mode="edit"] {
   color: #FDFBF6;
 }
 
+/* ---- Edit mode can only be entered from Подробно or Проекты ---- */
+body[data-mode="brief"] .mode-btn[data-mode="edit"] {
+  opacity: 0.35;
+  pointer-events: none;
+}
 /* Subtle indicator showing the base mode when editing */
 .mode-btn.base-mode-active {
   background: rgba(184,117,10,0.12) !important;

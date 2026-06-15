@@ -361,7 +361,9 @@
     document.querySelectorAll('section.month').forEach(function (section) {
       section.querySelectorAll('li.program').forEach(function (prog) {
         if (prog.style.display === 'none') return;
-        var hasVisible = Array.from(prog.querySelectorAll('li.project')).some(function (li) {
+        var projItems = Array.from(prog.querySelectorAll('li.project'));
+        if (projItems.length === 0) return; /* нет проектов — программу не скрываем */
+        var hasVisible = projItems.some(function (li) {
           return li.style.display !== 'none';
         });
         if (!hasVisible) prog.style.display = 'none';
