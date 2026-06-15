@@ -729,6 +729,17 @@
     var name = (proj.querySelector('.project-name') || {}).textContent || pid;
     if (!confirm('Удалить проект «' + name + '»?\nЗадачи, статусы и тексты проекта будут удалены.')) return;
     if (pid) _cleanProjectData(pid);
+    // удалить из po-new-projects чтобы не восстановился после перезагрузки
+    if (pid) {
+      var progEl = proj.closest('.program');
+      var progId2 = progEl ? progEl.getAttribute('data-program-id') : null;
+      var np2 = getNewProjects();
+      if (progId2 && np2[progId2]) {
+        np2[progId2] = np2[progId2].filter(function(p) { return p.id !== pid; });
+        if (np2[progId2].length === 0) delete np2[progId2];
+        saveNewProjects(np2);
+      }
+    }
     if (pid) {
       var d = getDeleted();
       if (d.projects.indexOf(pid) === -1) d.projects.push(pid);
@@ -749,6 +760,24 @@
     prog.querySelectorAll('.project-id-mono').forEach(function(mono) {
       _cleanProjectData(mono.textContent.trim());
     });
+    // чистим тексты самой программы (np-progname-*, np-progdesc-* и т.д.)
+    if (progId) {
+      var texts = lsGet(LS_TEXTS);
+      Object.keys(texts).forEach(function(k) { if (k.indexOf(progId) !== -1) delete texts[k]; });
+      lsSet(LS_TEXTS, texts);
+    }
+    // удалить из po-new-programs чтобы не восстановилась после перезагрузки
+    if (progId) {
+      var np = getNewProgs();
+      var npChanged = false;
+      Object.keys(np).forEach(function(mid) {
+        var before = (np[mid] || []).length;
+        np[mid] = (np[mid] || []).filter(function(p) { return p.id !== progId; });
+        if (np[mid].length !== before) npChanged = true;
+        if (np[mid].length === 0) delete np[mid];
+      });
+      if (npChanged) saveNewProgs(np);
+    }
     var d = getDeleted();
     if (progId && d.programs.indexOf(progId) === -1) d.programs.push(progId);
     saveDeleted(d);
