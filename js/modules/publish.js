@@ -112,10 +112,18 @@
       /* в любом случае обновляем ASSIGNEES и UI */
       if (typeof window.refreshPeopleViews === 'function') window.refreshPeopleViews();
     }
+    if (data.newPrograms && typeof data.newPrograms === 'object' && Object.keys(data.newPrograms).length) {
+      try { localStorage.setItem('po-new-programs', JSON.stringify(data.newPrograms)); } catch (e) {}
+      if (typeof window.restoreNewPrograms === 'function') window.restoreNewPrograms();
+    }
     if (data.newProjects && typeof data.newProjects === 'object') {
       try { localStorage.setItem('po-new-projects', JSON.stringify(data.newProjects)); } catch (e) {}
       if (typeof window.restoreNewProjects === 'function') window.restoreNewProjects();
       if (typeof window.injectProjStatuses === 'function') window.injectProjStatuses();
+    }
+    if (data.deletedItems && typeof data.deletedItems === 'object') {
+      try { localStorage.setItem('po-deleted', JSON.stringify(data.deletedItems)); } catch (e) {}
+      if (typeof window.applyDeleted === 'function') window.applyDeleted();
     }
     if (data.texts && Object.keys(data.texts).length) {
       try { localStorage.setItem(LS_TEXTS, JSON.stringify(data.texts)); } catch (e) {}

@@ -119,6 +119,8 @@
     /* flatten: progId → data */
     Object.keys(np).forEach(function (origMonthId) {
       (np[origMonthId] || []).forEach(function (d) {
+        /* skip if already in DOM (prevents duplicates when called from applyData) */
+        if (document.querySelector('.program[data-program-id="' + CSS.escape(d.id) + '"]')) return;
         /* if the program has been moved, place it in new month */
         var monthId = pm[d.id] || origMonthId;
         var sec = document.getElementById(monthId) || document.getElementById(origMonthId);

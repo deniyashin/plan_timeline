@@ -3,12 +3,6 @@
 // === Assignments / program flags === → js/modules/program-flags.js
 // === Main app (edit, DnD, tasks, backend) ===
 (function () {
-  var LS_TEXTS  = 'po-texts';
-  var LS_TASKS  = 'po-tasks';
-  var LS_PSTAT  = 'po-proj-statuses';
-  var LS_MIG    = 'po-migrated-v1';
-  var WEBHOOK   = 'https://noslosnodeyim.beget.app/webhook/plan_timeline';
-
   // lsGet, lsSet, lsRaw, lsRawSet — в js/utils/storage.js
 
 
