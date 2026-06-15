@@ -314,6 +314,8 @@
       el.addEventListener('blur', function () { saveTextField(el); });
       textEls.push(el);
     });
+
+    renderTimeline();
   }
 
   /* ---- month-move picker ---- */

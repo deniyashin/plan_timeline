@@ -186,7 +186,7 @@
       /* Hide master programs in this section that have 0 projects for this month */
       progList.querySelectorAll('.program[data-pm-master]').forEach(function (prog) {
         var progId = prog.getAttribute('data-program-id');
-        if (!monthPrograms[progId]) {
+        if (!monthPrograms[progId] && !prog.classList.contains('po-created-prog')) {
           prog.style.display = 'none';
         }
       });
