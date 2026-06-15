@@ -84,6 +84,17 @@ http.createServer(function(req, res) {
     return;
   }
 
+  // POST /api/check-auth — только проверка токена, без записи файлов
+  if (req.method === 'POST' && urlPath === '/api/check-auth') {
+    var auth = req.headers['authorization'] || '';
+    if (!SAVE_SECRET || auth !== 'Bearer ' + SAVE_SECRET) {
+      res.writeHead(401, {'Content-Type': 'application/json'});
+      return res.end(JSON.stringify({error: 'Unauthorized'}));
+    }
+    res.writeHead(200, {'Content-Type': 'application/json'});
+    return res.end(JSON.stringify({ok: true}));
+  }
+
   // Static files
   var resolved = (urlPath === '/' || urlPath.endsWith('/') || !path.extname(urlPath))
     ? urlPath.replace(/\/?$/, '/index.html')
