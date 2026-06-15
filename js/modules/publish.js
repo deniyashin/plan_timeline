@@ -65,6 +65,56 @@
 
   window.doEditAuth = doEditAuth;
 
+  var _autoSaveTimer = null;
+  var _autoSaveEl = document.getElementById('po-edit-saved');
+
+  function setAutoSaveStatus(text, cls) {
+    if (!_autoSaveEl) return;
+    _autoSaveEl.textContent = text;
+    _autoSaveEl.className = 'po-edit-saved' + (cls ? ' ' + cls : '');
+  }
+
+  function doAutoSave() {
+    var token = '';
+    try { token = sessionStorage.getItem('po-edit-token') || ''; } catch(e) {}
+    if (!token) return;
+    if (document.body.getAttribute('data-mode') !== 'edit') return;
+
+    setAutoSaveStatus('Сохранение...', 'saving');
+    if (typeof window.flushEditableFields === 'function') window.flushEditableFields();
+    fetch(WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify(collectState())
+    })
+      .then(function(r) {
+        if (!r.ok) return r.text().then(function(t) { throw new Error(t || 'HTTP ' + r.status); });
+        return r.json();
+      })
+      .then(function(resp) {
+        if (resp && resp.error) throw new Error(resp.error);
+        var nowIso = new Date().toISOString();
+        try { localStorage.setItem('po-doc-edited', nowIso); } catch(e) {}
+        updatePubStamp(nowIso);
+        setAutoSaveStatus('Сохранено ✓', 'saved');
+        setTimeout(function() { setAutoSaveStatus('Все изменения сохранены', ''); }, 3000);
+      })
+      .catch(function(err) {
+        setAutoSaveStatus('Ошибка сохранения ✗', 'error');
+        if (window.showToast) window.showToast('Не удалось сохранить: ' + err.message, 'error');
+      });
+  }
+
+  function scheduleAutoSave() {
+    if (document.body.getAttribute('data-mode') !== 'edit') return;
+    clearTimeout(_autoSaveTimer);
+    _autoSaveTimer = setTimeout(doAutoSave, 1500);
+  }
+
+  window.scheduleAutoSave = scheduleAutoSave;
+  window.doAutoSave = doAutoSave;
+  window._autoSaveTimer = _autoSaveTimer;
+
   function collectState() {
     var progStatuses = {};
     try { progStatuses = JSON.parse(localStorage.getItem('plan-timeline-statuses-v1') || '{}'); } catch (e) {}

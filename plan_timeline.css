@@ -3237,6 +3237,9 @@ body[data-mode="edit"] { padding-bottom: 56px; }
   color: rgba(255,255,255,0.35); transition: color 0.3s;
 }
 .po-edit-saved.flash { color: #7EBF83; }
+#po-edit-saved.saving { color: var(--text-muted, #888); }
+#po-edit-saved.saved  { color: var(--success, #3a7d44); }
+#po-edit-saved.error  { color: var(--danger, #c0392b); font-weight: 600; }
 .po-btn-pub {
   background: #2F5233; border: 1px solid #2F5233; color: #FDFBF6;
   font-family: inherit; font-size: 12px; padding: 6px 16px;
