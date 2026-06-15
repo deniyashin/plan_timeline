@@ -222,7 +222,10 @@
     var n = parseInt(val, 10);
     if (isNaN(n) || n < 1) { delete store[projectId]; }
     else { store[projectId] = n; }
-    try { localStorage.setItem(LS_DIR_ORDER, JSON.stringify(store)); } catch (e) {}
+    try {
+      localStorage.setItem(LS_DIR_ORDER, JSON.stringify(store));
+      if (typeof window.flash === 'function') window.flash();
+    } catch (e) {}
   }
 
   /* ================================================================

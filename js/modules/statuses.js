@@ -8,7 +8,10 @@
     catch (e) { return {}; }
   }
   function saveStatuses(obj) {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(obj)); } catch (e) {}
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
+      if (typeof window.flash === 'function') window.flash();
+    } catch (e) {}
   }
   let statuses = loadStatuses();
 

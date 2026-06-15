@@ -17,6 +17,11 @@
   function setMode(mode) {
     var _sy = window.scrollY;
     var currentMode = body.getAttribute('data-mode');
+    if (currentMode === 'edit' && mode !== 'edit') {
+      if (typeof window.doAutoSave === 'function') {
+        window.doAutoSave();
+      }
+    }
     if (mode === 'edit') {
       var baseMode = (currentMode === 'projects' || currentMode === 'detailed')
         ? currentMode
@@ -82,6 +87,9 @@
   if (_arl === 'edit') {
     try { localStorage.removeItem('po-people-after-reload-mode'); } catch(e) {}
     setMode('edit');
+    setTimeout(function() {
+      if (typeof window.doAutoSave === 'function') window.doAutoSave();
+    }, 300);
   }
 
   // Changes section toggle

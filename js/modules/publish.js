@@ -115,6 +115,11 @@
   window.doAutoSave = doAutoSave;
   window._autoSaveTimer = _autoSaveTimer;
 
+  document.getElementById('po-btn-pub').addEventListener('click', function() {
+    clearTimeout(_autoSaveTimer);
+    doAutoSave();
+  });
+
   function collectState() {
     var progStatuses = {};
     try { progStatuses = JSON.parse(localStorage.getItem('plan-timeline-statuses-v1') || '{}'); } catch (e) {}

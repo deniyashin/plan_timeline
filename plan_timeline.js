@@ -10,17 +10,19 @@
   var savedEl = document.getElementById('po-edit-saved');
   var _ft;
   function flash() {
-    if (!savedEl) return;
-    savedEl.textContent = '✓ Сохранено';
-    savedEl.classList.add('flash');
-    clearTimeout(_ft);
-    _ft = setTimeout(function () {
-      savedEl.classList.remove('flash');
-      savedEl.textContent = 'Все изменения сохранены';
-    }, 2000);
+    if (typeof window.scheduleAutoSave === 'function') window.scheduleAutoSave();
+    if (document.body.getAttribute('data-mode') !== 'edit') {
+      if (!savedEl) return;
+      savedEl.textContent = '✓ Сохранено';
+      savedEl.classList.add('flash');
+      clearTimeout(_ft);
+      _ft = setTimeout(function () {
+        savedEl.classList.remove('flash');
+        savedEl.textContent = 'Все изменения сохранены';
+      }, 2000);
+    }
     var _now = new Date().toISOString();
     try { localStorage.setItem('po-doc-edited', _now); } catch (e) {}
-    updatePubStamp(_now);
   }
   window.flash = flash; // нужен storage.js (lsSet вызывает window.flash)
 

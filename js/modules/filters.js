@@ -28,9 +28,9 @@
   function saveOverrides(obj) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
+      if (typeof window.flash === 'function') window.flash();
     } catch (e) {
-      console.warn('Could not save overrides', e);
-      window.showToast('Не удалось сохранить — проверьте, разрешено ли localStorage', 'error');
+      window.showToast('Не удалось сохранить ...', 'error');
     }
   }
 
