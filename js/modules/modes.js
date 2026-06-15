@@ -21,7 +21,6 @@
       var baseMode = (currentMode === 'projects' || currentMode === 'detailed')
         ? currentMode
         : (_prevBaseMode || 'detailed');
-      if (currentMode !== 'projects' && currentMode !== 'detailed') return;
       _prevBaseMode = baseMode;
       try { localStorage.setItem('plan-timeline-base-mode', baseMode); } catch(e) {}
       body.setAttribute('data-base-mode', baseMode);

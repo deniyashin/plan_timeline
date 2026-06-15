@@ -61,11 +61,22 @@
     wrap.removeAttribute('hidden');
   }
 
+  function flushEditableFields() {
+    /* Сбрасываем все открытые contentEditable поля в localStorage до collectState.
+       Без этого текст, набранный без blur, не попадает в публикацию. */
+    (window.textEls || []).forEach(function (el) {
+      if (el.contentEditable === 'true' && el.dataset.ek) {
+        if (typeof window.saveTextField === 'function') window.saveTextField(el);
+      }
+    });
+  }
+
   function doPublish() {
     var pwd = pubInp.value.trim();
     if (!pwd) { pubErr.textContent = 'Введите секрет'; return; }
     try { localStorage.setItem(LS_SECRET, pwd); } catch(e) {}
     closeModal('po-pub-modal');
+    flushEditableFields();
     var btn = document.getElementById('po-btn-pub');
     btn.disabled = true; btn.textContent = 'Публикация...';
     fetch(WEBHOOK, {
