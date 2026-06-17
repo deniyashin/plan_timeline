@@ -222,6 +222,18 @@
     });
   }
 
+  function _nextFreeId(prefix, startN, isInUse) {
+    var deleted = getDeleted();
+    var allDeleted = (deleted.programs || []).concat(deleted.projects || []);
+    var n = startN;
+    var id;
+    do {
+      id = prefix + n;
+      n++;
+    } while (allDeleted.indexOf(id) !== -1 || isInUse(id));
+    return id;
+  }
+
   function _openPmModal(sec) {
     _pmTargetSec = sec;
     _ensurePmModal();
@@ -232,7 +244,10 @@
     var changeEl = _pmModal.querySelector('#pm-change');
     if (changeEl) changeEl.selectedIndex = 0;
     _pmModal.querySelector('#pm-name').value = '';
-    _pmModal.querySelector('#pm-id').value = 'U-NEW-P-' + (monthIdx || '0') + '.' + (existCount + 1);
+    var prefix = 'U-NEW-P-' + (monthIdx || '0') + '.';
+    _pmModal.querySelector('#pm-id').value = _nextFreeId(prefix, existCount + 1, function(id) {
+      return !!document.querySelector('.program[data-program-id="' + id + '"]');
+    });
     _pmModal.querySelector('#pm-contour').value = '';
     _pmModal.classList.add('open');
     setTimeout(function () { _pmModal.querySelector('#pm-name').focus(); }, 50);
@@ -433,7 +448,11 @@
     var projList = prog.querySelector('.project-list');
     var existingCount = projList ? projList.querySelectorAll('.project').length : 0;
     _npModal.querySelector('#np-name').value = '';
-    _npModal.querySelector('#np-id').value = base + '.' + (existingCount + 1);
+    _npModal.querySelector('#np-id').value = _nextFreeId(base + '.', existingCount + 1, function(id) {
+      return Array.from(document.querySelectorAll('.project-id-mono')).some(function(el) {
+        return el.textContent.trim() === id;
+      });
+    });
     _npModal.querySelector('#np-contour').value = '';
     _npModal.classList.add('open');
     setTimeout(function () { _npModal.querySelector('#np-name').focus(); }, 50);
