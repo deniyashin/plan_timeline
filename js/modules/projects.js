@@ -748,9 +748,9 @@
     var name = (proj.querySelector('.project-name') || {}).textContent || pid;
     if (!confirm('Удалить проект «' + name + '»?\nЗадачи, статусы и тексты проекта будут удалены.')) return;
     if (pid) _cleanProjectData(pid);
-    // удалить из po-new-projects чтобы не восстановился после перезагрузки
-    if (pid) {
-      var progEl = proj.closest('.program');
+    var progEl = proj.closest('.program');
+    if (proj.classList.contains('po-created-proj')) {
+      // пользовательский проект — убираем из newProjects, deletedItems не нужен
       var progId2 = progEl ? progEl.getAttribute('data-program-id') : null;
       var np2 = getNewProjects();
       if (progId2 && np2[progId2]) {
@@ -758,13 +758,15 @@
         if (np2[progId2].length === 0) delete np2[progId2];
         saveNewProjects(np2);
       }
+    } else {
+      // встроенный HTML-проект — помечаем в deletedItems чтобы скрыть после перезагрузки
+      if (pid) {
+        var d = getDeleted();
+        if (d.projects.indexOf(pid) === -1) d.projects.push(pid);
+        saveDeleted(d);
+      }
     }
-    if (pid) {
-      var d = getDeleted();
-      if (d.projects.indexOf(pid) === -1) d.projects.push(pid);
-      saveDeleted(d);
-    }
-    var prog = proj.closest('.program');
+    var prog = progEl;
     proj.remove();
     if (prog) { updateProgProgress(prog); }
   }
@@ -785,21 +787,25 @@
       Object.keys(texts).forEach(function(k) { if (k.indexOf(progId) !== -1) delete texts[k]; });
       lsSet(LS_TEXTS, texts);
     }
-    // удалить из po-new-programs чтобы не восстановилась после перезагрузки
-    if (progId) {
-      var np = getNewProgs();
-      var npChanged = false;
-      Object.keys(np).forEach(function(mid) {
-        var before = (np[mid] || []).length;
-        np[mid] = (np[mid] || []).filter(function(p) { return p.id !== progId; });
-        if (np[mid].length !== before) npChanged = true;
-        if (np[mid].length === 0) delete np[mid];
-      });
-      if (npChanged) saveNewProgs(np);
+    if (prog.classList.contains('po-created-prog')) {
+      // пользовательская программа — убираем из newPrograms, deletedItems не нужен
+      if (progId) {
+        var np = getNewProgs();
+        var npChanged = false;
+        Object.keys(np).forEach(function(mid) {
+          var before = (np[mid] || []).length;
+          np[mid] = (np[mid] || []).filter(function(p) { return p.id !== progId; });
+          if (np[mid].length !== before) npChanged = true;
+          if (np[mid].length === 0) delete np[mid];
+        });
+        if (npChanged) saveNewProgs(np);
+      }
+    } else {
+      // встроенная HTML-программа — помечаем в deletedItems чтобы скрыть после перезагрузки
+      var d = getDeleted();
+      if (progId && d.programs.indexOf(progId) === -1) d.programs.push(progId);
+      saveDeleted(d);
     }
-    var d = getDeleted();
-    if (progId && d.programs.indexOf(progId) === -1) d.programs.push(progId);
-    saveDeleted(d);
     prog.remove();
   }
 
